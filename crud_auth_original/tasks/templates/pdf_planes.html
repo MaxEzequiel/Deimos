@@ -1,0 +1,13 @@
+<h1>
+    Listado de Planes
+</h1>
+
+{% for plan in planes %}
+<div style="background-color: rgb(192, 203, 210);">
+<h3>Nombre del plan: {{plan.nombre}} </h3>
+<h4>Descripcion: {{plan.descripcion}}</h4>
+<h4>Precio: ${{plan.precio_base}}</h4>
+
+<h3>----------------------------------</h3>
+</div>
+{% endfor %}

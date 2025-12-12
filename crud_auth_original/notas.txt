@@ -1,0 +1,136 @@
+consultas de sql
+
+
+INSERTAR DATOS 
+
+use mydb;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+
+DELETE FROM pagos WHERE id_pago > 0;
+ALTER TABLE pagos AUTO_INCREMENT = 1;
+
+DELETE FROM facturas WHERE id_facturas > 0;
+ALTER TABLE facturas AUTO_INCREMENT = 1;
+
+DELETE FROM membresia WHERE id_membresia > 0;
+ALTER TABLE membresia AUTO_INCREMENT = 1;
+
+DELETE FROM persona WHERE id > 0;
+ALTER TABLE persona AUTO_INCREMENT = 1;
+
+DELETE FROM auth_user WHERE id_usuario > 0;
+ALTER TABLE auth_user AUTO_INCREMENT = 1;
+
+
+SET FOREIGN_KEY_CHECKS = 1;
+insert into auth_user(nombre_usuario,password,email,is_staff) 
+values("pepito","1234","pepe@gmail.com",False),
+("jorge","12345","jorge@gmail.com",False),
+("juan","123","juan@gmail.com",False);
+
+INSERT INTO persona(id, usuario, dni, nombre, apellido, fecha_nacimiento, genero, telefono) 
+VALUES 
+(1,1, "12345678", "pepito", "pereira", "2005-05-30", "Masculino", "37040083345"),
+(2,2, "87654321", "jorge", "jujuy", "2000-07-30", "Masculino", "3524642"), 
+(3,3, "11223344", "juan", "carlez", "1998-04-29", "Masculino", "65264");
+
+INSERT INTO membresia(id_usuario,esta_activa) values
+(1,true),
+(2,false),
+(3,true);
+
+INSERT INTO facturas (fecha_emision, importe_pago, id_plan, id_usuario) VALUES 
+('2024-01-15', 100.50, 1, 1),
+('2024-01-20', 75.25, 2, 2),
+('2024-01-25', 150.00, 1, 3);
+
+INSERT INTO pagos (id_usuario, monto, id_factura, fecha_pago, referencia) VALUES 
+(1, 100.50, 1, '2024-01-16', 'REF001'),
+(2, 75.25, 2, '2024-01-21', 'REF002'),
+(3, 150.00, 3, '2024-01-26', 'REF003');
+
+
+
+
+
+/CREAR TABLAS/
+use mydb;
+
+create table membresia(
+id_membresia int primary key auto_increment,
+id_usuario int, foreign key (id_usuario) references persona(id),
+esta_activa boolean
+);
+
+CREATE TABLE facturas (
+    id_facturas INT PRIMARY KEY AUTO_INCREMENT,
+    fecha_emision DATE NOT NULL,
+    importe_pago DECIMAL(10,2) NOT NULL,
+    id_plan INT,
+    id_usuario INT NOT NULL
+);
+
+
+CREATE TABLE pagos (
+    id_pago INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    id_factura INT,
+    fecha_pago DATE NOT NULL,
+    referencia VARCHAR(100)
+);
+
+ALTER TABLE facturas 
+ADD CONSTRAINT fk_facturas_usuario 
+FOREIGN KEY (id_usuario) 
+REFERENCES auth_user(id_usuario);
+
+--Relación: pagos -> auth_user
+ALTER TABLE pagos 
+ADD CONSTRAINT fk_pagos_usuario 
+FOREIGN KEY (id_usuario) 
+REFERENCES auth_user(id_usuario);
+
+--Relación: pagos -> facturas
+ALTER TABLE pagos 
+ADD CONSTRAINT fk_pagos_factura 
+FOREIGN KEY (id_factura) 
+REFERENCES facturas(id_facturas);
+
+//////JOIN TABLA DE PERSONAS Y SU USUARIO/////
+use mydb;
+
+select * from persona
+inner join auth_user on
+persona.usuario = auth_user.id_usuario
+
+
+/////JOIN TABLA DE PERSONAS Y SU MEMBRESIA/////
+
+use mydb;
+
+select * from membresia
+inner join persona on
+membresia.id_membresia = persona.id
+
+
+/////JOIN PERSONAS, PAGOS, FACTURAS//////
+
+SELECT 
+    auth_user.id_usuario,
+    auth_user.nombre_usuario,
+    auth_user.email,
+    auth_user.is_staff,
+    facturas.id_facturas,
+    facturas.fecha_emision,
+    facturas.importe_pago,
+    facturas.id_plan,
+    pagos.id_pago,
+    pagos.monto,
+    pagos.fecha_pago,
+    pagos.referencia
+FROM facturas
+INNER JOIN auth_user ON facturas.id_usuario = auth_user.id_usuario
+INNER JOIN pagos ON facturas.id_facturas = pagos.id_factura AND auth_user.id_usuario = pagos.id_usuario;

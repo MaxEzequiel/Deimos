@@ -1,0 +1,12 @@
+{% extends "base.html"%}
+
+{% block content %}
+
+<h3>¿Deseas eliminar el plan?</h3>
+<form action="" method="POST">
+    {% csrf_token %}
+    <a href="listar_tareas">Cancelar</a>
+    <button type="submit">Eliminar</button>
+</form>
+
+{% endblock content %}

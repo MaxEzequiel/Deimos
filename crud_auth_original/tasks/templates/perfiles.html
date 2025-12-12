@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %} 
+
+{% comment %} bucle para mostrar los perfiles usando el objeto que da el orm {% endcomment %}
+{% for perfil in perfiles %}
+
+<p>usuario: {{perfil.User.username}}</p>
+<p>dni: {{perfil.dni}}</p>
+
+
+
+{% endfor %}
+
+{% endblock content %}
