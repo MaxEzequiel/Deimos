@@ -17,7 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from tasks.views import *
+from tasks.views.modulo_login import *
+from tasks.views.modulo_membresias import *
+from tasks.views.modulo_planes import *
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,7 +28,6 @@ urlpatterns = [
     path("logout/", singout, name="logout"),
     path("login/", log_in),
     path("delete_user/", delete_user, name="delete_user"),
-    path("perfiles/", perfiles, name="perfiles"),
     path("editar_membresia/", editar_membresia, name="editar_membresia"),
     path("crear_plan/", crear_plan, name="crear_plan"),
     path("listar_planes/" , listar_planes, name = "listar_planes"),
