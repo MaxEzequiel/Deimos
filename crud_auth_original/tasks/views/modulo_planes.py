@@ -17,9 +17,7 @@ from django.contrib.auth import login, logout, authenticate
 
 from django.contrib.auth.decorators import login_required
 
-from tasks.forms import MembresiaForm, PlanForm
-
-
+from tasks.forms import PlanForm
 
 @login_required
 def crear_plan(request):
@@ -69,4 +67,3 @@ def eliminar_plan(request, id_plan):
     else:
         plan.delete()
         return redirect("listar_planes")
-    

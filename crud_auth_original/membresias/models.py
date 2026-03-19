@@ -7,7 +7,7 @@ from django.contrib import messages
 # modelo del usuario por defecto de django
 from django.contrib.auth.models import User
 # datos del perfil persona
-from ..models import Persona,RutinaEjercicioDia,Rutina,Ejercicio,Dia,Membresia,Plan
+from .models import Persona,RutinaEjercicioDia,Rutina,Ejercicio,Dia,Membresia,Plan
 
 # modulo de pdf
 from django_xhtml2pdf.utils import pdf_decorator
