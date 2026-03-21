@@ -1,15 +1,42 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Inicio{% endblock %}
 
 {% block content %}
-<h3 class="home-title">home page</h3>
 
-<div style="background-color: aliceblue;">
-    <h3>Estado de membresia: </h3><p>{{estado}}</p>
+<!-- HERO / BIENVENIDA -->
+<div class="home-hero text-center">
+    <h1>Bienvenido al sistema 💪</h1>
+    <p>Gestioná tu entrenamiento y membresía de forma simple</p>
+</div>
+
+<!-- CARDS -->
+<div class="row g-4 mt-3">
+
+    <!-- ESTADO -->
+    <div class="col-md-6">
+        <div class="card home-card">
+            <h4>📊 Estado de membresía</h4>
+            <p class="status-text">{{ estado }}</p>
+        </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="col-md-6">
+        <div class="card home-card">
+            <h4>⚡ Acciones rápidas</h4>
+
+            <div class="d-grid gap-2 mt-3">
+                {% if user.is_authenticated %}
+                    <a href="/logout" class="btn btn-outline-light">Cerrar sesión</a>
+                {% else %}
+                    <a href="/login" class="btn btn-outline-light">Iniciar sesión</a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 {% endblock %}
-
-</body>
-</html>
