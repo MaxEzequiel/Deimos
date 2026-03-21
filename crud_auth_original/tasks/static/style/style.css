@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-/* Fondo general - GRIS OSCURO NEUTRO */
+/* Fondo general */
 body {
     background-color: #1a1a1a;
     color: #e0e0e0;
@@ -91,7 +91,7 @@ nav ul li a:hover {
 }
 
 /* ---------------------------------------------------
-    LOGIN (DISEÑO MEJORADO)
+    LOGIN
 --------------------------------------------------- */
 
 .login-box {
@@ -125,7 +125,7 @@ nav ul li a:hover {
     display: block;
 }
 
-/* Inputs - ESTILO UNIFORME */
+/* Inputs - ESTILO */
 .login-box input {
     border-radius: 8px !important;
     padding: 12px 15px;
@@ -144,7 +144,7 @@ nav ul li a:hover {
     background-color: #424242;
 }
 
-/* Botón - TAMAÑO UNIFORME Y CENTRADO */
+/* Botón tamaños */
 .btn-outline-light {
     background-color: #9b59b6 !important;
     border: none !important;
@@ -187,7 +187,7 @@ nav ul li a:hover {
     transform: translateY(-1px);
 }
 
-/* Contenedor de botones para centrar */
+/* Contenedor de botones */
 .button-group {
     display: flex;
     justify-content: center;
@@ -382,7 +382,7 @@ nav ul li a:hover {
     animation: fadeInLogin 0.6s ease-out forwards;
 }
 
-/* Animación suave para botones */
+/* Animación para botones */
 .btn-outline-light,
 .btn-secondary-custom,
 nav ul li a {
