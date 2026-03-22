@@ -99,7 +99,7 @@ def log_in(request):
             logout(request)
             return render(
                 request,
-                "login/login.html",
+                "login.html",
                 {
                     "login_form": AuthenticationForm,
                     "error": "username or password isnt correct",
@@ -126,12 +126,12 @@ def delete_user(request):
             else:
                 return render(
                     request,
-                    "login/delete_user.html",
+                    "delete_user.html",
                     {"error": "la contraseña no es correcta"},
                 )
         else:
             return render(
                 request,
-                "login/delete_user.html",
+                "delete_user.html",
                 {"error": "la contraseña no puede estar vacia"},
             )
