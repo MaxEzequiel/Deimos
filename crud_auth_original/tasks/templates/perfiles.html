@@ -1,15 +1,25 @@
 {% extends "base.html" %}
 
-{% block content %} 
+{% block content %}
 
-{% comment %} bucle para mostrar los perfiles usando el objeto que da el orm {% endcomment %}
-{% for perfil in perfiles %}
+<h2>Usuarios Registrados</h2>
 
-<p>usuario: {{perfil.User.username}}</p>
-<p>dni: {{perfil.dni}}</p>
-
-
-
-{% endfor %}
+<div class="row">
+    {% for perfil in perfiles %}
+    <div class="col-md-6 mb-3">
+        <div class="perfil-card">
+            <h4>{{ perfil.User.username }}</h4>
+            <p>DNI: {{ perfil.dni }}</p>
+            {% if perfil.User.email %}
+            <p>Email: {{ perfil.User.email }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No hay perfiles registrados.</div>
+    </div>
+    {% endfor %}
+</div>
 
 {% endblock content %}

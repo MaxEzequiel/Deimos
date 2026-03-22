@@ -1,13 +1,42 @@
-<h1>
-    Listado de Planes
-</h1>
-
-{% for plan in planes %}
-<div style="background-color: rgb(192, 203, 210);">
-<h3>Nombre del plan: {{plan.nombre}} </h3>
-<h4>Descripcion: {{plan.descripcion}}</h4>
-<h4>Precio: ${{plan.precio_base}}</h4>
-
-<h3>----------------------------------</h3>
-</div>
-{% endfor %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Planes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+        h1 {
+            color: #9b59b6;
+            text-align: center;
+        }
+        .plan {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .plan h3 {
+            color: #8e44ad;
+        }
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>Listado de Planes - Deimos Gym</h1>
+    
+    {% for plan in planes %}
+    <div class="plan">
+        <h3>{{ plan.nombre }}</h3>
+        <p>{{ plan.descripcion }}</p>
+        <p class="price">Precio: ${{ plan.precio_base }}</p>
+    </div>
+    {% endfor %}
+</body>
+</html>

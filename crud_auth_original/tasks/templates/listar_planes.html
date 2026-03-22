@@ -2,17 +2,29 @@
 
 {% block content %}
 
-<button><a href="/pdf_planes">Descargar PDF</a></button>
-
-{% for plan in planes %}
-<div style="background-color: black;">
-<h3>Nombre del plan {{plan.nombre}} </h3>
-<h4>Descripcion: {{plan.descripcion}}</h4>
-<h4>Precio: {{plan.precio_base}}</h4>
-
-<a href="{% url 'editar_plan' plan.id %}" class="btn btn-sm btn-primary">Editar</a>
-<a href="{% url 'eliminar_plan' plan.id %}" class="btn btn-sm btn-secondary">Eliminar</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Listado de Planes</h2>
+    <a href="/pdf_planes" class="btn-pdf">Descargar PDF</a>
 </div>
-{% endfor %}
 
-{% endblock content %} 
+<div class="row">
+    {% for plan in planes %}
+    <div class="col-md-6 mb-3">
+        <div class="plan-card">
+            <div class="plan-title">{{ plan.nombre }}</div>
+            <div class="plan-description">{{ plan.descripcion }}</div>
+            <div class="plan-price">${{ plan.precio_base }}</div>
+            <div class="plan-actions">
+                <a href="{% url 'editar_plan' plan.id %}" class="btn-edit">Editar</a>
+                <a href="{% url 'eliminar_plan' plan.id %}" class="btn-delete">Eliminar</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No hay planes disponibles.</div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}
