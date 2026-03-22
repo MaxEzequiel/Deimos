@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card text-center" style="max-width: 500px; margin: 2rem auto;">
+    <h3>Eliminar Cuenta</h3>
+    
+    {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="password">Ingrese su contraseña para confirmar:</label>
+        <input type="password" name="password" required>
+        <button type="submit" class="btn-delete w-100 mt-3">Eliminar mi cuenta</button>
+    </form>
+</div>
+
+{% endblock %}

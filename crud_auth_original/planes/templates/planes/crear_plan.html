@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="text-center">Crear Nuevo Plan</h2>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        <label for="nombre">Nombre del plan:</label>
+        <input type="text" name="nombre" placeholder="Ej: Plan Premium" required>
+        
+        <label for="descripcion">Descripción:</label>
+        <textarea name="descripcion" rows="3" placeholder="Descripción del plan..."></textarea>
+        
+        <label for="precio">Precio:</label>
+        <input type="text" name="precio" placeholder="$" required>
+        
+        <button type="submit" class="btn-create w-100 mt-3">Guardar Plan</button>
+    </form>
+</div>
+
+{% endblock content %}

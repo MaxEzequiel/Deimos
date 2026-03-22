@@ -7,7 +7,9 @@ from django.contrib import messages
 # modelo del usuario por defecto de django
 from django.contrib.auth.models import User
 # datos del perfil persona
-from .models import Persona,RutinaEjercicioDia,Rutina,Ejercicio,Dia,Membresia,Plan
+from login.models import Persona, RutinaEjercicioDia, Rutina, Ejercicio, Dia
+from membresias.models import Membresia
+from planes.models import Plan
 
 # modulo de pdf
 from django_xhtml2pdf.utils import pdf_decorator
@@ -17,7 +19,7 @@ from django.contrib.auth import login, logout, authenticate
 
 from django.contrib.auth.decorators import login_required
 
-from tasks.forms import MembresiaForm, PlanForm
+from membresias.forms import MembresiaForm
 
 # //// modulo membresia //// 
 
@@ -26,7 +28,7 @@ from tasks.forms import MembresiaForm, PlanForm
 @login_required
 def editar_membresia(request):
     # obtener o crear la membresía del usuario
-    membresia= Membresia.objects.get_or_create(id_cliente=request.user)
+    membresia, created = Membresia.objects.get_or_create(id_cliente=request.user)
 
     # obtener ids de planes con funcion str para renderizar por nombre
     if request.method == "GET":

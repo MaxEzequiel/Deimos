@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<div class="home-hero text-center mb-5">
+    <h1>Te damos la bienvenida a Deimos</h1>
+    <p>Gestioná tu entrenamiento y membresía de forma simple</p>
+</div>
+
+<div class="row g-4 mt-3">
+
+    <div class="col-md-6">
+        <div class="card home-card">
+            <h4>Estado de membresía</h4>
+            <p class="status-text">{{ estado }}</p>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card home-card">
+            <h4>Acciones rápidas</h4>
+            <div class="d-grid gap-2 mt-3">
+                {% if user.is_authenticated %}
+                    <a href="/logout" class="btn-primary">Cerrar sesión</a>
+                {% else %}
+                    <a href="/login" class="btn-primary">Iniciar sesión</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

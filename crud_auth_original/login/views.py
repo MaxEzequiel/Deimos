@@ -9,15 +9,9 @@ from django.contrib.auth.models import User
 # ////
 
 # datos del perfil persona
-from .models import (
-    Persona,
-    RutinaEjercicioDia,
-    Rutina,
-    Ejercicio,
-    Dia,
-    Membresia,
-    Plan,
-)
+from login.models import Persona, RutinaEjercicioDia, Rutina, Ejercicio, Dia
+from membresias.models import Membresia
+from planes.models import Plan
 
 # funciones para el inicio de sesion
 from django.contrib.auth import login, logout, authenticate
@@ -105,7 +99,7 @@ def log_in(request):
             logout(request)
             return render(
                 request,
-                "login.html",
+                "login/login.html",
                 {
                     "login_form": AuthenticationForm,
                     "error": "username or password isnt correct",
@@ -132,12 +126,12 @@ def delete_user(request):
             else:
                 return render(
                     request,
-                    "delete_user.html",
+                    "login/delete_user.html",
                     {"error": "la contraseña no es correcta"},
                 )
         else:
             return render(
                 request,
-                "delete_user.html",
+                "login/delete_user.html",
                 {"error": "la contraseña no puede estar vacia"},
             )

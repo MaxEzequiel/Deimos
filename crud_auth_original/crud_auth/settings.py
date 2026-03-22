@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "tasks",
+    "login",
+    "membresias",
+    "planes",
+    "clases",
+    "pagos",
 ]
 
 MIDDLEWARE = [
@@ -55,7 +59,7 @@ ROOT_URLCONF = "crud_auth.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "crud_auth" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

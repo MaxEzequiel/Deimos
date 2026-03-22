@@ -7,7 +7,9 @@ from django.contrib import messages
 # modelo del usuario por defecto de django
 from django.contrib.auth.models import User
 # datos del perfil persona
-from .models import Persona,RutinaEjercicioDia,Rutina,Ejercicio,Dia,Membresia,Plan
+from login.models import Persona, RutinaEjercicioDia, Rutina, Ejercicio, Dia
+from membresias.models import Membresia
+from planes.models import Plan
 
 # modulo de pdf
 from django_xhtml2pdf.utils import pdf_decorator
@@ -17,7 +19,7 @@ from django.contrib.auth import login, logout, authenticate
 
 from django.contrib.auth.decorators import login_required
 
-from tasks.forms import PlanForm
+from planes.forms import PlanForm
 
 @login_required
 def crear_plan(request):
@@ -60,7 +62,7 @@ def editar_plan(request, id_plan):
             return render(request, "editar_plan.html", {"form" : form, "error" : error})
 
 def eliminar_plan(request, id_plan):
-    plan = Plan.objects.get(id = id_plan)
+    plan = get_object_or_404(Plan, id=id_plan)
     if request.method == "GET":
         return render(request, "eliminar_plan.html")
     # POST
