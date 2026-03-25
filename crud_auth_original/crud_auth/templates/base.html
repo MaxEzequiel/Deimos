@@ -42,18 +42,18 @@
                             <a class="btn-logout" href="/logout">Salir</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn-delete" href="/delete_user">Eliminar Cuenta</a>
+                            <a class="btn-delete" href="/delete-account">Eliminar Cuenta</a>
                         </li>
                         
                         {% if user.is_staff %}
                             <li class="nav-item">
-                                <a class="btn-create" href="/crear_plan">Crear Plan</a>
+                                <a class="btn-create" href="/create-plan">Crear Plan</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn" href="/listar_planes">Ver Planes</a>
+                                <a class="btn" href="/list-plans">Ver Planes</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn-create" href="/singup">Crear Usuario</a>
+                                <a class="btn-create" href="/signup">Crear Usuario</a>
                             </li>
                         {% endif %}
                     {% else %}

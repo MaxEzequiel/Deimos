@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Planes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+        h1 {
+            color: #9b59b6;
+            text-align: center;
+        }
+        .plan {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .plan h3 {
+            color: #8e44ad;
+        }
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>Listado de Planes - Deimos Gym</h1>
+    
+    {% for plan in planes %}
+    <div class="plan">
+        <h3>{{ plan.name }}</h3>
+        <p>{{ plan.description }}</p>
+        <p class="price">Precio: ${{ plan.base_price }}</p>
+    </div>
+    {% endfor %}
+</body>
+</html>

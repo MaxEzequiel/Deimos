@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="signup-box">
+    <h1 class="text-center">Registrar Usuario</h1>
+
+    <form action="/signup/" method="POST">
+        {% csrf_token %}
+        
+        <h3>Datos de usuario</h3>
+        {{ form }}
+        
+        <label for="is_staff">Tipo de usuario:</label>
+        <select name="is_staff" id="is_staff">
+            <option value="0">Usuario normal</option>
+            <option value="1">Administrador (Staff)</option>
+        </select>
+
+        <h3 class="mt-4">Datos personales</h3>
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <input type="text" name="name" placeholder="Nombre" required>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <input type="text" name="surname" placeholder="Apellido" required>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <input type="text" name="dni" placeholder="DNI" required>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <input type="date" name="birth_date" required>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <input type="text" name="gender" placeholder="Género" required>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <input type="text" name="phone_number" placeholder="Teléfono" required>
+            </div>
+
+            <div class="col-12">
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn-create w-100 mt-4">Registrarse</button>
+        
+        {% if error %}
+        <div class="alert alert-error mt-3">{{ error }}</div>
+        {% endif %}
+    </form>
+</div>
+
+{% endblock %}

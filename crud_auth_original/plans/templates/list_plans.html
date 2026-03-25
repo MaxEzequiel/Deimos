@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Listado de Planes</h2>
+    <a href="/plans-pdf" class="btn-pdf">Descargar PDF</a>
+</div>
+
+<div class="row">
+    {% for plan in plans %}
+    <div class="col-md-6 mb-3">
+        <div class="plan-card">
+            <div class="plan-title">{{ plan.name }}</div>
+            <div class="plan-description">{{ plan.description }}</div>
+            <div class="plan-price">${{ plan.base_price }}</div>
+            <div class="plan-actions">
+                <a href="{% url 'edit_plan' plan.id %}" class="btn-edit">Editar</a>
+                <a href="{% url 'delete_plan' plan.id %}" class="btn-delete">Eliminar</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">No hay planes disponibles.</div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

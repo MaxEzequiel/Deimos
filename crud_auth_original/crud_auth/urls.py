@@ -17,22 +17,23 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from login.views import home, singup, singout, log_in, delete_user
-from membresias.views import editar_membresia
-from planes.views import crear_plan, listar_planes, editar_plan, eliminar_plan, pdf_planes
+from accounts.views import home, signup, signout, login_view, delete_account
+from memberships.views import edit_membership
+from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("home/",home, name="home"),
-    path("singup/", singup, name="singup"),
-    path("logout/", singout, name="logout"),
-    path("login/", log_in),
-    path("delete_user/", delete_user, name="delete_user"),
-    path("editar_membresia/", editar_membresia, name="editar_membresia"),
-    path("crear_plan/", crear_plan, name="crear_plan"),
-    path("listar_planes/" , listar_planes, name = "listar_planes"),
-    path("editar_plan/<int:id_plan>", editar_plan, name="editar_plan"),
-    path("eliminar_plan/<int:id_plan>" , eliminar_plan, name="eliminar_plan"),
-    path("pdf_planes/", pdf_planes, name="pdf_planes")
+    path("", home, name="root"),
+    path("home/", home, name="home"),
+    path("signup/", signup, name="signup"),
+    path("logout/", signout, name="logout"),
+    path("login/", login_view, name="login"),
+    path("delete-account/", delete_account, name="delete_account"),
+    path("edit-membership/", edit_membership, name="edit_membership"),
+    path("create-plan/", create_plan, name="create_plan"),
+    path("list-plans/", list_plans, name="list_plans"),
+    path("edit-plan/<int:plan_id>", edit_plan, name="edit_plan"),
+    path("delete-plan/<int:plan_id>", delete_plan, name="delete_plan"),
+    path("plans-pdf/", plans_pdf, name="plans_pdf"),
 ]
 

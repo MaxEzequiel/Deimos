@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+<h1>Listado de Clases</h1>
+
+{% for element in classes %}
+<div>
+    <h2>{{ element.title }}</h2>
+    <h4>{{ element.description }}</h4>
+    <h4>{{ element.start_time }}</h4>
+    <h4>{{ element.end_time }}</h4>
+    <h4>{{ element.current_spaces }} / {{element.total_spaces}}</h4>
+    <h4>{{  }}
+</div>
+{% endfor %}
