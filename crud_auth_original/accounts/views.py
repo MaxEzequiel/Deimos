@@ -21,11 +21,16 @@ from django.contrib.auth.decorators import login_required
 # vista de inicio con estado de membresia si es que existe 
 def home(request):
     if request.user.is_authenticated:
-        membership = Membership.objects.get(user=request.user)
-        status = membership.status
+        try:
+            membership = Membership.objects.get(user=request.user)
+            status = membership.status
+        except Membership.DoesNotExist:
+            # si no existe la membresia, se puede crear o mostrar estado claro
+            status = "No membership found. Please create a membership."
         return render(request, "home.html", {"estado": status})
     else:
         return render(request, "home.html", {"estado": "The user is not logged in. Log in to view your membership status"})
+
 
 def signup(request):
     if request.method == "GET":

@@ -7,7 +7,7 @@ class Plan(models.Model):
     base_price = models.DecimalField(decimal_places=2, max_digits=10)
 
     class Meta:
-        db_table = "planes_plan"
+        db_table = "planes_plan"  # tabla existente en db.sqlite3
 
     def __str__(self):
         return self.name or "Plan"

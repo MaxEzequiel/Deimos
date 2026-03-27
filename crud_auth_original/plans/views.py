@@ -25,9 +25,9 @@ from plans.forms import PlanForm
 def create_plan(request):
     if request.method == "POST":
         Plan.objects.create(
-            nombre=request.POST.get("nombre", ""),
-            descripcion=request.POST.get("descripcion", ""),
-            precio_base=float(request.POST.get("precio", "")),
+            name=request.POST.get("nombre", ""),
+            description=request.POST.get("descripcion", ""),
+            base_price=float(request.POST.get("precio", 0) or 0),
         )
         return redirect("home")
     else:
