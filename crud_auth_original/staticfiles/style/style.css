@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-/* Fondo general - GRIS OSCURO NEUTRO */
+/* Fondo general - */
 body {
     background-color: #1a1a1a;
     color: #e0e0e0;
@@ -16,7 +16,7 @@ body {
     margin: 0;
 }
 
-/* Contenedor principal para centrar contenido */
+/* Contenedor principal */
 .container-main {
     max-width: 1200px;
     margin: 0 auto;
@@ -91,7 +91,7 @@ nav ul li a:hover {
 }
 
 /* ---------------------------------------------------
-    LOGIN (DISEÑO MEJORADO)
+    LOGIN
 --------------------------------------------------- */
 
 .login-box {
@@ -125,7 +125,7 @@ nav ul li a:hover {
     display: block;
 }
 
-/* Inputs - ESTILO UNIFORME */
+/* Inputs*/
 .login-box input {
     border-radius: 8px !important;
     padding: 12px 15px;
@@ -144,7 +144,7 @@ nav ul li a:hover {
     background-color: #424242;
 }
 
-/* Botón - TAMAÑO UNIFORME Y CENTRADO */
+/* Botón */
 .btn-outline-light {
     background-color: #9b59b6 !important;
     border: none !important;
@@ -201,7 +201,7 @@ nav ul li a:hover {
     min-width: 150px;
 }
 
-/* Error Django */
+/* Errores */
 .login-box .errorlist {
     color: #e74c3c;
     font-weight: 600;
