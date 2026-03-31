@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 
-
+# ordenar los modelos en base su logica
 class Day(models.Model):
     name = models.CharField(max_length=15)
 
