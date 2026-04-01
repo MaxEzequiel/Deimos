@@ -1,3 +1,5 @@
+/* style.css - Versión completa con todos los estilos */
+
 /* Reset general */
 * {
     margin: 0;
@@ -5,10 +7,10 @@
     box-sizing: border-box;
 }
 
-/* Fondo general - */
+/* Fondo general - oscuro */
 body {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
+    background-color: #0a0a0a;
+    color: #ffffff;
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -24,171 +26,279 @@ body {
     width: 100%;
 }
 
-/* Títulos */
-.home-title {
+/* ===================================================
+   NAVBAR MODERNA
+   =================================================== */
+.custom-navbar {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-navbar .navbar-brand {
     color: #ffffff;
-    margin: 1.5rem auto;
-    background: #2c3e50;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 2rem;
-    max-width: 800px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.home-subtitle {
-    color: #d4d4d4;
-    margin: 1rem auto;
-    background: #34495e;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    font-size: 1.2rem;
-    max-width: 800px;
+.custom-navbar .navbar-brand:hover {
+    opacity: 0.9;
 }
-/* ---------------------------------------------------
-    CARDS DE INFORMACIÓN
---------------------------------------------------- */
 
-.info-card {
-    text-align: center;
+/* Botones de navegación */
+.custom-navbar .nav-item a {
+    border-radius: 25px;
+    font-weight: 500;
+    padding: 8px 24px;
+    margin: 0 5px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-home {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white !important;
+}
+
+.btn-home:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.btn-logout {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white !important;
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #7f8c8d, #636e72);
+    color: white !important;
+}
+
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
+}
+
+.btn-create {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    color: white !important;
+}
+
+.btn-create:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
+
+.btn-login {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: white !important;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+}
+
+/* ===================================================
+   CARDS Y CONTENEDORES
+   =================================================== */
+
+/* Card principal estilo imagen JPEG */
+.card-modern {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
     margin-bottom: 1.5rem;
-    background-color: #2d2d2d;
-    padding: 1rem;
-    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.card-modern h3, .card-modern h4 {
+    color: #f39c12;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.card-modern p {
+    color: #e0e0e0;
+    line-height: 1.6;
+}
+
+/* Cards de información */
+.info-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.info-card h4 {
+    color: #f39c12;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
 }
 
 .info-card p {
-    font-size: 1.1rem;
-    margin-bottom: 0;
-    color: #e0e0e0;
-    line-height: 1.5;
-}
-
-h2 {
-    text-align: center;
-    margin: 1.5rem 0;
-    font-size: 2rem;
     color: #ffffff;
+    font-size: 1.1rem;
 }
 
-/* NAVBAR */
-nav {
-    width: 100%;
-    background-color: #2c0231;
-    padding: 0.5rem 0;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-    padding: 0.8rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    background: #4a2c5e;
-    padding: 0.7rem 1.8rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    display: inline-block;
-    font-weight: 500;
-    min-width: 120px;
-    text-align: center;
-}
-
-nav ul li a:hover {
-    background: #6b3e8a;
-    transform: translateY(-2px);
-}
-
-/* ---------------------------------------------------
-    LOGIN
---------------------------------------------------- */
-
-.login-box {
-    display: flex;
-    width: 100%;
-    max-width: 450px;
+/* ===================================================
+   LOGIN, SIGNUP Y FORMULARIOS
+   =================================================== */
+.login-box, .signup-box {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    max-width: 500px;
     margin: 2rem auto;
-    background-color: #2d2d2d;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    flex-direction: column;
-    border: 1px solid #404040;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* Padding interno */
-.p-4 {
-    padding: 2rem !important;
+.signup-box {
+    max-width: 700px;
 }
 
-/* Formulario dentro del login */
-.login-box form {
-    width: 100%;
+.login-box h1, .signup-box h1 {
+    color: #f39c12;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
 }
 
-/* Labels */
-.login-box label {
+.signup-box h3 {
+    color: #e74c3c;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(243, 156, 18, 0.3);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.login-box label, .signup-box label {
     color: #e0e0e0;
     font-weight: 500;
     margin-bottom: 0.5rem;
     display: block;
 }
 
-/* Inputs*/
-.login-box input {
-    border-radius: 8px !important;
-    padding: 12px 15px;
+.login-box input, .signup-box input, .signup-box select, .signup-box textarea {
     width: 100%;
-    background-color: #3a3a3a;
-    border: 1px solid #555;
+    padding: 12px 15px;
+    background-color: #2a2a3a;
+    border: 1px solid #3a3a4a;
+    border-radius: 12px;
     color: #ffffff;
     font-size: 1rem;
     transition: all 0.3s ease;
 }
 
-.login-box input:focus {
+.login-box input:focus, .signup-box input:focus, .signup-box select:focus, .signup-box textarea:focus {
     outline: none;
-    border-color: #9b59b6;
-    box-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
-    background-color: #424242;
+    border-color: #f39c12;
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
+    background-color: #353548;
 }
 
-/* Botón */
-.btn-outline-light {
-    background-color: #9b59b6 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 12px 24px !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    transition: all 0.3s ease !important;
-    color: white !important;
-    width: 100%;
+.login-box input::placeholder, .signup-box input::placeholder, .signup-box textarea::placeholder {
+    color: #888;
+}
+
+.signup-box textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.error-text {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+.form-select {
+    cursor: pointer;
+}
+
+.form-select option {
+    background-color: #2a2a3a;
+    color: #ffffff;
+}
+
+.forgot-password {
+    color: #f39c12;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #e67e22;
+    text-decoration: underline;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    color: #b0b0b0 !important;
+}
+
+/* ===================================================
+   BOTONES
+   =================================================== */
+.btn-outline-light, .btn-primary-custom {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
     cursor: pointer;
     text-align: center;
     display: inline-block;
+    width: 100%;
+    transition: all 0.3s ease;
 }
 
-.btn-outline-light:hover {
-    background-color: #8e44ad !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+.btn-outline-light:hover, .btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
 }
 
-/* Botones secundarios */
 .btn-secondary-custom {
-    background-color: #555;
+    background: linear-gradient(135deg, #7f8c8d, #636e72);
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 12px 24px;
     font-weight: 600;
     font-size: 1rem;
@@ -201,11 +311,10 @@ nav ul li a:hover {
 }
 
 .btn-secondary-custom:hover {
-    background-color: #666;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
 }
 
-/* Contenedor de botones para centrar */
 .button-group {
     display: flex;
     justify-content: center;
@@ -219,190 +328,456 @@ nav ul li a:hover {
     min-width: 150px;
 }
 
-/* Errores */
-.login-box .errorlist {
+/* ===================================================
+   PÁGINA DE INICIO (HOME)
+   =================================================== */
+.home-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.home-hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+
+.home-hero p {
+    font-size: 1.2rem;
+    color: #b0b0b0;
+}
+
+/* Grid de cards para clases */
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.class-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border-left: 4px solid #f39c12;
+    transition: all 0.3s ease;
+}
+
+.class-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.class-card h3 {
+    color: #f39c12;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.class-card .profesor {
     color: #e74c3c;
     font-weight: 600;
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: rgba(231, 76, 60, 0.1);
-    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.class-card .duracion {
+    color: #2ecc71;
+    margin-bottom: 0.5rem;
+}
+
+.class-card .fecha, .class-card .hora {
+    color: #b0b0b0;
+}
+
+/* ===================================================
+   SECCIÓN DE SELECCIÓN (Disciplina y Profesor)
+   =================================================== */
+.selection-section {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.selection-section h3 {
+    color: #f39c12;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.selection-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+.selection-box h4 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+}
+
+.selection-box ul {
     list-style: none;
+    padding: 0;
 }
 
-/* ---------------------------------------------------
-    NAVBAR PERSONALIZADA
---------------------------------------------------- */
-
-.custom-navbar {
-    background-color: #2c0231;
-    padding: 12px 24px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+.selection-box ul li {
+    padding: 8px 0;
+    color: #e0e0e0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: color 0.3s ease;
 }
 
-.custom-navbar .navbar-brand {
-    color: #ffffff;
-    font-size: 1.3rem;
-    font-weight: 600;
+.selection-box ul li:hover {
+    color: #f39c12;
 }
 
-.custom-navbar .navbar-brand:hover {
-    color: #cccccc;
+/* ===================================================
+   PERFIL DE USUARIO
+   =================================================== */
+.profile-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
 }
 
-.custom-navbar .btn {
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 8px 20px;
-    min-width: 100px;
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
 }
 
-.custom-navbar .nav-item .btn {
-    margin: 0 5px;
+.profile-info p {
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
 }
 
-/* ---------------------------------------------------
-    CARDS Y CONTENEDORES
---------------------------------------------------- */
+.profile-info strong {
+    color: #f39c12;
+}
 
-.card {
-    background-color: #2d2d2d;
-    border: 1px solid #404040;
-    border-radius: 12px;
+/* ===================================================
+   RUTINA
+   =================================================== */
+.routine-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
     padding: 1.5rem;
     margin-bottom: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ---------------------------------------------------
-    RESPONSIVE
---------------------------------------------------- */
+.routine-day {
+    color: #f39c12;
+    font-size: 1.3rem;
+    border-left: 3px solid #f39c12;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
 
-/* Tablets */
+.routine-exercise {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===================================================
+   PLANES Y SUSCRIPCIONES
+   =================================================== */
+.plan-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(243, 156, 18, 0.3);
+}
+
+.plan-icon {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #f39c12;
+    margin-bottom: 1rem;
+}
+
+.plan-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f39c12;
+    text-align: center;
+    margin-bottom: 0.75rem;
+}
+
+.plan-description {
+    color: #e0e0e0;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 1rem;
+    min-height: 80px;
+}
+
+.plan-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2ecc71;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.plan-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    color: white;
+}
+
+.btn-delete-plan {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.btn-delete-plan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    color: white;
+}
+
+/* ===================================================
+   TUTORIALES
+   =================================================== */
+.tutorials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.tutorial-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-5px);
+}
+
+.tutorial-image {
+    height: 180px;
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.tutorial-info {
+    padding: 1.5rem;
+}
+
+.tutorial-info h4 {
+    color: #f39c12;
+    margin-bottom: 0.5rem;
+}
+
+/* ===================================================
+   ALERTAS Y MENSAJES
+   =================================================== */
+.alert {
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: none;
+}
+
+.alert-error {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+}
+
+.alert-success {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border-left: 4px solid #2ecc71;
+}
+
+.alert-info {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border-left: 4px solid #3498db;
+}
+
+.alert-error ul {
+    margin-left: 1.5rem;
+}
+
+/* ===================================================
+   WARNING CARD
+   =================================================== */
+.warning-card {
+    background: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid #e74c3c;
+}
+
+.warning-card i {
+    color: #e74c3c;
+}
+
+.warning-card p {
+    color: #e74c3c;
+}
+
+.warning-card p strong {
+    color: #e74c3c;
+}
+
+/* ===================================================
+   RESPONSIVE
+   =================================================== */
 @media (max-width: 768px) {
-    .home-title {
+    .custom-navbar .navbar-brand {
+        font-size: 1.4rem;
+    }
+    
+    .custom-navbar .nav-item a {
+        margin: 5px 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .home-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .classes-grid, .tutorials-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .selection-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .login-box, .signup-box {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .signup-box h1 {
         font-size: 1.5rem;
-        margin: 1rem auto;
-        padding: 0.8rem;
     }
-
-    .home-subtitle {
-        font-size: 1rem;
-        margin: 0.8rem auto;
-        padding: 0.8rem;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-    }
-
-    nav ul {
-        gap: 0.6rem;
-        padding: 0.6rem;
-    }
-
-    nav ul li a {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
-        min-width: 100px;
-    }
-
-    .login-box {
-        max-width: 90%;
-        margin: 1.5rem auto;
-    }
-
-    .p-4 {
-        padding: 1.5rem !important;
-    }
-
+    
     .button-group {
         flex-direction: column;
         gap: 0.8rem;
     }
-
+    
     .button-group .btn,
     .button-group button {
         width: 100%;
         min-width: unset;
     }
+    
+    .plan-title {
+        font-size: 1.2rem;
+    }
+    
+    .plan-price {
+        font-size: 1.4rem;
+    }
+    
+    .plan-actions {
+        flex-direction: column;
+    }
+    
+    .btn-edit, .btn-delete-plan {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
 }
 
-/* Celulares */
 @media (max-width: 480px) {
     .container-main {
         padding: 10px;
     }
-
-    .home-title {
-        font-size: 1.2rem;
-        margin: 0.8rem auto;
-        padding: 0.6rem;
+    
+    .home-hero h1 {
+        font-size: 1.5rem;
     }
-
-    .home-subtitle {
-        font-size: 0.9rem;
-        margin: 0.6rem auto;
-        padding: 0.6rem;
-    }
-
-    h2 {
-        font-size: 1.2rem;
-        margin: 0.8rem 0;
-    }
-
-    nav ul {
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        width: 100%;
-    }
-
-    nav ul li {
-        width: 100%;
-    }
-
-    nav ul li a {
-        width: 100%;
-        text-align: center;
-        padding: 0.6rem;
-        font-size: 0.9rem;
-        min-width: unset;
-    }
-
-    .login-box input,
-    .btn-outline-light,
-    .btn-secondary-custom {
-        padding: 10px 16px !important;
-        font-size: 0.9rem !important;
+    
+    .card-modern, .info-card, .class-card {
+        padding: 1rem;
     }
 }
 
-/* ---------------------------------------------------
-    ANIMACIONES
---------------------------------------------------- */
-
-@keyframes fadeInLogin {
-    0% {
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
         opacity: 0;
         transform: translateY(30px);
-        filter: blur(4px);
     }
-    100% {
+    to {
         opacity: 1;
         transform: translateY(0);
-        filter: blur(0);
     }
 }
 
-/* Aplicar animación a la caja del login */
-.login-box {
-    animation: fadeInLogin 0.6s ease-out forwards;
-}
-
-/* Animación suave para botones */
-.btn-outline-light,
-.btn-secondary-custom,
-nav ul li a {
-    transition: all 0.2s ease;
+.card-modern, .info-card, .class-card, .login-box, .signup-box, .plan-card {
+    animation: fadeInUp 0.5s ease-out forwards;
 }

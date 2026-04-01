@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil | Deimos Gym{% endblock %}
+
+{% block content %}
+
+<div class="home-hero text-center mb-4">
+    <h1><i class="fas fa-user-circle"></i> Mi Perfil</h1>
+    <p>Gestioná tus datos personales</p>
+</div>
+
+<div class="profile-card">
+    <div class="profile-avatar">
+        <i class="fas fa-user fa-3x"></i>
+    </div>
+    <div class="profile-info">
+        <p><strong><i class="fas fa-user"></i> Nombre:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+        <p><strong><i class="fas fa-envelope"></i> Email:</strong> {{ user.email }}</p>
+    </div>
+</div>
+
+{% endblock %}

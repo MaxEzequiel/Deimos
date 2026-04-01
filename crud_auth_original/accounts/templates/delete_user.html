@@ -2,18 +2,43 @@
 
 {% block content %}
 
-<div class="card text-center" style="max-width: 500px; margin: 2rem auto;">
-    <h3>Eliminar Cuenta</h3>
+<div class="login-box">
+    <h1 class="text-center">
+        <i class="fas fa-trash-alt"></i> Eliminar Cuenta
+    </h1>
+    
+    <div class="info-card text-center mb-4 warning-card">
+        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+        <p class="mt-2">
+            <strong>¡Advertencia!</strong> Esta acción es irreversible. Todos tus datos serán eliminados permanentemente.
+        </p>
+    </div>
     
     {% if error %}
-    <div class="alert alert-error">{{ error }}</div>
+    <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i> {{ error }}
+    </div>
     {% endif %}
     
     <form action="" method="post">
         {% csrf_token %}
-        <label for="password">Ingrese su contraseña para confirmar:</label>
-        <input type="password" name="password" required>
-        <button type="submit" class="btn-delete w-100 mt-3">Eliminar mi cuenta</button>
+        
+        <div class="form-group">
+            <label for="password">
+                <i class="fas fa-lock"></i> Ingrese su contraseña para confirmar:
+            </label>
+            <input type="password" name="password" id="password" required placeholder="••••••••">
+        </div>
+        
+        <button type="submit" class="btn-delete w-100 mt-3">
+            <i class="fas fa-trash-alt"></i> Eliminar mi cuenta
+        </button>
+        
+        <div class="button-group mt-3">
+            <a href="/home/" class="btn-secondary-custom">
+                <i class="fas fa-arrow-left"></i> Cancelar
+            </a>
+        </div>
     </form>
 </div>
 
