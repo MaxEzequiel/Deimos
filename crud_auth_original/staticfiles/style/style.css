@@ -31,138 +31,235 @@ body {
    =================================================== */
 .custom-navbar {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    padding: 1rem 2rem;
+    padding: 0.8rem 2rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .custom-navbar .navbar-brand {
-    color: #ffffff;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: 1px;
     background: linear-gradient(135deg, #e74c3c, #f39c12);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
 }
 
 .custom-navbar .navbar-brand:hover {
     opacity: 0.9;
 }
 
-/* Botones de navegación */
+/* Contenedor de navegación */
+.custom-navbar .navbar-collapse {
+    justify-content: flex-end;
+}
+
+.custom-navbar .navbar-nav {
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Estilo base para todos los botones del navbar */
 .custom-navbar .nav-item a {
     border-radius: 25px;
     font-weight: 500;
-    padding: 8px 24px;
-    margin: 0 5px;
+    padding: 8px 20px;
     transition: all 0.3s ease;
     text-decoration: none;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    min-width: 100px;
+    text-align: center;
+    white-space: nowrap;
 }
 
-.btn-home {
+/* Botón Inicio */
+.btn-nav-home {
     background: linear-gradient(135deg, #3498db, #2980b9);
     color: white !important;
 }
 
-.btn-home:hover {
+.btn-nav-home:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
 }
 
-.btn-logout {
+/* Botón Salir */
+.btn-nav-logout {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white !important;
 }
 
-.btn-logout:hover {
+.btn-nav-logout:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
 }
 
-.btn-delete {
+/* Botón Eliminar */
+.btn-nav-delete {
     background: linear-gradient(135deg, #7f8c8d, #636e72);
     color: white !important;
 }
 
-.btn-delete:hover {
+.btn-nav-delete:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
 }
 
-.btn-create {
+/* Botón Crear Plan / Crear Usuario */
+.btn-nav-create {
     background: linear-gradient(135deg, #2ecc71, #27ae60);
     color: white !important;
 }
 
-.btn-create:hover {
+.btn-nav-create:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
 }
 
-.btn-login {
+/* Botón Iniciar Sesión */
+.btn-nav-login {
     background: linear-gradient(135deg, #9b59b6, #8e44ad);
     color: white !important;
 }
 
-.btn-login:hover {
+.btn-nav-login:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
+}
+
+/* Botón genérico para otros enlaces */
+.btn-nav-default {
+    background: rgba(255, 255, 255, 0.1);
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-nav-default:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Responsive para navbar */
+@media (max-width: 991px) {
+    .custom-navbar {
+        padding: 0.8rem 1rem;
+    }
+    
+    .custom-navbar .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .custom-navbar .navbar-nav {
+        margin-top: 1rem;
+        gap: 0.8rem;
+    }
+    
+    .custom-navbar .nav-item a {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .custom-navbar .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .custom-navbar .nav-item a {
+        min-width: auto;
+        font-size: 0.85rem;
+        padding: 8px 16px;
+    }
 }
 
 /* ===================================================
    CARDS Y CONTENEDORES
    =================================================== */
 
-/* Card principal estilo imagen JPEG */
-.card-modern {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card-modern:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-}
-
-.card-modern h3, .card-modern h4 {
-    color: #f39c12;
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-.card-modern p {
-    color: #e0e0e0;
-    line-height: 1.6;
-}
-
-/* Cards de información */
 .info-card {
     background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
     border-radius: 20px;
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
     text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 220px;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(243, 156, 18, 0.3);
+}
+
+.info-card i {
+    font-size: 2rem;
+    color: #f39c12;
+    margin-bottom: 1rem;
 }
 
 .info-card h4 {
     color: #f39c12;
     margin-bottom: 1rem;
     font-size: 1.3rem;
+    font-weight: 600;
 }
 
 .info-card p {
     color: #ffffff;
     font-size: 1.1rem;
+    margin-bottom: 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-card .btn-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.info-card .btn-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+}
+
+/* tamaños*/
+.row-equal-height {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row-equal-height [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+}
+
+/* home.html */
+.home-cards-container .col-md-6 {
+    display: flex;
 }
 
 /* ===================================================
@@ -394,7 +491,7 @@ body {
 }
 
 /* ===================================================
-   SECCIÓN DE SELECCIÓN (Disciplina y Profesor)
+   SECCIÓN DE SELECCIÓN
    =================================================== */
 .selection-section {
     background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);

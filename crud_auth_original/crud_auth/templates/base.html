@@ -9,17 +9,17 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Font-->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- CSS PERSONALIZADO -->
+    <!-- CSS Personalizado -->
     <link rel="stylesheet" href="{% static 'style/style.css' %}">
     
     {% block head %}{% endblock %}
 </head>
 <body>
 
-    <!-- NAVBAR MODERNA -->
+    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg custom-navbar">
         <div class="container">
             <a class="navbar-brand" href="/home">
@@ -36,44 +36,83 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="btn-home" href="/home"><i class="fas fa-home"></i> Inicio</a>
-                    </li>
-
                     {% if user.is_authenticated %}
+                        <!-- Inicio -->
                         <li class="nav-item">
-                            <a class="btn" href="/clases/"><i class="fas fa-calendar-alt"></i> Clases</a>
+                            <a class="btn-nav-home" href="/home">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
                         </li>
+                        
+                        <!-- Clases -->
                         <li class="nav-item">
-                            <a class="btn" href="/perfil/"><i class="fas fa-user"></i> Mi perfil</a>
+                            <a class="btn-nav-default" href="/clases/">
+                                <i class="fas fa-calendar-alt"></i> Clases
+                            </a>
                         </li>
+                        
+                        <!-- Mi perfil -->
                         <li class="nav-item">
-                            <a class="btn" href="/rutina/"><i class="fas fa-dumbbell"></i> Mi rutina</a>
+                            <a class="btn-nav-default" href="/perfil/">
+                                <i class="fas fa-user"></i> Mi perfil
+                            </a>
                         </li>
+                        
+                        <!-- Mi rutina -->
                         <li class="nav-item">
-                            <a class="btn" href="/tutoriales/"><i class="fas fa-video"></i> Tutoriales</a>
+                            <a class="btn-nav-default" href="/rutina/">
+                                <i class="fas fa-dumbbell"></i> Mi rutina
+                            </a>
                         </li>
+                        
+                        <!-- Tutoriales -->
                         <li class="nav-item">
-                            <a class="btn-logout" href="/logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                            <a class="btn-nav-default" href="/tutoriales/">
+                                <i class="fas fa-video"></i> Tutoriales
+                            </a>
                         </li>
+                        
+                        <!-- Salir -->
                         <li class="nav-item">
-                            <a class="btn-delete" href="/delete-account"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                            <a class="btn-nav-logout" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Salir
+                            </a>
+                        </li>
+                        
+                        <!-- Eliminar Cuenta -->
+                        <li class="nav-item">
+                            <a class="btn-nav-delete" href="/delete-account">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
                         </li>
                         
                         {% if user.is_staff %}
+                            <!-- Crear Plan -->
                             <li class="nav-item">
-                                <a class="btn-create" href="/create-plan"><i class="fas fa-plus-circle"></i> Crear Plan</a>
+                                <a class="btn-nav-create" href="/create-plan">
+                                    <i class="fas fa-plus-circle"></i> Crear Plan
+                                </a>
                             </li>
+                            
+                            <!-- Ver Planes -->
                             <li class="nav-item">
-                                <a class="btn" href="/list-plans"><i class="fas fa-list"></i> Ver Planes</a>
+                                <a class="btn-nav-default" href="/list-plans">
+                                    <i class="fas fa-list"></i> Ver Planes
+                                </a>
                             </li>
+                            
+                            <!-- Crear Usuario -->
                             <li class="nav-item">
-                                <a class="btn-create" href="/signup"><i class="fas fa-user-plus"></i> Crear Usuario</a>
+                                <a class="btn-nav-create" href="/signup">
+                                    <i class="fas fa-user-plus"></i> Crear Usuario
+                                </a>
                             </li>
                         {% endif %}
                     {% else %}
                         <li class="nav-item">
-                            <a class="btn-login" href="/login"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                            <a class="btn-nav-login" href="/login">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
                         </li>
                     {% endif %}
                 </ul>

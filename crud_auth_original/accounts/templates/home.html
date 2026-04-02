@@ -9,24 +9,28 @@
     <p>Gestioná tu entrenamiento y membresía de forma simple</p>
 </div>
 
-<div class="row g-4 mt-3">
+<div class="row g-4 mt-3 home-cards-container">
     <div class="col-md-6">
         <div class="info-card">
-            <i class="fas fa-id-card" style="font-size: 2rem; color: #f39c12;"></i>
-            <h4 class="mt-2">Estado de membresía</h4>
-            <p>{{ estado }}</p>
+            <i class="fas fa-id-card"></i>
+            <h4>Estado de membresía</h4>
+            <p>{{ estado|default:"Inactivo" }}</p>
         </div>
     </div>
 
     <div class="col-md-6">
         <div class="info-card">
-            <i class="fas fa-bolt" style="font-size: 2rem; color: #f39c12;"></i>
-            <h4 class="mt-2">Acciones rápidas</h4>
-            <div class="mt-3">
+            <i class="fas fa-bolt"></i>
+            <h4>Acciones rápidas</h4>
+            <div>
                 {% if user.is_authenticated %}
-                    <a href="/logout" class="btn-logout" style="display: inline-block; text-decoration: none;"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+                    <a href="/logout" class="btn-link">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </a>
                 {% else %}
-                    <a href="/login" class="btn-login" style="display: inline-block; text-decoration: none;"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</a>
+                    <a href="/login" class="btn-link">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                    </a>
                 {% endif %}
             </div>
         </div>

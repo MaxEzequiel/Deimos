@@ -1,14 +1,66 @@
 {% extends "base.html" %}
 
-<h1>Listado de Clases</h1>
+{% block title %}Clases | Deimos Gym{% endblock %}
 
-{% for element in classes %}
-<div>
-    <h2>{{ element.title }}</h2>
-    <h4>{{ element.description }}</h4>
-    <h4>{{ element.start_time }}</h4>
-    <h4>{{ element.end_time }}</h4>
-    <h4>{{ element.current_spaces }} / {{element.total_spaces}}</h4>
-    <h4>{{  }}
+{% block content %}
+
+<div class="hero-section">
+    <h1>CLASES</h1>
+    <p>Elegí la clase que mejor se adapte a tus objetivos</p>
 </div>
-{% endfor %}
+
+<!-- SECCIÓN DE CLASES -->
+<div class="classes-grid">
+    <div class="class-card">
+        <h3><i class="fas fa-music"></i> ZUMBA</h3>
+        <p class="class-profesor"><i class="fas fa-user"></i> Profesor: Zarate Julian</p>
+        <p class="class-duracion"><i class="fas fa-clock"></i> Duración: 1h 40m</p>
+        <p class="class-fecha"><i class="fas fa-calendar"></i> Fecha: 02/08/2025</p>
+        <p class="class-hora"><i class="fas fa-hourglass-start"></i> Hora: 11:25am</p>
+    </div>
+    
+    <div class="class-card">
+        <h3><i class="fas fa-hand-fist"></i> CALISTENIA</h3>
+        <p class="class-profesor"><i class="fas fa-user"></i> Profesor: Juan Ignacio</p>
+        <p class="class-duracion"><i class="fas fa-clock"></i> Duración: 1h</p>
+        <p class="class-fecha"><i class="fas fa-calendar"></i> Fecha: 03/08/2025</p>
+        <p class="class-hora"><i class="fas fa-hourglass-start"></i> Hora: 05:00pm</p>
+    </div>
+    
+    <div class="class-card">
+        <h3><i class="fas fa-fist-raised"></i> BOXEO</h3>
+        <p class="class-profesor"><i class="fas fa-user"></i> Profesor: Hugo Villalba</p>
+        <p class="class-duracion"><i class="fas fa-clock"></i> Duración: 2h</p>
+        <p class="class-fecha"><i class="fas fa-calendar"></i> Fecha: 06/08/2025</p>
+        <p class="class-hora"><i class="fas fa-hourglass-start"></i> Hora: 08:20pm</p>
+    </div>
+</div>
+
+<!-- SECCIÓN DE SELECCIÓN (Disciplina y Profesor) -->
+<div class="selection-section">
+    <h3><i class="fas fa-filter"></i> Seleccionar</h3>
+    <div class="selection-grid">
+        <div class="selection-box">
+            <h4><i class="fas fa-person-walking-arrow-right"></i> Disciplina</h4>
+            <ul>
+                <li>Calistenia</li>
+                <li>Powerlifting</li>
+                <li>Funcional</li>
+                <li>Maratonista</li>
+                <li>Musculación</li>
+            </ul>
+        </div>
+        
+        <div class="selection-box">
+            <h4><i class="fas fa-chalkboard-user"></i> Profesor</h4>
+            <ul>
+                <li>Prof. Zarate Julian</li>
+                <li>Prof. Juan Ignacio</li>
+                <li>Prof. Marcos Rojo</li>
+                <li>Prof. Hugo Villalba</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
