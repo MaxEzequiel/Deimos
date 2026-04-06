@@ -134,3 +134,504 @@ SELECT
 FROM facturas
 INNER JOIN auth_user ON facturas.id_usuario = auth_user.id_usuario
 INNER JOIN pagos ON facturas.id_facturas = pagos.id_factura AND auth_user.id_usuario = pagos.id_usuario;
+
+
+
+
+
+
+
+
+
+
+
+================================================================================
+TÍTULO: MERCADO PAGO EN DJANGO — DOCUMENTACIÓN COMPLETA, MUY EXTENDIDA Y PASO A PASO
+================================================================================
+
+Esta documentación está escrita para alguien que recién empieza. Por eso:
+  - Explica términos antes de usarlos.
+  - Repite ideas clave (a propósito).
+  - No se salta detalles importantes (URLs, estados, validaciones, base de datos).
+
+También aclaro algo importante:
+  Puedo explicarlo “muy despacio” y “como para una persona totalmente nueva”, pero
+  no voy a usar términos ofensivos para referirme a nadie. La guía igual va a ser
+  larga y muy detallada.
+
+--------------------------------------------------------------------------------
+0) LA META REAL: QUÉ QUEREMOS LOGRAR
+--------------------------------------------------------------------------------
+
+Queremos dos cosas dentro de Django:
+
+  A) PAGO ÚNICO (una sola vez)
+     Ejemplo: el usuario paga una factura, una compra, un plan, un producto.
+
+  B) SUSCRIPCIÓN MENSUAL (cobro recurrente)
+     Ejemplo: el usuario autoriza un plan mensual y Mercado Pago intenta cobrar cada mes.
+
+En ambos casos, tu aplicación debe terminar pudiendo responder:
+  - ¿El usuario pagó?
+  - ¿Cuánto pagó?
+  - ¿Qué compró?
+  - ¿Cuándo pagó?
+  - ¿Le doy acceso o no le doy acceso?
+
+--------------------------------------------------------------------------------
+1) LOS 3 ACTORES (QUIÉN HABLA CON QUIÉN)
+--------------------------------------------------------------------------------
+
+Actor 1: El usuario (cliente)
+  - Usa el navegador.
+  - Hace clic en “Pagar” o “Suscribirse”.
+
+Actor 2: Tu servidor Django (tu backend)
+  - Tiene la lógica de negocio.
+  - Tiene tus modelos (Facturas, Pagos, Membresía).
+  - Tiene el Access Token (secreto).
+
+Actor 3: Mercado Pago
+  - Muestra el checkout (pantallas para pagar).
+  - Cobra (habla con bancos/medios de pago).
+  - Te avisa cambios con webhooks.
+
+Dos tipos de comunicación (repito porque es clave):
+
+  A) Comunicación por navegador (Front):
+     - Usuario ve pantallas de tu web y de Mercado Pago.
+     - Hay redirecciones (volver a success/failure/pending).
+
+  B) Comunicación servidor-a-servidor (Back):
+     - Tu Django llama a la API de Mercado Pago (con Access Token).
+     - Mercado Pago llama a tu webhook (notification_url).
+
+Por qué importa:
+  El navegador puede cerrar, la pestaña puede apagarse, la red puede fallar.
+  Los webhooks + consultas a la API son los que te permiten tener “verdad final”.
+
+--------------------------------------------------------------------------------
+2) QUÉ ES UNA API, QUÉ ES UN SDK, QUÉ ES JSON (EN PALABRAS SIMPLES)
+--------------------------------------------------------------------------------
+
+API:
+  Un conjunto de URLs donde un sistema le pide cosas a otro sistema.
+  Ejemplo: tu Django hace un pedido HTTP a Mercado Pago para “crear preferencia”.
+
+SDK:
+  Una librería que hace esos pedidos por vos de forma más fácil.
+  En Python se usa con: import mercadopago
+
+JSON:
+  Texto con estructura (llaves y listas) para mandar datos:
+    { "clave": "valor", "lista": [1,2,3] }
+
+--------------------------------------------------------------------------------
+3) CREDENCIALES (CLAVES): PUBLIC KEY vs ACCESS TOKEN
+--------------------------------------------------------------------------------
+
+Public Key:
+  - Se usa del lado del cliente (front) en algunos componentes.
+  - Se considera “publicable” (no es el secreto máximo).
+
+Access Token:
+  - Es secreto.
+  - Se usa SOLO en el servidor (Django).
+  - Con esto se crean preferencias, se consultan pagos, se crean suscripciones.
+
+Regla clara:
+  - Public Key puede aparecer en JavaScript del navegador.
+  - Access Token jamás debe aparecer en el navegador ni en repositorios públicos.
+
+Dónde guardarlo en Django:
+  En variables de entorno y en settings.py leerlas con os.environ.get(...).
+
+--------------------------------------------------------------------------------
+4) MODO TEST vs MODO PRODUCCIÓN (EL ERROR MÁS COMÚN)
+--------------------------------------------------------------------------------
+
+Mercado Pago tiene credenciales para:
+  - TEST (pruebas)
+  - PRODUCCIÓN (real)
+
+Si mezclás:
+  - vas a ver pagos que “no aparecen”
+  - init_point que no funciona como esperás
+  - o webhooks que no llegan donde creías
+
+Regla práctica:
+  Durante aprendizaje: usá TEST.
+  Cuando ya funciona y estás listo: pasás a PRODUCCIÓN.
+
+--------------------------------------------------------------------------------
+5) OBJETOS IMPORTANTES EN MERCADO PAGO (TRADUCCIÓN A “COSAS REALES”)
+--------------------------------------------------------------------------------
+
+5.1) Preferencia (Preference) = “orden de pago”
+  Es un objeto que describe:
+    - qué se paga (items)
+    - cuánto se paga (precios)
+    - moneda (currency_id)
+    - a dónde volver (back_urls)
+    - a dónde avisar (notification_url)
+    - referencia interna tuya (external_reference)
+
+5.2) init_point = “link para pagar”
+  Es la URL a la que mandás al usuario para que pague en Mercado Pago.
+
+5.3) Payment = “el pago real”
+  Es el registro del cobro en Mercado Pago.
+  Tiene un id y un status.
+
+5.4) external_reference = “etiqueta tuya”
+  Es un string que vos elegís.
+  Lo usás para asociar el pago a tu factura o a tu usuario.
+
+5.5) Webhook / notification_url = “el mensajero automático”
+  Es tu URL donde Mercado Pago te avisa cambios.
+  Es lo más importante para actualizar tu base de datos de forma confiable.
+
+5.6) Suscripción mensual
+  Dependiendo del producto/API, se crea un objeto de preaprobación/plan.
+  La idea es siempre:
+    - el usuario autoriza
+    - Mercado Pago cobra cada mes
+    - tu webhook recibe eventos
+    - tu Django actualiza membresía
+
+--------------------------------------------------------------------------------
+6) FLUJO DE DATOS: PAGO ÚNICO (EXPLICADO PASO A PASO)
+--------------------------------------------------------------------------------
+
+Vamos a contarlo como una historia concreta.
+
+Situación:
+  - En tu BD existe Factura #123 por $1999.00 ARS
+  - El usuario hace clic en “Pagar”
+
+Pasos:
+
+  Paso 1) El navegador llama a tu Django:
+    - URL: /pagar/123/
+    - Django entiende: “quiere pagar la factura 123”.
+
+  Paso 2) Django arma un payload (preference_data) para Mercado Pago.
+    - Incluye item con precio.
+    - Incluye external_reference = \"factura_123\" (por ejemplo).
+    - Incluye back_urls (para volver a tu web).
+    - Incluye notification_url (webhook).
+
+  Paso 3) Django llama a la API de Mercado Pago con Access Token:
+    - Mercado Pago crea la preferencia.
+    - Responde con un init_point.
+
+  Paso 4) Django responde al navegador con redirect(init_point).
+    - El navegador se va al checkout de Mercado Pago.
+
+  Paso 5) El usuario paga en Mercado Pago.
+    - Puede ser tarjeta, transferencia, etc.
+    - Mercado Pago procesa.
+
+  Paso 6) Mercado Pago hace dos cosas (pueden ocurrir en distinto orden):
+
+    (6a) Redirección del navegador (back_urls):
+      - success / failure / pending
+      - Sirve para mostrar mensaje en pantalla.
+
+    (6b) Aviso al webhook (notification_url):
+      - Mercado Pago llama a tu endpoint.
+      - Tu servidor se entera “en serio”.
+
+  Paso 7) Tu webhook NO debe confiar solo en lo que llega.
+    - Tu webhook toma el id del evento (por ejemplo, payment_id).
+    - Y consulta a Mercado Pago: “dame el detalle del pago”.
+
+  Paso 8) Tu webhook valida:
+    - status == approved
+    - monto == 1999.00 (lo esperado para factura 123)
+    - moneda == ARS
+    - external_reference coincide (factura_123)
+
+  Paso 9) Tu webhook actualiza tu BD:
+    - Marca factura 123 como pagada.
+    - Crea registro en tabla pagos (con mp_payment_id).
+    - Activa membresía si corresponde.
+
+  Paso 10) Tu webhook responde HTTP 200.
+    - Para que Mercado Pago sepa “lo recibí”.
+
+Repetición corta:
+  - back_urls: para el usuario.
+  - webhook + consulta API: para tu base de datos.
+
+--------------------------------------------------------------------------------
+7) FLUJO DE DATOS: SUSCRIPCIÓN MENSUAL (EXPLICADO PASO A PASO)
+--------------------------------------------------------------------------------
+
+Situación:
+  - Un usuario quiere pagar todos los meses.
+
+Pasos:
+
+  Paso 1) Usuario hace clic “Suscribirse al plan mensual”.
+    - Tu Django crea un objeto de suscripción en Mercado Pago.
+    - Indica frecuencia: 1 mes
+    - Indica monto: por ejemplo 1999.00
+    - Indica moneda.
+    - Indica notification_url para eventos.
+    - Indica back_url para volver tras autorizar.
+
+  Paso 2) Mercado Pago te devuelve un link de autorización.
+    - Vos redirigís al usuario.
+
+  Paso 3) Usuario autoriza el débito recurrente en Mercado Pago.
+    - Esto NO es “un pago ya cobrado” necesariamente.
+    - Es el permiso para que MP intente cobrar cada mes.
+
+  Paso 4) Cada ciclo (cada mes), Mercado Pago intenta cobrar.
+    - Puede aprobar.
+    - Puede rechazar (sin fondos, tarjeta vencida, etc.).
+
+  Paso 5) Mercado Pago avisa por webhook cada evento.
+    - Alta de suscripción.
+    - Cobro aprobado del ciclo.
+    - Cobro rechazado del ciclo.
+    - Cancelación.
+
+  Paso 6) Tu Django sincroniza tu BD.
+    - Si cobro aprobado: extendés acceso hasta +1 mes.
+    - Si cobro falló: aplicás tu política (gracia o bloqueo).
+
+La idea clave:
+  En suscripción, no es “un pago”. Son “muchos intentos de pago” a lo largo del tiempo.
+
+--------------------------------------------------------------------------------
+8) INSTALACIÓN EN DJANGO (LO MÍNIMO)
+--------------------------------------------------------------------------------
+
+Comando:
+  pip install mercadopago
+
+En settings.py:
+  import os
+  MP_ACCESS_TOKEN = os.environ.get(\"MP_ACCESS_TOKEN\", \"\")
+  MP_PUBLIC_KEY = os.environ.get(\"MP_PUBLIC_KEY\", \"\")
+
+Si MP_ACCESS_TOKEN está vacío:
+  Tu backend no puede crear preferencias ni consultar pagos.
+
+--------------------------------------------------------------------------------
+9) CÓDIGO DE EJEMPLO (CON EXPLICACIÓN LENTA) — PAGO ÚNICO CON CHECKOUT PRO
+--------------------------------------------------------------------------------
+
+9.1) Servicio para crear preferencia (conceptual)
+
+  import mercadopago
+  from django.conf import settings
+
+  def sdk():
+      return mercadopago.SDK(settings.MP_ACCESS_TOKEN)
+
+  def crear_preferencia_pago_unico(*, factura_id, titulo, monto, currency_id,
+                                  success_url, failure_url, pending_url,
+                                  notification_url, payer_email=None):
+      data = {
+          \"items\": [
+              {
+                  \"title\": titulo,
+                  \"quantity\": 1,
+                  \"unit_price\": float(monto),
+                  \"currency_id\": currency_id,
+              }
+          ],
+          \"external_reference\": f\"factura_{factura_id}\",
+          \"back_urls\": {
+              \"success\": success_url,
+              \"failure\": failure_url,
+              \"pending\": pending_url,
+          },
+          \"notification_url\": notification_url,
+          \"auto_return\": \"approved\",
+      }
+      if payer_email:
+          data[\"payer\"] = {\"email\": payer_email}
+
+      return sdk().preference().create(data)
+
+Explicación:
+  - data es el JSON que Mercado Pago necesita.
+  - external_reference incluye factura_id para que después lo puedas identificar.
+  - back_urls: donde vuelve el usuario.
+  - notification_url: donde te avisa Mercado Pago.
+
+9.2) Vista Django que inicia el pago (conceptual)
+
+  from django.shortcuts import redirect
+  from django.urls import reverse
+
+  def iniciar_pago(request, factura_id):
+      base = request.build_absolute_uri(\"/\")[:-1]
+      notif = base + reverse(\"mp_webhook\")
+      ok = base + reverse(\"pago_exito\")
+      fail = base + reverse(\"pago_falla\")
+      pend = base + reverse(\"pago_pendiente\")
+
+      # Acá deberías traer la factura real de tu BD:
+      # factura = Factura.objects.get(pk=factura_id)
+      # monto = factura.importe_pago
+
+      resp = crear_preferencia_pago_unico(
+          factura_id=factura_id,
+          titulo=\"Pago de factura\",
+          monto=1999.00,
+          currency_id=\"ARS\",
+          success_url=ok,
+          failure_url=fail,
+          pending_url=pend,
+          notification_url=notif,
+          payer_email=request.user.email if request.user.is_authenticated else None,
+      )
+      init_point = resp[\"response\"][\"init_point\"]
+      return redirect(init_point)
+
+Explicación lenta:
+  - build_absolute_uri arma una URL absoluta (incluye dominio).
+  - reverse arma el path según el name=... de urls.py
+  - init_point es el link de checkout. Con redirect lo abrís en el navegador.
+
+--------------------------------------------------------------------------------
+10) WEBHOOK EN DJANGO (CONFIRMACIÓN REAL) — EXPLICACIÓN MUY DETALLADA
+--------------------------------------------------------------------------------
+
+Por qué existe el webhook:
+  Porque el usuario puede no volver a tu web, pero igual pagar.
+  Porque la redirección no es prueba definitiva.
+
+Cómo se piensa el webhook:
+  - Llega un evento con alguna referencia.
+  - Vos consultás a Mercado Pago para ver el estado final.
+  - Si está aprobado y coincide con lo esperado, actualizás BD.
+  - Si llega repetido, no duplicás.
+
+Esqueleto conceptual:
+
+  from django.views.decorators.csrf import csrf_exempt
+  from django.http import HttpResponse
+  import mercadopago
+  from django.conf import settings
+
+  @csrf_exempt
+  def mp_webhook(request):
+      # 1) Ver método
+      # 2) Extraer ids del evento (depende del formato)
+      # 3) Consultar a MP: sdk.payment().get(payment_id)
+      # 4) Validar status, monto, moneda, external_reference
+      # 5) Idempotencia: si mp_payment_id ya existe, no repetir
+      return HttpResponse(status=200)
+
+Por qué @csrf_exempt:
+  CSRF protege formularios del navegador.
+  El webhook no viene del navegador, viene de Mercado Pago.
+
+Idempotencia (otra vez):
+  Si MP manda el mismo aviso 2 veces:
+    - tu sistema debe registrar solo 1 pago.
+
+Validación (otra vez):
+  Nunca actives membresía solo por status.
+  Siempre cruzá con:
+    - monto esperado en tu BD
+    - moneda esperada
+    - referencia esperada
+
+--------------------------------------------------------------------------------
+11) MODELOS / BD: QUÉ CAMPOS CONVIENE GUARDAR (CON MOTIVO)
+--------------------------------------------------------------------------------
+
+Si tenés modelos tipo Factura, Pago, Membresía, podés guardar:
+
+En Factura:
+  - mp_preference_id (opcional): para rastrear la preferencia creada.
+  - estado (pendiente/pagada/cancelada) en tu sistema.
+
+En Pago:
+  - mp_payment_id (UNIQUE): evita duplicados.
+  - status_mp: approved/pending/rejected...
+  - monto y moneda
+  - external_reference (para rastreo)
+
+En Suscripción (modelo local):
+  - mp_subscription_id (o id equivalente)
+  - estado local
+  - fecha_fin_acceso (lo que realmente te importa para dar acceso)
+
+Por qué fecha_fin_acceso:
+  Tu app tiene que poder decir “hasta cuándo tiene acceso”.
+  Eso es tu negocio, no solo el pago.
+
+--------------------------------------------------------------------------------
+12) ERRORES COMUNES (LISTA LARGA, CON CAUSA Y SOLUCIÓN)
+--------------------------------------------------------------------------------
+
+Error: “No me llega el webhook”
+  Causa típica: notification_url apunta a localhost.
+  Solución: usar túnel (ngrok/cloudflared) o deploy público.
+
+Error: “Me volvió success pero no se guardó el pago”
+  Causa: estás confiando en back_urls y no en webhook.
+  Solución: procesar pago en webhook consultando API.
+
+Error: “Se duplican pagos”
+  Causa: webhook llega varias veces y tu código crea registros duplicados.
+  Solución: mp_payment_id UNIQUE + chequear si ya existe antes de crear.
+
+Error: “En TEST funciona, en PROD no”
+  Causa: credenciales o URLs de retorno diferentes.
+  Solución: revisar tokens, dominios, https.
+
+Error: “El monto es distinto”
+  Causa: mala construcción de items o moneda.
+  Solución: validar currency_id y transaction_amount.
+
+--------------------------------------------------------------------------------
+13) PRUEBAS EN LOCAL (WINDOWS) — PASO A PASO
+--------------------------------------------------------------------------------
+
+Meta:
+  Que Mercado Pago pueda llamarte el webhook.
+
+Paso 1:
+  python manage.py runserver 0.0.0.0:8000
+
+Paso 2:
+  Crear túnel público al puerto 8000:
+    - ngrok http 8000
+    - o cloudflared tunnel
+
+Paso 3:
+  Usar la URL pública del túnel en notification_url.
+
+Paso 4:
+  Hacer un pago de prueba.
+
+Paso 5:
+  Mirar logs de Django para ver que llegó el evento.
+
+--------------------------------------------------------------------------------
+14) CHECKLIST FINAL (ANTES DE DECIR “LISTO”)
+--------------------------------------------------------------------------------
+
+  [ ] Access Token SOLO en backend y protegido
+  [ ] notification_url es pública y responde 200
+  [ ] webhook consulta el pago por API y valida monto/moneda
+  [ ] external_reference está bien diseñado y consistente
+  [ ] mp_payment_id UNIQUE para no duplicar
+  [ ] en suscripción: guardás mp_subscription_id y manejás fallos de cobro
+
+--------------------------------------------------------------------------------
+15) DOCUMENTACIÓN OFICIAL (RECOMENDADO LEER SIEMPRE)
+--------------------------------------------------------------------------------
+
+https://www.mercadopago.com.ar/developers/es/docs
+
+Fin del documento de Mercado Pago para Django.

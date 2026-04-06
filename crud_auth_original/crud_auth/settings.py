@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "plans",
     "classes",
     "payments",
+    "people",
+    "routines",
 ]
 
 MIDDLEWARE = [

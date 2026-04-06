@@ -6,8 +6,6 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 # modelo del usuario por defecto de django
 from django.contrib.auth.models import User
-# datos del perfil persona
-from accounts.models import Person, RoutineExerciseDay, Routine, Exercise, Day
 from memberships.models import Membership
 from plans.models import Plan
 

@@ -6,13 +6,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 # modelo del usuario por defecto de django
 from django.contrib.auth.models import User
 
-# ////
-
 # datos del perfil persona
-from accounts.models import Person, RoutineExerciseDay, Routine, Exercise, Day
+from people.models import Person
 from memberships.models import Membership
-from plans.models import Plan
-
+from routines.models import Routine
 # funciones para el inicio de sesion
 from django.contrib.auth import login, logout, authenticate
 
@@ -46,8 +43,7 @@ def signup(request):
                 )
                 user.save()
 
-                routine = Routine.objects.create()
-                Person.objects.create(
+                person = Person.objects.create(
                     user=user,
                     plan=None,
                     id_number=request.POST.get("dni", ""),
@@ -57,7 +53,11 @@ def signup(request):
                     gender=request.POST.get("gender", ""),
                     phone_number=request.POST.get("phone_number", ""),
                     email=request.POST.get("email", ""),
-                    routine=routine,
+                )
+                Routine.objects.create(
+                    client=person,
+                    name="Mi rutina",
+                    description="",
                 )
 
                 Membership.objects.create(user=user)
