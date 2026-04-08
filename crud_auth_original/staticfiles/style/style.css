@@ -878,3 +878,8 @@ body {
 .card-modern, .info-card, .class-card, .login-box, .signup-box, .plan-card {
     animation: fadeInUp 0.5s ease-out forwards;
 }
+
+.fa-sign-in-alt, .fa-sign-out-alt {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
