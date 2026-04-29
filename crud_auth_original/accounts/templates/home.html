@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="home-hero text-center mb-5">
-    <h1><i class="fas fa-dumbbell"></i> Te damos la bienvenida a Deimos</h1>
+    <h1>Te damos la bienvenida a Deimos</h1>
     <p>Gestioná tu entrenamiento y membresía de forma simple</p>
 </div>
 
@@ -25,7 +25,7 @@
             <div>
                 {% if user.is_authenticated %}
                     <a href="/logout" class="btn-link">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                        Cerrar sesión
                     </a>
                 {% else %}
                     <div style="text-align: center;">
@@ -39,7 +39,7 @@
     </div>
 </div>
 
-<!-- SECCIÓN DE CLASES DESTACADAS -->
+<!-- SECCIÓN DE CLASES DESTACADAS
 <div class="selection-section mt-5">
     <h3><i class="fas fa-chalkboard-user"></i> Próximas Clases</h3>
     <div class="classes-grid">
@@ -69,7 +69,7 @@
     </div>
 </div>
 
-<!-- SECCIÓN DE SELECCIÓN (Disciplina y Profesor) -->
+ SECCIÓN DE SELECCIÓN (Disciplina y Profesor) 
 <div class="selection-section mt-4">
     <h3><i class="fas fa-filter"></i> Seleccionar</h3>
     <div class="selection-grid">
@@ -94,6 +94,5 @@
             </ul>
         </div>
     </div>
-</div>
-
+</div> -->
 {% endblock %}
