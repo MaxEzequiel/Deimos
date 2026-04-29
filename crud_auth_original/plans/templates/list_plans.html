@@ -1,58 +1,70 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Listado de Planes | Deimos Gym{% endblock %}
+{% block title %}Gestión de Planes | Deimos Gym{% endblock %}
 
 {% block content %}
 
-<!-- Título y botón PDF -->
-<div class="section-header">
-    <h1><i class="fas fa-list"></i> Listado de Planes</h1>
-    <a href="/plans-pdf" class="btn-pdf">
-        <i class="fas fa-file-pdf"></i> Descargar PDF
-    </a>
-</div>
+<!-- MÓDULO CREAR PLAN + LISTADO DE PLANES -->
+<div class="plans-module">
 
-<!-- LISTADO HORIZONTAL (TIPO TABLA) -->
-<div class="plans-table-container">
-    <table class="plans-table">
-        <thead>
-            <tr>
-                <th>Plan</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for plan in plans %}
-            <tr>
-                <td class="plan-name-cell">
-                    <i class="fas fa-dumbbell"></i> {{ plan.name }}
-                </td>
-                <td class="plan-description-cell">{{ plan.description|truncatewords:15 }}</td>
-                <td class="plan-price-cell">
-                    <i class="fas fa-dollar-sign"></i> {{ plan.base_price }}
-                </td>
-                <td class="plan-actions-cell">
-                    <a href="{% url 'edit_plan' plan.id %}" class="action-btn edit-btn">
-                        <i class="fas fa-edit"></i> Editar
-                    </a>
-                    <a href="{% url 'delete_plan' plan.id %}" class="action-btn delete-btn">
-                        <i class="fas fa-trash-alt"></i> Eliminar
-                    </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="empty-row">
-                    <i class="fas fa-folder-open"></i> No hay planes disponibles.
-                    <a href="{% url 'create_plan' %}" class="create-link">Crear primer plan</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Cabecera del módulo -->
+    <div class="module-header">
+        <h2>Gestión de Planes</h2>
+        <p>Administrá los planes de membresía disponibles</p>
+    </div>
+
+    <!-- Botón para CREAR NUEVO PLAN -->
+    <div class="create-plan-section">
+        <a href="{% url 'create_plan' %}" class="btn-create-plan">
+            <i class="fas fa-plus-circle"></i> Crear Nuevo Plan
+        </a>
+    </div>
+
+    <!-- Listado de planes existentes -->
+    <div class="list-plans-section">
+        <h3><i class="fas fa-list"></i> Planes disponibles</h3>
+        
+        <div class="plans-table-container">
+            <table class="plans-table">
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in plans %}
+                    <tr>
+                        <td class="plan-name-cell">
+                            <i class="fas fa-dumbbell"></i> {{ plan.name }}
+                        </td>
+                        <td class="plan-description-cell">{{ plan.description|truncatewords:15 }}</td>
+                        <td class="plan-price-cell">
+                            <i class="fas fa-dollar-sign"></i> {{ plan.base_price }}
+                        </td>
+                        <td class="plan-actions-cell">
+                            <a href="{% url 'edit_plan' plan.id %}" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{% url 'delete_plan' plan.id %}" class="action-btn delete-btn">
+                                <i class="fas fa-trash-alt"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-row">
+                            <i class="fas fa-folder-open"></i> No hay planes disponibles.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

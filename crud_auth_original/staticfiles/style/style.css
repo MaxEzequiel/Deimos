@@ -697,80 +697,98 @@ CARDS Y CONTENEDORES
 }
 
 /* ===================================================
-   LISTADO DE PLANES - FORMATO HORIZONTAL / TABLA
+   MÓDULO COMPLETO: CREAR PLAN + VER PLANES
    =================================================== */
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.plans-module {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    margin: 1rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Cabecera del módulo */
+.module-header {
+    text-align: center;
     margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
 }
 
-.section-header h1 {
-    color: #f39c12;
-    font-size: 1.8rem;
-    margin: 0;
+.module-header h2 {
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
 }
 
-.section-header h1 i {
-    margin-right: 10px;
+.module-header p {
+    color: #b0b0b0;
+    font-size: 1rem;
 }
 
-/* Botón PDF */
-.btn-pdf {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
+/* Sección del botón Crear Plan */
+.create-plan-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-create-plan {
+    background: linear-gradient(135deg, #00702f, #005e27);
     color: white !important;
-    padding: 10px 24px;
-    border-radius: 30px;
+    padding: 12px 32px;
+    border-radius: 40px;
     text-decoration: none;
     font-weight: 600;
-    transition: all 0.3s ease;
+    font-size: 1rem;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    transition: all 0.3s ease;
 }
 
-.btn-pdf:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+.btn-create-plan:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
 }
 
-/* Contenedor de la tabla */
+/* Sección del listado */
+.list-plans-section h3 {
+    color: #f39c12;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    border-left: 3px solid #f39c12;
+    padding-left: 15px;
+}
+
+/* Tabla (mismo estilo que antes) */
 .plans-table-container {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
-    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
     overflow-x: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Tabla */
 .plans-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
 }
 
-/* Encabezados */
 .plans-table thead tr {
-    background: rgba(243, 156, 18, 0.2);
+    background: rgba(243, 156, 18, 0.15);
     border-bottom: 2px solid #f39c12;
 }
 
 .plans-table th {
     text-align: left;
-    padding: 1rem 1.2rem;
+    padding: 1rem;
     color: #f39c12;
-    font-weight: 600;
-    font-size: 1rem;
 }
 
-/* Celdas del cuerpo */
 .plans-table tbody tr {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    transition: background 0.2s ease;
 }
 
 .plans-table tbody tr:hover {
@@ -778,48 +796,20 @@ CARDS Y CONTENEDORES
 }
 
 .plans-table td {
-    padding: 1rem 1.2rem;
+    padding: 1rem;
     color: #e0e0e0;
-    vertical-align: middle;
 }
 
-/* Columna del nombre del plan */
 .plan-name-cell {
     font-weight: 600;
     color: #e74c3c;
-    white-space: nowrap;
 }
 
-.plan-name-cell i {
-    color: #f39c12;
-    margin-right: 10px;
-}
-
-/* Columna de descripción */
-.plan-description-cell {
-    line-height: 1.4;
-    color: #b0b0b0;
-}
-
-/* Columna del precio */
 .plan-price-cell {
     font-weight: 700;
     color: #2ecc71;
-    font-size: 1.1rem;
-    white-space: nowrap;
 }
 
-.plan-price-cell i {
-    font-size: 0.85rem;
-    margin-right: 3px;
-}
-
-/* Columna de acciones */
-.plan-actions-cell {
-    white-space: nowrap;
-}
-
-/* Botones de acción */
 .action-btn {
     display: inline-flex;
     align-items: center;
@@ -828,13 +818,7 @@ CARDS Y CONTENEDORES
     border-radius: 20px;
     text-decoration: none;
     font-size: 0.8rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
     margin-right: 8px;
-}
-
-.action-btn i {
-    font-size: 0.8rem;
 }
 
 .edit-btn {
@@ -846,7 +830,6 @@ CARDS Y CONTENEDORES
 .edit-btn:hover {
     background: #3498db;
     color: white !important;
-    transform: translateY(-2px);
 }
 
 .delete-btn {
@@ -858,41 +841,22 @@ CARDS Y CONTENEDORES
 .delete-btn:hover {
     background: #e74c3c;
     color: white !important;
-    transform: translateY(-2px);
 }
 
-/* Fila vacía */
 .empty-row {
     text-align: center;
-    padding: 3rem !important;
+    padding: 2rem !important;
     color: #b0b0b0;
 }
 
-.empty-row i {
-    font-size: 2rem;
-    color: #f39c12;
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.empty-row a {
-    display: inline-block;
-    margin-top: 1rem;
-    color: #f39c12;
-    text-decoration: none;
-}
-
-.empty-row a:hover {
-    text-decoration: underline;
-}
-
-/* ===================================================
-   RESPONSIVE: en celular se apila verticalmente
-   =================================================== */
+/* Responsive */
 @media (max-width: 768px) {
-    .section-header {
-        flex-direction: column;
-        text-align: center;
+    .plans-module {
+        padding: 1.5rem;
+    }
+    
+    .module-header h2 {
+        font-size: 1.5rem;
     }
     
     .plans-table,
@@ -909,9 +873,8 @@ CARDS Y CONTENEDORES
     
     .plans-table tbody tr {
         margin-bottom: 1rem;
-        border-radius: 16px;
-        background: rgba(30, 30, 47, 0.8);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.3);
     }
     
     .plans-table td {
@@ -919,11 +882,6 @@ CARDS Y CONTENEDORES
         justify-content: space-between;
         align-items: center;
         padding: 0.8rem 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .plans-table td:last-child {
-        border-bottom: none;
     }
     
     .plans-table td::before {
@@ -931,7 +889,6 @@ CARDS Y CONTENEDORES
         font-weight: 600;
         color: #f39c12;
         width: 35%;
-        text-align: left;
     }
     
     .plan-name-cell::before {
@@ -948,16 +905,6 @@ CARDS Y CONTENEDORES
     
     .plan-actions-cell::before {
         content: "Acciones";
-    }
-    
-    .plan-actions-cell {
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    .action-btn {
-        width: auto;
-        margin-right: 0;
     }
 }
 /* ===================================================
