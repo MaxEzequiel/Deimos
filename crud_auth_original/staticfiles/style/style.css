@@ -26,8 +26,9 @@ body {
     width: 100%;
 }
 
+
 /* ===================================================
-   NAVBAR MODERNA
+   NAVBAR (solo texto blanco)
    =================================================== */
 .custom-navbar {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -61,91 +62,38 @@ body {
     align-items: center;
 }
 
-/* Estilo base para todos los botones del navbar */
+/* ===================================================
+NAVB STYLE
+   =================================================== */
 .custom-navbar .nav-item a {
-    border-radius: 25px;
+    background: transparent !important;  
+    border: none !important;             
+    border-radius: 0 !important;         
     font-weight: 500;
-    padding: 8px 20px;
+    padding: 8px 16px;
     transition: all 0.3s ease;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 0.9rem;
-    min-width: 100px;
-    text-align: center;
-    white-space: nowrap;
+    font-size: 0.95rem;
+    color: #ffffff !important;           /* Texto blanco */
+    letter-spacing: 0.3px;
 }
 
-/* Botón Inicio */
-.btn-nav-home {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white !important;
+/* Efecto al pasar el mouse */
+.custom-navbar .nav-item a:hover {
+    color: #f39c12 !important;           
+    transform: translateY(-2px);          
+    background: transparent !important;   
+    border: none !important;              
+    text-decoration: none;
 }
 
-.btn-nav-home:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-}
-
-/* Botón Salir */
-.btn-nav-logout {
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white !important;
-}
-
-.btn-nav-logout:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
-}
-
-/* Botón Eliminar */
-.btn-nav-delete {
-    background: linear-gradient(135deg, #7f8c8d, #636e72);
-    color: white !important;
-}
-
-.btn-nav-delete:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
-}
-
-/* Botón Crear Plan / Crear Usuario */
-.btn-nav-create {
-    background: linear-gradient(135deg, #2ecc71, #27ae60);
-    color: white !important;
-}
-
-.btn-nav-create:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
-}
-
-/* Botón Iniciar Sesión */
-.btn-nav-login {
-    background: linear-gradient(135deg, #9b59b6, #8e44ad);
-    color: white !important;
-}
-
-.btn-nav-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
-}
-
-/* Botón genérico para otros enlaces */
-.btn-nav-default {
-    background: rgba(255, 255, 255, 0.1);
-    color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-nav-default:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-}
-
-/* Responsive para navbar */
+/* ===================================================
+   RESPONSIVE PARA NAVBAR
+   =================================================== */
 @media (max-width: 991px) {
     .custom-navbar {
         padding: 0.8rem 1rem;
@@ -162,8 +110,8 @@ body {
     
     .custom-navbar .nav-item a {
         width: 100%;
-        justify-content: center;
-        padding: 10px 20px;
+        justify-content: flex-start;
+        padding: 10px 16px;
     }
 }
 
@@ -173,95 +121,245 @@ body {
     }
     
     .custom-navbar .nav-item a {
-        min-width: auto;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         padding: 8px 16px;
     }
 }
+/* botones especiales */
+.btn-nav-home,
+.btn-nav-logout,
+.btn-nav-delete,
+.btn-nav-create,
+.btn-nav-login,
+.btn-nav-default {
+    background: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+.btn-nav-home:hover,
+.btn-nav-logout:hover,
+.btn-nav-delete:hover,
+.btn-nav-create:hover,
+.btn-nav-login:hover,
+.btn-nav-default:hover {
+    background: transparent !important;
+    color: #f39c12 !important;
+    border: none !important;
+}
 
 /* ===================================================
-   CARDS Y CONTENEDORES
+CARDS Y CONTENEDORES
    =================================================== */
 
-.info-card {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
-    border-radius: 20px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* ===================================================
+   ESTRUCTURA PRINCIPAL ORDENADA
+   =================================================== */
+
+.container-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    width: 100%;
+}
+
+.content-wrapper {
+    width: 100%;
+}
+
+/* SECCION DE BIENVENIDA */
+.welcome-section {
     text-align: center;
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 220px;
+    margin-bottom: 3rem;
 }
 
-.info-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border-color: rgba(243, 156, 18, 0.3);
-}
-
-.info-card i {
-    font-size: 2rem;
-    color: #f39c12;
+.welcome-section h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
     margin-bottom: 1rem;
 }
 
-.info-card h4 {
-    color: #f39c12;
-    margin-bottom: 1rem;
-    font-size: 1.3rem;
-    font-weight: 600;
+.welcome-section p {
+    color: #b0b0b0;
+    font-size: 1.2rem;
 }
 
-.info-card p {
-    color: #ffffff;
-    font-size: 1.1rem;
-    margin-bottom: 0;
-    flex-grow: 1;
+/* CARDS DE ESTADO Y ACCIONES */
+.cards-row {
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.info-card .btn-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #f39c12, #e67e22);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    margin-top: 1rem;
-}
-
-.info-card .btn-link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
-}
-
-/* tamaños*/
-.row-equal-height {
-    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
     flex-wrap: wrap;
 }
 
-.row-equal-height [class*="col-"] {
-    display: flex;
-    flex-direction: column;
+.card-info {
+    flex: 1;
+    min-width: 250px;
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.8rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* home.html */
-.home-cards-container .col-md-6 {
-    display: flex;
+.card-info:hover {
+    transform: translateY(-5px);
 }
 
+.card-icon {
+    font-size: 2.5rem;
+    color: #f39c12;
+    margin-bottom: 1rem;
+}
+
+.card-info h4 {
+    color: #f39c12;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.card-info p {
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.btn-action {
+    display: inline-block;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white !important;
+    padding: 10px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+/* SECCION CLASES */
+.section-clases {
+    margin-bottom: 3rem;
+}
+
+.section-clases h2 {
+    color: #f39c12;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.clases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.clase-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border-left: 4px solid #f39c12;
+    transition: transform 0.3s ease;
+}
+
+.clase-card:hover {
+    transform: translateY(-5px);
+}
+
+.clase-card h3 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.clase-card p {
+    margin-bottom: 0.5rem;
+    color: #e0e0e0;
+}
+
+.clase-card i {
+    margin-right: 10px;
+    width: 25px;
+    color: #f39c12;
+}
+
+/* SECCION SELECCION */
+.section-seleccion {
+    margin-bottom: 2rem;
+}
+
+.section-seleccion h2 {
+    color: #f39c12;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.seleccion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.seleccion-box {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+.seleccion-box h4 {
+    color: #e74c3c;
+    margin-bottom: 1.2rem;
+    border-left: 3px solid #f39c12;
+    padding-left: 12px;
+}
+
+.seleccion-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.seleccion-box ul li {
+    padding: 10px 0;
+    color: #e0e0e0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.seleccion-box ul li:hover {
+    color: #f39c12;
+    transform: translateX(5px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container-main {
+        padding: 1rem;
+    }
+    
+    .welcome-section h1 {
+        font-size: 1.8rem;
+    }
+    
+    .cards-row {
+        flex-direction: column;
+    }
+    
+    .clases-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .seleccion-grid {
+        grid-template-columns: 1fr;
+    }
+}
 /* ===================================================
    LOGIN, SIGNUP Y FORMULARIOS
    =================================================== */
@@ -599,101 +697,269 @@ body {
 }
 
 /* ===================================================
-   PLANES Y SUSCRIPCIONES
+   LISTADO DE PLANES - FORMATO HORIZONTAL / TABLA
    =================================================== */
-.plan-card {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
-    border-radius: 20px;
-    padding: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    height: 100%;
-}
 
-.plan-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border-color: rgba(243, 156, 18, 0.3);
-}
-
-.plan-icon {
-    text-align: center;
-    font-size: 2.5rem;
-    color: #f39c12;
-    margin-bottom: 1rem;
-}
-
-.plan-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #f39c12;
-    text-align: center;
-    margin-bottom: 0.75rem;
-}
-
-.plan-description {
-    color: #e0e0e0;
-    line-height: 1.6;
-    text-align: center;
-    margin-bottom: 1rem;
-    min-height: 80px;
-}
-
-.plan-price {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #2ecc71;
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.plan-actions {
+.section-header {
     display: flex;
-    gap: 1rem;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
     flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.btn-edit {
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 25px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
+.section-header h1 {
+    color: #f39c12;
+    font-size: 1.8rem;
+    margin: 0;
 }
 
-.btn-edit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-    color: white;
+.section-header h1 i {
+    margin-right: 10px;
 }
 
-.btn-delete-plan {
+/* Botón PDF */
+.btn-pdf {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 25px;
+    color: white !important;
+    padding: 10px 24px;
+    border-radius: 30px;
     text-decoration: none;
+    font-weight: 600;
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.9rem;
 }
 
-.btn-delete-plan:hover {
+.btn-pdf:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
-    color: white;
 }
 
+/* Contenedor de la tabla */
+.plans-table-container {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    overflow-x: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Tabla */
+.plans-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+/* Encabezados */
+.plans-table thead tr {
+    background: rgba(243, 156, 18, 0.2);
+    border-bottom: 2px solid #f39c12;
+}
+
+.plans-table th {
+    text-align: left;
+    padding: 1rem 1.2rem;
+    color: #f39c12;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Celdas del cuerpo */
+.plans-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.2s ease;
+}
+
+.plans-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.plans-table td {
+    padding: 1rem 1.2rem;
+    color: #e0e0e0;
+    vertical-align: middle;
+}
+
+/* Columna del nombre del plan */
+.plan-name-cell {
+    font-weight: 600;
+    color: #e74c3c;
+    white-space: nowrap;
+}
+
+.plan-name-cell i {
+    color: #f39c12;
+    margin-right: 10px;
+}
+
+/* Columna de descripción */
+.plan-description-cell {
+    line-height: 1.4;
+    color: #b0b0b0;
+}
+
+/* Columna del precio */
+.plan-price-cell {
+    font-weight: 700;
+    color: #2ecc71;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.plan-price-cell i {
+    font-size: 0.85rem;
+    margin-right: 3px;
+}
+
+/* Columna de acciones */
+.plan-actions-cell {
+    white-space: nowrap;
+}
+
+/* Botones de acción */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-right: 8px;
+}
+
+.action-btn i {
+    font-size: 0.8rem;
+}
+
+.edit-btn {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db !important;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.edit-btn:hover {
+    background: #3498db;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c !important;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.delete-btn:hover {
+    background: #e74c3c;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* Fila vacía */
+.empty-row {
+    text-align: center;
+    padding: 3rem !important;
+    color: #b0b0b0;
+}
+
+.empty-row i {
+    font-size: 2rem;
+    color: #f39c12;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.empty-row a {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #f39c12;
+    text-decoration: none;
+}
+
+.empty-row a:hover {
+    text-decoration: underline;
+}
+
+/* ===================================================
+   RESPONSIVE: en celular se apila verticalmente
+   =================================================== */
+@media (max-width: 768px) {
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .plans-table,
+    .plans-table thead,
+    .plans-table tbody,
+    .plans-table tr,
+    .plans-table td {
+        display: block;
+    }
+    
+    .plans-table thead {
+        display: none;
+    }
+    
+    .plans-table tbody tr {
+        margin-bottom: 1rem;
+        border-radius: 16px;
+        background: rgba(30, 30, 47, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .plans-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .plans-table td:last-child {
+        border-bottom: none;
+    }
+    
+    .plans-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #f39c12;
+        width: 35%;
+        text-align: left;
+    }
+    
+    .plan-name-cell::before {
+        content: "Plan";
+    }
+    
+    .plan-description-cell::before {
+        content: "Descripción";
+    }
+    
+    .plan-price-cell::before {
+        content: "Precio";
+    }
+    
+    .plan-actions-cell::before {
+        content: "Acciones";
+    }
+    
+    .plan-actions-cell {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .action-btn {
+        width: auto;
+        margin-right: 0;
+    }
+}
 /* ===================================================
    TUTORIALES
    =================================================== */

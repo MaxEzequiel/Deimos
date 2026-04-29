@@ -4,95 +4,86 @@
 
 {% block content %}
 
-<div class="home-hero text-center mb-5">
+<!-- TITULO PRINCIPAL -->
+<div class="welcome-section">
     <h1>Te damos la bienvenida a Deimos</h1>
     <p>Gestioná tu entrenamiento y membresía de forma simple</p>
 </div>
 
-<div class="row g-4 mt-3 home-cards-container">
-    <div class="col-md-6">
-        <div class="info-card">
+<!-- CARDS DE ESTADO Y ACCIONES -->
+<div class="cards-row">
+    <div class="card-info">
+        <div class="card-icon">
             <i class="fas fa-id-card"></i>
-            <h4>Estado de membresía</h4>
-            <p>{{ estado|default:"Inactivo" }}</p>
         </div>
+        <h4>Estado de membresía</h4>
+        <p>{{ estado|default:"No membership found. Please create a membership." }}</p>
     </div>
 
-    <div class="col-md-6">
-        <div class="info-card">
+    <div class="card-info">
+        <div class="card-icon">
             <i class="fas fa-bolt"></i>
-            <h4>Acciones rápidas</h4>
-            <div>
-                {% if user.is_authenticated %}
-                    <a href="/logout" class="btn-link">
-                        Cerrar sesión
-                    </a>
-                {% else %}
-                    <div style="text-align: center;">
-                    <a href="/login" class="btn-link">
-                        Iniciar sesión
-                    </a>
-                    </div>
-                {% endif %}
-            </div>
+        </div>
+        <h4>Acciones rápidas</h4>
+        <a href="/logout" class="btn-action">Cerrar sesión</a>
+    </div>
+</div>
+
+<!-- SECCION CLASES -->
+<div class="section-clases">
+    <h2><i class="fas fa-calendar-alt"></i> Próximas Clases</h2>
+    <div class="clases-grid">
+        <div class="clase-card">
+            <h3>ZUMBA</h3>
+            <p><i class="fas fa-user"></i> Profesor: Zarate Julian</p>
+            <p><i class="fas fa-clock"></i> Duración: 1h 40m</p>
+            <p><i class="fas fa-calendar"></i> Fecha: 02/08/2025</p>
+            <p><i class="fas fa-hourglass-start"></i> Hora: 11:25am</p>
+        </div>
+        
+        <div class="clase-card">
+            <h3>CALISTENIA</h3>
+            <p><i class="fas fa-user"></i> Profesor: Juan Ignacio</p>
+            <p><i class="fas fa-clock"></i> Duración: 1h</p>
+            <p><i class="fas fa-calendar"></i> Fecha: 03/08/2025</p>
+            <p><i class="fas fa-hourglass-start"></i> Hora: 05:00pm</p>
+        </div>
+        
+        <div class="clase-card">
+            <h3>BOXEO</h3>
+            <p><i class="fas fa-user"></i> Profesor: Hugo Villalba</p>
+            <p><i class="fas fa-clock"></i> Duración: 2h</p>
+            <p><i class="fas fa-calendar"></i> Fecha: 06/08/2025</p>
+            <p><i class="fas fa-hourglass-start"></i> Hora: 08:20pm</p>
         </div>
     </div>
 </div>
 
-<!-- SECCIÓN DE CLASES DESTACADAS
-<div class="selection-section mt-5">
-    <h3><i class="fas fa-chalkboard-user"></i> Próximas Clases</h3>
-    <div class="classes-grid">
-        <div class="class-card">
-            <h3><i class="fas fa-music"></i> ZUMBA</h3>
-            <p class="profesor"><i class="fas fa-user"></i> Profesor: Zarate Julian</p>
-            <p class="duracion"><i class="fas fa-clock"></i> Duración: 1h 40m</p>
-            <p class="fecha"><i class="fas fa-calendar"></i> Fecha: 02/08/2025</p>
-            <p class="hora"><i class="fas fa-hourglass-start"></i> Hora: 11:25am</p>
-        </div>
-        
-        <div class="class-card">
-            <h3><i class="fas fa-hand-fist"></i> CALISTENIA</h3>
-            <p class="profesor"><i class="fas fa-user"></i> Profesor: Juan Ignacio</p>
-            <p class="duracion"><i class="fas fa-clock"></i> Duración: 1h</p>
-            <p class="fecha"><i class="fas fa-calendar"></i> Fecha: 03/08/2025</p>
-            <p class="hora"><i class="fas fa-hourglass-start"></i> Hora: 05:00pm</p>
-        </div>
-        
-        <div class="class-card">
-            <h3><i class="fas fa-fist-raised"></i> BOXEO</h3>
-            <p class="profesor"><i class="fas fa-user"></i> Profesor: Hugo Villalba</p>
-            <p class="duracion"><i class="fas fa-clock"></i> Duración: 2h</p>
-            <p class="fecha"><i class="fas fa-calendar"></i> Fecha: 06/08/2025</p>
-            <p class="hora"><i class="fas fa-hourglass-start"></i> Hora: 08:20pm</p>
-        </div>
-    </div>
-</div>
-
- SECCIÓN DE SELECCIÓN (Disciplina y Profesor) 
-<div class="selection-section mt-4">
-    <h3><i class="fas fa-filter"></i> Seleccionar</h3>
-    <div class="selection-grid">
-        <div class="selection-box">
-            <h4><i class="fas fa-person-walking-arrow-right"></i> Disciplina</h4>
+<!-- SECCION SELECCION
+<div class="section-seleccion">
+    <h2><i class="fas fa-filter"></i> Seleccionar</h2>
+    <div class="seleccion-grid">
+        <div class="seleccion-box">
+            <h4><i class="fas fa-dumbbell"></i> Disciplina</h4>
             <ul>
-                <li><i class="fas fa-check-circle"></i> Calistenia</li>
-                <li><i class="fas fa-check-circle"></i> Powerlifting</li>
-                <li><i class="fas fa-check-circle"></i> Funcional</li>
-                <li><i class="fas fa-check-circle"></i> Maratonista</li>
-                <li><i class="fas fa-check-circle"></i> Musculación</li>
+                <li>Calistenia</li>
+                <li>Powerlifting</li>
+                <li>Funcional</li>
+                <li>Maratonista</li>
+                <li>Musculación</li>
             </ul>
         </div>
         
-        <div class="selection-box">
+        <div class="seleccion-box">
             <h4><i class="fas fa-chalkboard-user"></i> Profesor</h4>
             <ul>
-                <li><i class="fas fa-user-graduate"></i> Prof. Zarate Julian</li>
-                <li><i class="fas fa-user-graduate"></i> Prof. Juan Ignacio</li>
-                <li><i class="fas fa-user-graduate"></i> Prof. Marcos Rojo</li>
-                <li><i class="fas fa-user-graduate"></i> Prof. Hugo Villalba</li>
+                <li>Prof. Zarate Julian</li>
+                <li>Prof. Juan Ignacio</li>
+                <li>Prof. Marcos Rojo</li>
+                <li>Prof. Hugo Villalba</li>
             </ul>
         </div>
     </div>
 </div> -->
+
 {% endblock %}
