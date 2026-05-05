@@ -23,7 +23,7 @@ def home(request):
             status = membership.status
         except Membership.DoesNotExist:
             # si no existe la membresia, se puede crear o mostrar estado claro
-            status = "No membership found. Please create a membership."
+            status = "No se encontro la membresia, porfavor adquiera una"
         return render(request, "home.html", {"estado": status})
     else:
         return render(request, "home.html", {"estado": "The user is not logged in. Log in to view your membership status"})
@@ -31,35 +31,39 @@ def home(request):
 
 def signup(request):
     if request.method == "GET":
-        return render(request, "signup.html", {"form": UserCreationForm})
+        return render(request, "signup.html", {"form": UserCreationForm, "e": ""})
     else:
         if request.POST["password1"] == request.POST["password2"]:
 
             try:
-                user = User.objects.create_user(
-                    username=request.POST["username"],
-                    password=request.POST["password1"],
-                    is_staff=request.POST.get("is_staff") == "1",
-                )
-                user.save()
-
-                person = Person.objects.create(
-                    user=user,
-                    plan=None,
-                    id_number=request.POST.get("dni", ""),
-                    name=request.POST.get("name", ""),
-                    surname=request.POST.get("surname", ""),
-                    birth_date=request.POST.get("birth_date") or None,
-                    gender=request.POST.get("gender", ""),
-                    phone_number=request.POST.get("phone_number", ""),
-                    email=request.POST.get("email", ""),
-                )
-                Routine.objects.create(
-                    client=person,
-                    name="Mi rutina",
-                    description="",
-                )
-
+                if len(request.POST["username"]) >3 and len(request.POST["username"]) <21:
+                    user = User.objects.create_user(
+                        username=request.POST["username"],
+                        password=request.POST["password1"],
+                        is_staff=request.POST.get("is_staff") == "1",
+                    )
+                    user.save()
+                else:
+                    return render(request, "signup.html", {"form": UserCreationForm, "e": "nombre de usuario debe tener entre 4 y 20 caracteres"})
+                if len(request.POST["name"]) > 1 and len(request.POST["name"]) <40:
+                    person = Person.objects.create(
+                        user=user,
+                        plan=None,
+                        id_number=request.POST.get("dni", ""),
+                        name=request.POST.get("name", ""),
+                        surname=request.POST.get("surname", ""),
+                        birth_date=request.POST.get("birth_date") or None,
+                        gender=request.POST.get("gender", ""),
+                        phone_number=request.POST.get("phone_number", ""),
+                        email=request.POST.get("email", ""),
+                    )
+                    Routine.objects.create(
+                        client=person,
+                        name="Mi rutina",
+                        description="",
+                    )
+                else:
+                    return render(request, "signup.html", {"form": UserCreationForm, "e": "nombre de usuario debe tener entre 4 y 20 caracteres"})
                 Membership.objects.create(user=user)
                 login(request, user)
                 return redirect("home")

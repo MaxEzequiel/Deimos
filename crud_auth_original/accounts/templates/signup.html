@@ -75,7 +75,10 @@
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <input type="text" name="gender" placeholder="Género" required>
+                    <select name="gender" required>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                    </select>
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -98,6 +101,8 @@
         </div>
         {% endif %}
     </form>
+
+    {{ e }} 
 </div>
 
 {% endblock %}
