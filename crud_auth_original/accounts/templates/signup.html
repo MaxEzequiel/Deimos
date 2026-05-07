@@ -15,26 +15,26 @@
                 <i class="fas fa-user-circle"></i> Datos de usuario
             </h3>
             <div class="form-group">
-                {{ form.username.label_tag }}
-                {{ form.username }}
-                {% if form.username.errors %}
-                <div class="error-text">{{ form.username.errors }}</div>
+                {{ user_form.username.label_tag }}
+                {{ user_form.username }}
+                {% if user_form.username.errors %}
+                <div class="error-text">{{ user_form.username.errors }}</div>
                 {% endif %}
             </div>
             
             <div class="form-group">
-                {{ form.password1.label_tag }}
-                {{ form.password1 }}
-                {% if form.password1.errors %}
-                <div class="error-text">{{ form.password1.errors }}</div>
+                {{ user_form.password1.label_tag }}
+                {{ user_form.password1 }}
+                {% if user_form.password1.errors %}
+                <div class="error-text">{{ user_form.password1.errors }}</div>
                 {% endif %}
             </div>
             
             <div class="form-group">
-                {{ form.password2.label_tag }}
-                {{ form.password2 }}
-                {% if form.password2.errors %}
-                <div class="error-text">{{ form.password2.errors }}</div>
+                {{ user_form.password2.label_tag }}
+                {{ user_form.password2 }}
+                {% if user_form.password2.errors %}
+                <div class="error-text">{{ user_form.password2.errors }}</div>
                 {% endif %}
             </div>
         </div>
@@ -44,12 +44,8 @@
                 <i class="fas fa-user-tag"></i> Tipo de usuario:
             </label>
             <select name="is_staff" id="is_staff" class="form-select">
-                <option value="0">
-                    <i class="fas fa-user"></i> Usuario normal
-                </option>
-                <option value="1">
-                    <i class="fas fa-user-shield"></i> Administrador (Staff)
-                </option>
+                <option value="0">Usuario normal</option>
+                <option value="1">Administrador (Staff)</option>
             </select>
         </div>
 
@@ -57,38 +53,15 @@
             <h3>
                 <i class="fas fa-address-card"></i> Datos personales
             </h3>
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
-                    <input type="text" name="name" placeholder="Nombre" required>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <input type="text" name="surname" placeholder="Apellido" required>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <input type="text" name="dni" placeholder="DNI" required>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <input type="date" name="birth_date" required>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <select name="gender" required>
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
-                    </select>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <input type="text" name="phone_number" placeholder="Teléfono" required>
-                </div>
-
-                <div class="col-12">
-                    <input type="email" name="email" placeholder="Email" required>
-                </div>
+            {% for field in person_form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-text">{{ field.errors }}</div>
+                {% endif %}
             </div>
+            {% endfor %}
         </div>
         
         <button type="submit" class="btn-create w-100 mt-4">
@@ -101,8 +74,6 @@
         </div>
         {% endif %}
     </form>
-
-    {{ e }} 
 </div>
 
 {% endblock %}

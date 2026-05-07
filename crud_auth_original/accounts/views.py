@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 
 # datos del perfil persona
 from people.models import Person
+from people.forms import PersonForm
 from memberships.models import Membership
 from routines.models import Routine
 # funciones para el inicio de sesion
@@ -31,60 +32,35 @@ def home(request):
 
 def signup(request):
     if request.method == "GET":
-        return render(request, "signup.html", {"form": UserCreationForm, "e": ""})
+        return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm()})
     else:
-        if request.POST["password1"] == request.POST["password2"]:
-
+        user_form = UserCreationForm(request.POST)
+        person_form = PersonForm(request.POST)
+        if user_form.is_valid() and person_form.is_valid():
             try:
-                if len(request.POST["username"]) >3 and len(request.POST["username"]) <21:
-                    user = User.objects.create_user(
-                        username=request.POST["username"],
-                        password=request.POST["password1"],
-                        is_staff=request.POST.get("is_staff") == "1",
-                    )
-                    user.save()
-                else:
-                    return render(request, "signup.html", {"form": UserCreationForm, "e": "nombre de usuario debe tener entre 4 y 20 caracteres"})
-                if len(request.POST["name"]) > 1 and len(request.POST["name"]) <40:
-                    person = Person.objects.create(
-                        user=user,
-                        plan=None,
-                        id_number=request.POST.get("dni", ""),
-                        name=request.POST.get("name", ""),
-                        surname=request.POST.get("surname", ""),
-                        birth_date=request.POST.get("birth_date") or None,
-                        gender=request.POST.get("gender", ""),
-                        phone_number=request.POST.get("phone_number", ""),
-                        email=request.POST.get("email", ""),
-                    )
-                    Routine.objects.create(
-                        client=person,
-                        name="Mi rutina",
-                        description="",
-                    )
-                else:
-                    return render(request, "signup.html", {"form": UserCreationForm, "e": "nombre de usuario debe tener entre 4 y 20 caracteres"})
+                # creamos el objeto del formulario recibido sin guardar para añadir el campo de is_staff
+                # al formulario final
+                user = user_form.save(commit=False)
+                user.is_staff = request.POST.get("is_staff", False)
+                user.save()
+                
+                person = person_form.save(commit=False)
+                person.user = user
+                person.save()
+                
+                Routine.objects.create(client=person, name=f"Rutina de {person.name}", description="Rutina personalizada")
                 Membership.objects.create(user=user)
                 login(request, user)
                 return redirect("home")
-            except Exception as excep:
+            except Exception as e:
                 logout(request)
-                print(excep)
-                return render(
-                    request,
-                    "signup.html",
-                    {"form": UserCreationForm, "error": "usuario ya existe"},
-                )
-
-        else:
-            logout(request)
-            return render(
-                request,
-                "signup.html",
-                {"form": UserCreationForm, "error": "las contraseñas no coinciden"},
-            )
-
-
+                print(e)
+                return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm(), "e": "usuario ya existe"})
+        return render(request, "signup.html", {
+        "user_form": user_form,
+        "person_form": person_form,
+    })
+                            
 def signout(request):
     logout(request)
     return redirect("home")
