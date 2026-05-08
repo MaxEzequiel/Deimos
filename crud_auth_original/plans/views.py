@@ -1,12 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from django.db import transaction, IntegrityError
-# formularios de login y register
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib import messages
-# modelo del usuario por defecto de django
-from django.contrib.auth.models import User
-from memberships.models import Membership
 from plans.models import Plan
 
 # modulo de pdf
