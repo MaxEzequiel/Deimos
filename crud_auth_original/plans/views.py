@@ -5,7 +5,6 @@ from plans.models import Plan
 from django_xhtml2pdf.utils import pdf_decorator
 
 # funciones para el inicio de sesion
-from django.contrib.auth import login, logout, authenticate
 
 from django.contrib.auth.decorators import login_required
 
