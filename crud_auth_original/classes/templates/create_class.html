@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+<p>create class view</p>
+
+{% block content %}
+<form action="{% url 'create_class' %}", method="POST">
+    {% csrf_token %}
+
+    {{ class_form }}
+
+    <button type="submit">Guardar</button>
+</form>
+{% endblock content %}

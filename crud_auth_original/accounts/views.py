@@ -27,7 +27,7 @@ def home(request):
             status = "No se encontro la membresia, porfavor adquiera una"
         return render(request, "home.html", {"estado": status})
     else:
-        return render(request, "home.html", {"estado": "The user is not logged in. Log in to view your membership status"})
+        return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
 
 
 def signup(request):
