@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for course in courses %}
+
+<h4>{{ course.name }}</h4>
+<h4>{{ course.description }}</h4>
+<a href="{% url 'edit_class' course.id %}">Editar</a>
+
+{% endfor %}
+
+{% endblock content %}
