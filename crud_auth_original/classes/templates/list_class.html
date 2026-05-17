@@ -7,6 +7,7 @@
 <h4>{{ course.name }}</h4>
 <h4>{{ course.description }}</h4>
 <a href="{% url 'edit_class' course.id %}">Editar</a>
+<a href="{% url 'delete_class' course.id %}">Eliminar</a>
 
 {% endfor %}
 

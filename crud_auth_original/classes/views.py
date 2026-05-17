@@ -17,17 +17,17 @@ def create_class(request):
             course_instance = current_class.save(commit=False)
             course_instance.teacher = Person.objects.get(user = request.user)
             course_instance.save()
-            return redirect("home")
+            return redirect("list_class")
         else:
             return render(request, "create_class.html", {"course_form" : CourseForm})
 
-
+@login_required
 def list_class(request):
     if request.method == "GET": 
         courses = Course.objects.all()
         return render(request, "list_class.html",{"courses": courses})
 
-
+@login_required
 def edit_class(request, course_id): 
     course = Course.objects.get(id = course_id)
     if request.method == "GET":
@@ -39,3 +39,12 @@ def edit_class(request, course_id):
             form.save()
             return redirect("list_class")
         return render(request, "edit_class.html", {"edit_form" : form})
+
+@login_required
+def delete_class(request, course_id):
+    if request.method == "GET":
+        return render(request,"delete_class.html")
+    else:
+        course = Course.objects.get(id = course_id)
+        course.delete()
+        return redirect("list_class")

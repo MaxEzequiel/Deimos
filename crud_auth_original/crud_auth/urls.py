@@ -20,7 +20,7 @@ from django.urls import path, include
 from accounts.views import home, signup, signout, login_view, delete_account
 from memberships.views import edit_membership
 from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
-from classes.views import create_class, edit_class, list_class
+from classes.views import create_class, edit_class, list_class, delete_class
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home, name="root"),
@@ -38,6 +38,7 @@ urlpatterns = [
     path("plans-pdf/", plans_pdf, name="plans_pdf"),
     path("create-class/", create_class, name="create_class"),
     path("edit-class/<int:course_id>", edit_class, name="edit_class"),
-    path("list_class/", list_class, name="list_class")
+    path("list-class/", list_class, name="list_class"),
+    path("delete_class/<int:course_id>",delete_class, name="delete_class")
 ]
 

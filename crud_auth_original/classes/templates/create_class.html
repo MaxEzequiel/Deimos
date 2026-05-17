@@ -6,7 +6,7 @@
 <form action="{% url 'create_class' %}", method="POST">
     {% csrf_token %}
 
-    {{ class_form }}
+    {{ course_form }}
 
     <button type="submit">Guardar</button>
 </form>
