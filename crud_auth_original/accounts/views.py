@@ -116,3 +116,13 @@ def delete_account(request):
                 "delete_user.html",
                 {"error": "la contraseña no puede estar vacia"},
             )
+
+
+# vistas de gestion de usuarios 
+
+def list_user(request):
+    if request.method == "GET":
+        users = User.objects.all()
+        return render(request, "list_user.html",{"user" : users})
+
+def

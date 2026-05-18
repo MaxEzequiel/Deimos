@@ -22,19 +22,20 @@ def create_plan(request):
     else:
         return render(request, "create_plan.html")
 
-
+@login_required
 def list_plans(request):
     if request.method == "GET":
         plans = Plan.objects.all()
         return render(request, "list_plans.html", {"plans": plans})
 
+@login_required
 @pdf_decorator
 def plans_pdf(request):
     if request.method == "GET":
         plans = Plan.objects.all()
         return render(request, "plans_pdf.html", {"plans": plans})
 
-
+@login_required
 def edit_plan(request, plan_id):
     plan = Plan.objects.get(id=plan_id)
     if request.method == "GET":
@@ -49,6 +50,7 @@ def edit_plan(request, plan_id):
             error = "form is invalid, please verify the fields"
             return render(request, "edit_plan.html", {"form": form, "error": error})
 
+@login_required
 def delete_plan(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
     if request.method == "GET":
