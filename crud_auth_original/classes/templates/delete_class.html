@@ -1,12 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="login-box">
+    <h1 class="text-center">
+        <i class="fas fa-trash-alt"></i> Eliminar Clase
+    </h1>
+    
+    <div class="warning-card text-center p-3">
+        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
+        <p class="mt-2"><strong>¿Estás seguro de eliminar esta clase?</strong></p>
+    </div>
+    
+    <form action="" method="POST">
 
-<a href="{% url 'list_class' %}">Cancelar</a>
-
-<form action="" method="post">
     {% csrf_token %}
-    <button type="submit">Eliminar</button>
-</form>
+        <div class="button-group">
+            <button type="submit" class="btn-outline-light">
+                <i class="fas fa-trash-alt"></i> Eliminar
+            </button>
+            <a href="{% url 'list_class' %}" class="btn-secondary-custom">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
 
 {% endblock content %}
