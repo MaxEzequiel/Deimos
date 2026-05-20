@@ -1,14 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container-main">
+    <div class="plans-module">
+        <div class="module-header">
+            <h2>Lista de Clases</h2>
+            <p>Gestión de clases disponibles</p>
+        </div>
+        <div class="plans-table-container">
+            <table class="plans-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-{% for course in courses %}
-
-<h4>{{ course.name }}</h4>
-<h4>{{ course.description }}</h4>
-<a href="{% url 'edit_class' course.id %}">Editar</a>
-<a href="{% url 'delete_class' course.id %}">Eliminar</a>
-
-{% endfor %}
-
+                    {% for course in courses %}
+                    <tr>
+                        <td data-label="Nombre" class="plan-name-cell">
+                            <i class="fas fa-dumbbell"></i> {{ course.name }}
+                        </td>
+                        <td data-label="Descripción">
+                            <i class="fas fa-align-left"></i> {{ course.description }}
+                        </td>
+                        <td data-label="Acciones" class="plan-actions-cell">
+                            <a href="{% url 'edit_class' course.id %}" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{% url 'delete_class' course.id %}" class="action-btn delete-btn">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="empty-row">
+                            <i class="fas fa-info-circle"></i> No hay clases para mostrar
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock content %}
