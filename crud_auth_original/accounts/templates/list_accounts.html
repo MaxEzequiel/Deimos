@@ -2,17 +2,53 @@
 
 {% block content %}
 
-{% for account in accounts %}
+<div class="container-main">
+    <div class="welcome-section">
+        <h1>Usuarios Registrados</h1>
+        <p>Gestión de cuentas del sistema</p>
+    </div>
 
-<p>{{ account.username }} <br> {{ account.person.email }}</p>
+    <div class="plans-module">
+        <div class="module-header">
+            <h2> Lista de Usuarios</h2>
+            <p>Total: {{ accounts|length }} usuarios</p>
+        </div>
 
-<a href="{% url 'edit_account' account.id %}">Editar Usuario</a>
-
-
-{% empty %}
-<p>sin usuarios para mostrar</p>
-
-{% endfor %}
-
+        <div class="plans-table-container">
+            <table class="plans-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td class="plan-name-cell" data-label="Usuario">
+                            <i class="fas fa-user-circle"></i> {{ account.username }}
+                        </td>
+                        <td data-label="Email">
+                            <i class="fas fa-envelope"></i> {{ account.person.email }}
+                        </td>
+                        <td data-label="Acciones" class="plan-actions-cell">
+                            <a href="{% url 'edit_account' account.id %}" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar Usuario
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="empty-row">
+                            <i class="fas fa-info-circle"></i> Sin usuarios para mostrar
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 {% endblock content %}
