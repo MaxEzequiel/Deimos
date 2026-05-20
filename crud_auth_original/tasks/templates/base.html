@@ -39,7 +39,7 @@
 
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="btn-logout" href="/logout">Salir</a>
+                            <a class="btn-logout" href="{% url 'logout' %}">Salir</a>
                         </li>
                         <li class="nav-item">
                             <a class="btn-delete" href="/delete_user">Eliminar Cuenta</a>
@@ -53,12 +53,12 @@
                                 <a class="btn" href="/listar_planes">Ver Planes</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn-create" href="/singup">Crear Usuario</a>
+                                <a class="btn-create" href="{% url 'list_accounts' %}">Gestionar Usuarios</a>
                             </li>
                         {% endif %}
                     {% else %}
                         <li class="nav-item">
-                            <a class="btn-login" href="/login">Iniciar Sesión</a>
+                            <a class="btn-login" href="{% url 'login' %}">Iniciar Sesión</a>
                         </li>
                     {% endif %}
                 </ul>

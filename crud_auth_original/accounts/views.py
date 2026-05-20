@@ -83,7 +83,7 @@ def login_view(request):
                 "login.html",
                 {
                     "login_form": AuthenticationForm,
-                    "error": "username or password isnt correct",
+                    "error": "el usuario o contraseña no son correctos",
                 },
             )
         else:
