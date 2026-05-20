@@ -103,6 +103,7 @@ def deactivate_account(request):
                 user = request.user
                 logout(request)
                 user.is_active = 0
+                user.save()
                 return redirect("home")
             else:
                 return render(
