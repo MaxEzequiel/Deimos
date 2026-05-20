@@ -21,10 +21,10 @@
                     {% for course in courses %}
                     <tr>
                         <td data-label="Nombre" class="plan-name-cell">
-                            <i class="fas fa-dumbbell"></i> {{ course.name }}
+                            {{ course.name }}
                         </td>
                         <td data-label="Descripción">
-                            <i class="fas fa-align-left"></i> {{ course.description }}
+                             {{ course.description }}
                         </td>
                         <td data-label="Acciones" class="plan-actions-cell">
                             <a href="{% url 'edit_class' course.id %}" class="action-btn edit-btn">
