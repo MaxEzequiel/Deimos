@@ -7,7 +7,7 @@
         <i class="fas fa-user-plus"></i> Registrar Usuario
     </h1>
 
-    <form action="/signup/" method="POST">
+    <form action="{% url 'singup' %}" method="POST">
         {% csrf_token %}
         
         <div class="form-section">

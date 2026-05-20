@@ -4,7 +4,7 @@ from people.models import Person
 from .forms import CourseForm
 from django.contrib.auth.decorators import login_required
 # Create your views here. 
-# Mineaqua
+
 
 #  class es lo que vera el user, en codigo se manejara como course
 @login_required

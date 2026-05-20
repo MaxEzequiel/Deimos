@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib.auth import views
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import home, signup, signout, login_view, delete_account
+from accounts.views import home, create_account, login_view, singout,deactivate_account, edit_account, list_accounts
 from memberships.views import edit_membership
 from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
 from classes.views import create_class, edit_class, list_class, delete_class
@@ -25,17 +25,22 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home, name="root"),
     path("home/", home, name="home"),
-    path("signup/", signup, name="signup"),
-    path("logout/", signout, name="logout"),
-    path("login/", login_view, name="login"),
-    path("delete-account/", delete_account, name="delete_account"),
+    # modulo de usuarios
+    path("accounts/", list_accounts, name="list_accounts"),
+    path("accounts/create/", create_account, name="create"),
+    path("accounts/logout/", singout, name="logout"),
+    path("accounts/login/", login_view, name="login"),
+    path("accounts/deactivate-account/", deactivate_account, name="delete_account"),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("edit-membership/", edit_membership, name="edit_membership"),
+    path("accounts/edit-membership/", edit_membership, name="edit_membership"),
+    path("accounts/edit/<int:account_id>", edit_account , name="edit_account"),
+    # modulo de planes
     path("create-plan/", create_plan, name="create_plan"),
     path("list-plans/", list_plans, name="list_plans"),
     path("edit-plan/<int:plan_id>", edit_plan, name="edit_plan"),
     path("delete-plan/<int:plan_id>", delete_plan, name="delete_plan"),
     path("plans-pdf/", plans_pdf, name="plans_pdf"),
+    # modulo de clases
     path("create-class/", create_class, name="create_class"),
     path("edit-class/<int:course_id>", edit_class, name="edit_class"),
     path("list-class/", list_class, name="list_class"),
