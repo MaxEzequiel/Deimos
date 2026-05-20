@@ -93,7 +93,12 @@
                                     Ver Planes
                                 </a>
                             </li>
-                            
+                            {% comment %} Clases {% endcomment %}
+                            <li class="nav-item">
+                                <a class="btn-nav-logout" href="/list-class">
+                                    Clases
+                                </a>
+                            </li>
                             {% comment %} url a gestion de usuarios {% endcomment %}
                             <li class="nav-item">
                                 <a class="btn-nav-create" href="{% url 'list_accounts' %}">
@@ -104,12 +109,6 @@
                         <li class="nav-item">
                             <a class="btn-nav-logout" href="/logout">
                                 Salir
-                            </a>
-                        </li>
-                            {% comment %} Clases {% endcomment %}
-                        <li class="nav-item">
-                            <a class="btn-nav-logout" href="/list-class">
-                                Clases
                             </a>
                         </li>
                         {% endif %}
