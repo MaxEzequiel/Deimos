@@ -123,7 +123,7 @@ def deactivate_account(request):
 
 def list_accounts(request):
     if request.method == "GET":
-        users = User.objects.all()
+        users = User.objects.all().exclude(id = request.user.id)
         return render(request, "list_accounts.html",{"accounts" : users})
 
 
