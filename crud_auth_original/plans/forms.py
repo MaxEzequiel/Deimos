@@ -1,7 +1,7 @@
 from django import forms
 from .models import Plan
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxLengthValidator,MinLengthValidator
+from django.core.validators import MaxLengthValidator,MinLengthValidator,MinValueValidator
 
 def plan_name_unique_validator(value):
     if Plan.objects.filter(name=value).exists():
@@ -25,6 +25,11 @@ class PlanForm(forms.ModelForm):
                     MinLengthValidator(5, "La descripcion debe tener al menos 5 caracteres"),
                     MaxLengthValidator(180,"La descripcion del plan no debe superar los 180 caracteres")],
         label="descripcion del plan"
+    )
+    
+    base_price = forms.DecimalField(
+        validators=[MinValueValidator(100, "el precio minimo es de $100.00")],
+        label="Precio del plan"
     )
     
     class Meta:
