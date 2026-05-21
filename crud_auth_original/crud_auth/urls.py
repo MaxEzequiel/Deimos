@@ -27,7 +27,7 @@ urlpatterns = [
     path("home/", home, name="home"),
     # modulo de usuarios
     path("accounts/", list_accounts, name="list_accounts"),
-    path("accounts/create/", create_account, name="create"),
+    path("accounts/create/", create_account, name="create_account"),
     path("accounts/logout/", singout, name="logout"),
     path("accounts/login/", login_view, name="login"),
     path("accounts/deactivate-account/", deactivate_account, name="delete_account"),
