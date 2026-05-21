@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 # modelo del usuario por defecto de django
 from django.contrib.auth.models import User
+from accounts.forms import UserEditForm
 
 # datos del perfil persona
 from people.models import Person
@@ -127,6 +128,30 @@ def list_accounts(request):
         return render(request, "list_accounts.html",{"accounts" : users})
 
 
-def edit_account(request,account_id):
-    pass
+def edit_account(request, account_id):
+    user = get_object_or_404(User, id=account_id)
+    person = get_object_or_404(Person, user=user)
+    
+    if request.method == "GET":
+        user_form = UserEditForm(instance=user)
+        person_form = PersonForm(instance=person)
+        return render(request, "edit_account.html", {
+            "user_form": user_form,
+            "person_form": person_form,
+            "account_id": account_id,
+        })
+    else:
+        user_form = UserEditForm(request.POST, instance=user)
+        person_form = PersonForm(request.POST, instance=person)
+        
+        if user_form.is_valid() and person_form.is_valid():
+            user_form.save()
+            person_form.save()
+            return redirect("list_accounts")
+        
+        return render(request, "edit_account.html", {
+            "user_form": user_form,
+            "person_form": person_form,
+            "account_id": account_id,
+        })
 

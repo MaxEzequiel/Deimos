@@ -1,9 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1>Editar Cuenta</h1>
 
 <form action="" method="POST">
-    <button type="submit">Guardar</button>
-</form>
+    {% csrf_token %}
+    
+    <h2>Datos de Usuario</h2>
+    
+    {% for field in user_form %}
+    <div>
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+        <div style="color: red;">{{ field.errors }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
 
+    <h2>Datos Personales</h2>
+    {% for field in person_form %}
+    <div>
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+        <div style="color: red;">{{ field.errors }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <button type="submit">Guardar Cambios</button>
+</form>
 {% endblock content %}
