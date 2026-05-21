@@ -13,14 +13,14 @@ from plans.forms import PlanForm
 @login_required
 def create_plan(request):
     if request.method == "POST":
-        Plan.objects.create(
-            name=request.POST.get("nombre", ""),
-            description=request.POST.get("descripcion", ""),
-            base_price=float(request.POST.get("precio", 0) or 0),
-        )
-        return redirect("home")
+        plan = PlanForm(request.POST)
+        if plan.is_valid():
+            plan.save()
+            return redirect("home")
+        else:
+            return render(request, "create_plan.html", {"plan_form": plan})
     else:
-        return render(request, "create_plan.html")
+        return render(request, "create_plan.html", {"plan_form": PlanForm()})
 
 @login_required
 def list_plans(request):

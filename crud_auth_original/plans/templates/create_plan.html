@@ -11,24 +11,33 @@
         {% csrf_token %}
         
         <div class="form-group">
-            <label for="nombre">
-                <i class="fas fa-tag"></i> Nombre del plan:
+            <label for="{{ plan_form.name.id_for_label }}">
+                <i class="fas fa-tag"></i> {{ plan_form.name.label }}
             </label>
-            <input type="text" name="nombre" id="nombre" placeholder="Ej: Plan Premium" required>
+            {{ plan_form.name }}
+            {% if plan_form.name.errors %}
+            <div style="color: red; margin-top: 5px;">{{ plan_form.name.errors }}</div>
+            {% endif %}
         </div>
         
         <div class="form-group">
-            <label for="descripcion">
-                <i class="fas fa-align-left"></i> Descripción:
+            <label for="{{ plan_form.description.id_for_label }}">
+                <i class="fas fa-align-left"></i> {{ plan_form.description.label }}
             </label>
-            <textarea name="descripcion" id="descripcion" rows="4" placeholder="Descripción del plan..."></textarea>
+            {{ plan_form.description }}
+            {% if plan_form.description.errors %}
+            <div style="color: red; margin-top: 5px;">{{ plan_form.description.errors }}</div>
+            {% endif %}
         </div>
         
         <div class="form-group">
-            <label for="precio">
-                <i class="fas fa-dollar-sign"></i> Precio:
+            <label for="{{ plan_form.base_price.id_for_label }}">
+                <i class="fas fa-dollar-sign"></i> {{ plan_form.base_price.label }}
             </label>
-            <input type="text" name="precio" id="precio" placeholder="$0.00" required>
+            {{ plan_form.base_price }}
+            {% if plan_form.base_price.errors %}
+            <div style="color: red; margin-top: 5px;">{{ plan_form.base_price.errors }}</div>
+            {% endif %}
         </div>
         
         <button type="submit" class="btn-create w-100 mt-3">
