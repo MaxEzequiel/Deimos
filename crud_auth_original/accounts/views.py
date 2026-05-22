@@ -93,31 +93,14 @@ def login_view(request):
 
 
 @login_required
-def deactivate_account(request):
+def deactivate_account(request, account_id):
+    user = User.objects.get(id = account_id)
     if request.method == "GET":
-        username = request.user.username
-        return render(request, "delete_user.html", {"username": username})
+        return render(request, "deactivate_account.html", {"user" : user})
     else:
-        if request.POST.get("password"):
-            password = request.POST["password"]
-            if request.user.check_password(password):
-                user = request.user
-                logout(request)
-                user.is_active = 0
-                user.save()
-                return redirect("home")
-            else:
-                return render(
-                    request,
-                    "delete_user.html",
-                    {"error": "la contraseña no es correcta"},
-                )
-        else:
-            return render(
-                request,
-                "delete_user.html",
-                {"error": "la contraseña no puede estar vacia"},
-            )
+        user.is_active = 0
+        user.save()
+        return redirect("list_accounts")
 
 
 # vistas de gestion de usuarios 

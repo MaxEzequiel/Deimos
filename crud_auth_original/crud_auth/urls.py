@@ -30,7 +30,7 @@ urlpatterns = [
     path("accounts/create/", create_account, name="create_account"),
     path("accounts/logout/", singout, name="logout"),
     path("accounts/login/", login_view, name="login"),
-    path("accounts/deactivate-account/", deactivate_account, name="delete_account"),
+    path("accounts/deactivate-account/<int:account_id>", deactivate_account, name="deactivate_account"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/edit-membership/", edit_membership, name="edit_membership"),
     path("accounts/edit/<int:account_id>", edit_account , name="edit_account"),
