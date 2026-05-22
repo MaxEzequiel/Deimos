@@ -21,6 +21,7 @@ from accounts.views import home, create_account, login_view, singout,deactivate_
 from memberships.views import edit_membership
 from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
 from classes.views import create_class, edit_class, list_class, delete_class
+from .core_view import error_403
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home, name="root"),
@@ -44,6 +45,8 @@ urlpatterns = [
     path("create-class/", create_class, name="create_class"),
     path("edit-class/<int:course_id>", edit_class, name="edit_class"),
     path("list-class/", list_class, name="list_class"),
-    path("delete_class/<int:course_id>",delete_class, name="delete_class")
+    path("delete_class/<int:course_id>",delete_class, name="delete_class"),
+    # cure
+    path("error_403/", error_403, name="error_403")
 ]
 

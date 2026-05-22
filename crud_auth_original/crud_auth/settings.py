@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "payments",
     "people",
     "routines",
+    "core",
 ]
 
 MIDDLEWARE = [

@@ -6,11 +6,12 @@ from django_xhtml2pdf.utils import pdf_decorator
 
 # funciones para el inicio de sesion
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from plans.forms import PlanForm
 
 @login_required
+@permission_required("plans.add_plan", login_url="/error_403")
 def create_plan(request):
     if request.method == "POST":
         plan = PlanForm(request.POST)
@@ -23,6 +24,7 @@ def create_plan(request):
         return render(request, "create_plan.html", {"plan_form": PlanForm()})
 
 @login_required
+@permission_required("plans.view_plan", login_url="/error_403")
 def list_plans(request):
     if request.method == "GET":
         plans = Plan.objects.all()
@@ -36,6 +38,7 @@ def plans_pdf(request):
         return render(request, "plans_pdf.html", {"plans": plans})
 
 @login_required
+@permission_required("plans.change_plan", login_url="/error_403")
 def edit_plan(request, plan_id):
     plan = Plan.objects.get(id=plan_id)
     if request.method == "GET":
@@ -51,6 +54,7 @@ def edit_plan(request, plan_id):
             return render(request, "edit_plan.html", {"form": form, "error": error})
 
 @login_required
+@permission_required("plans.delete_plan", login_url="/error_403")
 def delete_plan(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
     if request.method == "GET":
