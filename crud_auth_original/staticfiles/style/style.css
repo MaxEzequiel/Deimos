@@ -26,62 +26,6 @@ body {
     width: 100%;
 }
 
-
-/* ===================================================
-   NAVBAR (solo texto blanco)
-   =================================================== */
-.custom-navbar {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    padding: 0.8rem 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.custom-navbar .navbar-brand {
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    background: linear-gradient(135deg, #e74c3c, #f39c12);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    white-space: nowrap;
-}
-
-.custom-navbar .navbar-brand:hover {
-    opacity: 0.9;
-}
-
-/* Contenedor de navegación */
-.custom-navbar .navbar-collapse {
-    justify-content: flex-end;
-}
-
-.custom-navbar .navbar-nav {
-    gap: 0.5rem;
-    align-items: center;
-}
-
-/* ===================================================
-NAVB STYLE
-   =================================================== */
-.custom-navbar .nav-item a {
-    background: transparent !important;  
-    border: none !important;             
-    border-radius: 0 !important;         
-    font-weight: 500;
-    padding: 8px 16px;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 0.95rem;
-    color: #ffffff !important;           /* Texto blanco */
-    letter-spacing: 0.3px;
-}
-
 /* Efecto al pasar el mouse */
 .custom-navbar .nav-item a:hover {
     color: #f39c12 !important;           
@@ -125,28 +69,6 @@ NAVB STYLE
         padding: 8px 16px;
     }
 }
-/* botones especiales */
-.btn-nav-home,
-.btn-nav-logout,
-.btn-nav-delete,
-.btn-nav-create,
-.btn-nav-login,
-.btn-nav-default {
-    background: transparent !important;
-    border: none !important;
-    color: #ffffff !important;
-}
-
-.btn-nav-home:hover,
-.btn-nav-logout:hover,
-.btn-nav-delete:hover,
-.btn-nav-create:hover,
-.btn-nav-login:hover,
-.btn-nav-default:hover {
-    background: transparent !important;
-    color: #f39c12 !important;
-    border: none !important;
-}
 
 /* ===================================================
 CARDS Y CONTENEDORES
@@ -156,12 +78,6 @@ CARDS Y CONTENEDORES
    ESTRUCTURA PRINCIPAL ORDENADA
    =================================================== */
 
-.container-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-    width: 100%;
-}
 
 .content-wrapper {
     width: 100%;
@@ -997,20 +913,7 @@ CARDS Y CONTENEDORES
     color: #e74c3c;
 }
 
-/* ===================================================
-   RESPONSIVE
-   =================================================== */
-@media (max-width: 768px) {
-    .custom-navbar .navbar-brand {
-        font-size: 1.4rem;
-    }
-    
-    .custom-navbar .nav-item a {
-        margin: 5px 0;
-        width: 100%;
-        text-align: center;
-    }
-    
+/* =========RESPONSIVE GENERAL PARA HOME, LOGIN, SIGNUP Y PLANES======== */
     .home-hero h1 {
         font-size: 2rem;
     }
@@ -1060,7 +963,6 @@ CARDS Y CONTENEDORES
         text-align: center;
         justify-content: center;
     }
-}
 
 @media (max-width: 480px) {
     .container-main {
@@ -1090,4 +992,98 @@ CARDS Y CONTENEDORES
 
 .card-modern, .info-card, .class-card, .login-box, .signup-box, .plan-card {
     animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* ESTRUCTURA TIPO DJANGO ADMIN */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+.sidebar-logo {
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+}
+.sidebar-logo h2 {
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.sidebar-section-title {
+    color: #f39c12;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    padding: 10px 15px;
+}
+.sidebar-menu {
+    list-style: none;
+    padding-left: 0;
+}
+.sidebar-menu a {
+    display: flex;
+    padding: 10px 15px;
+    color: #e0e0e0;
+    text-decoration: none;
+    gap: 12px;
+}
+.sidebar-menu a:hover {
+    background: rgba(243,156,18,0.15);
+    color: #f39c12;
+}
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+}
+.top-navbar {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 12px 25px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(243,156,18,0.3);
+}
+.content-container {
+    padding: 25px 30px;
+}
+.user-tools span, .breadcrumbs a {
+    color: white;
+    text-decoration: none;
+}
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); position: fixed; }
+    .main-content { margin-left: 0; }
+}
+
+/* User tools en topbar */
+.user-tools {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-tools span {
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.user-tools a {
+    color: #b0b0b0;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.user-tools a:hover {
+    color: #f39c12;
+    transform: translateY(-1px);
 }
