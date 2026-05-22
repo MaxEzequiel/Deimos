@@ -41,10 +41,11 @@
         </aside>
         <div class="main-content">
             <nav class="top-navbar">
-                <div class="breadcrumbs"><a href="/home">Inicio</a></div>
+                <div class="breadcrumbs"><a href="/home"></a></div>
                 <div class="user-tools">
-                    <span><i class="fas fa-user-circle"></i> Hola, {{ user.get_short_name|default:user.username }}</span>
-                    <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                    <span><i class="fas fa-user"></i> HOLA, {{ user.username|upper }}</span>
+                    <a href="{% url 'password_reset' %}"><i class="fas fa-key"></i> Cambiar contraseña
+                    <a href="{% url 'logout' %}">Salir</a>
                 </div>
             </nav>
             <div class="content-container">
