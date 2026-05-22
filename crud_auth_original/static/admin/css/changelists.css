@@ -372,12 +372,17 @@
     border-color: var(--body-quiet-color);
 }
 /* ===================================================
-   CUSTOM CHANGELIST SHAPES
+   CUSTOM CHANGELIST STYLES
    =================================================== */
 
 #toolbar {
     border-radius: 16px !important;
     margin-bottom: 20px !important;
+}
+
+#changelist-filter {
+    border-radius: 16px !important;
+    overflow: hidden !important;
 }
 
 #changelist-filter li.selected {
@@ -392,4 +397,8 @@
 
 .object-tools a:hover {
     transform: translateY(-2px) !important;
+}
+
+.action-checkbox {
+    transform: scale(1.05) !important;
 }

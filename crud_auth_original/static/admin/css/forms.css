@@ -518,6 +518,10 @@ form .related-widget-wrapper ul {
 .clearable-file-input input {
     margin-top: 0;
 }
+/* ===================================================
+   CUSTOM FORMS STYLES
+   =================================================== */
+
 .aligned label {
     font-weight: 500 !important;
 }
@@ -527,5 +531,19 @@ form .related-widget-wrapper ul {
 }
 
 .form-row:hover {
-    background-color: rgba(121, 174, 200, 0.05) !important;
+    background-color: rgba(121, 174, 200, 0.04) !important;
+}
+
+.submit-row {
+    border-radius: 16px !important;
+    overflow: hidden !important;
+}
+
+.related-lookup {
+    border-radius: 8px !important;
+    transition: transform 0.2s ease !important;
+}
+
+.related-lookup:hover {
+    transform: scale(1.05) !important;
 }

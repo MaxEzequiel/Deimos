@@ -1232,3 +1232,59 @@ a.deletelink:focus, a.deletelink:hover {
     color: var(--body-fg);
     background-color: var(--body-bg);
 }
+
+/* ======
+   CUSTOM STYLES*/
+
+/* Tipografía */
+body, input, button, select, textarea, .module h2, .module caption,
+#header, #user-tools, div.breadcrumbs, .paginator, .object-tools a,
+h1, h2, h3, h4, h5, h6, #site-name, a, td, th, label, .help, .quiet {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+/* Pesos de texto */
+body, p, li, td, th, .help, .quiet, label, input, button, select, textarea {
+    font-weight: 400 !important;
+    letter-spacing: 0.2px !important;
+}
+
+/* Títulos */
+h1, h2, h3, h4, h5, h6, .module h2, #site-name {
+    font-weight: 600 !important;
+    letter-spacing: -0.2px !important;
+}
+
+/* Enlaces y botones */
+a, .button, input[type=submit], input[type=button] {
+    font-weight: 500 !important;
+}
+
+/* Breadcrumbs */
+div.breadcrumbs {
+    font-weight: 500 !important;
+    letter-spacing: 0.2px !important;
+}
+
+/* Mensajes */
+ul.messagelist li {
+    font-weight: 500 !important;
+}
+
+/* Hover en filas de tabla */
+tr:hover td {
+    background-color: rgba(121, 174, 200, 0.08) !important;
+    transition: background-color 0.2s ease !important;
+}
+
+/* Efecto hover en enlaces de sidebar */
+#nav-sidebar a:hover {
+    color: #79aec8 !important;
+    padding-left: 2px !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Sombras suaves en tarjetas */
+.module, .inline-group {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
