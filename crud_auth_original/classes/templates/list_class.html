@@ -6,6 +6,7 @@
         <div class="module-header">
             <h2>Lista de Clases</h2>
             <p>Gestión de clases disponibles</p>
+            <a href="{% url 'create_class' %}">Crear clase nueva</a>
         </div>
         <div class="plans-table-container">
             <table class="plans-table">
@@ -24,7 +25,7 @@
                             {{ course.name }}
                         </td>
                         <td data-label="Descripción">
-                             {{ course.description }}
+                            {{ course.description }}
                         </td>
                         <td data-label="Acciones" class="plan-actions-cell">
                             <a href="{% url 'edit_class' course.id %}" class="action-btn edit-btn">

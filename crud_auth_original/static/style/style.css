@@ -1,0 +1,1089 @@
+/* style.css - Versión completa con todos los estilos */
+
+/* Reset general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fondo general - oscuro */
+body {
+    background-color: #0a0a0a;
+    color: #ffffff;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+/* Contenedor principal */
+.container-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    width: 100%;
+}
+
+/* Efecto al pasar el mouse */
+.custom-navbar .nav-item a:hover {
+    color: #f39c12 !important;           
+    transform: translateY(-2px);          
+    background: transparent !important;   
+    border: none !important;              
+    text-decoration: none;
+}
+
+/* ===================================================
+   RESPONSIVE PARA NAVBAR
+   =================================================== */
+@media (max-width: 991px) {
+    .custom-navbar {
+        padding: 0.8rem 1rem;
+    }
+    
+    .custom-navbar .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .custom-navbar .navbar-nav {
+        margin-top: 1rem;
+        gap: 0.8rem;
+    }
+    
+    .custom-navbar .nav-item a {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 10px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .custom-navbar .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .custom-navbar .nav-item a {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
+
+/* ===================================================
+CARDS Y CONTENEDORES
+   =================================================== */
+
+/* ===================================================
+   ESTRUCTURA PRINCIPAL ORDENADA
+   =================================================== */
+
+
+.content-wrapper {
+    width: 100%;
+}
+
+/* SECCION DE BIENVENIDA */
+.welcome-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.welcome-section h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+
+.welcome-section p {
+    color: #b0b0b0;
+    font-size: 1.2rem;
+}
+
+/* CARDS DE ESTADO Y ACCIONES */
+.cards-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.card-info {
+    flex: 1;
+    min-width: 250px;
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.8rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-info:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: #f39c12;
+    margin-bottom: 1rem;
+}
+
+.card-info h4 {
+    color: #f39c12;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.card-info p {
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.btn-action {
+    display: inline-block;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white !important;
+    padding: 10px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+/* SECCION CLASES */
+.section-clases {
+    margin-bottom: 3rem;
+}
+
+.section-clases h2 {
+    color: #f39c12;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.clases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.clase-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border-left: 4px solid #f39c12;
+    transition: transform 0.3s ease;
+}
+
+.clase-card:hover {
+    transform: translateY(-5px);
+}
+
+.clase-card h3 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.clase-card p {
+    margin-bottom: 0.5rem;
+    color: #e0e0e0;
+}
+
+.clase-card i {
+    margin-right: 10px;
+    width: 25px;
+    color: #f39c12;
+}
+
+/* SECCION SELECCION */
+.section-seleccion {
+    margin-bottom: 2rem;
+}
+
+.section-seleccion h2 {
+    color: #f39c12;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.seleccion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.seleccion-box {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+.seleccion-box h4 {
+    color: #e74c3c;
+    margin-bottom: 1.2rem;
+    border-left: 3px solid #f39c12;
+    padding-left: 12px;
+}
+
+.seleccion-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.seleccion-box ul li {
+    padding: 10px 0;
+    color: #e0e0e0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.seleccion-box ul li:hover {
+    color: #f39c12;
+    transform: translateX(5px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container-main {
+        padding: 1rem;
+    }
+    
+    .welcome-section h1 {
+        font-size: 1.8rem;
+    }
+    
+    .cards-row {
+        flex-direction: column;
+    }
+    
+    .clases-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .seleccion-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ===================================================
+   LOGIN, SIGNUP Y FORMULARIOS
+   =================================================== */
+.login-box, .signup-box {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    max-width: 500px;
+    margin: 2rem auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.signup-box {
+    max-width: 700px;
+}
+
+.login-box h1, .signup-box h1 {
+    color: #f39c12;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.signup-box h3 {
+    color: #e74c3c;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(243, 156, 18, 0.3);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.login-box label, .signup-box label {
+    color: #e0e0e0;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.login-box input, .signup-box input, .signup-box select, .signup-box textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #2a2a3a;
+    border: 1px solid #3a3a4a;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.login-box input:focus, .signup-box input:focus, .signup-box select:focus, .signup-box textarea:focus {
+    outline: none;
+    border-color: #f39c12;
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
+    background-color: #353548;
+}
+
+.login-box input::placeholder, .signup-box input::placeholder, .signup-box textarea::placeholder {
+    color: #888;
+}
+
+.signup-box textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.error-text {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+.form-select {
+    cursor: pointer;
+}
+
+.form-select option {
+    background-color: #2a2a3a;
+    color: #ffffff;
+}
+
+.forgot-password {
+    color: #f39c12;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #e67e22;
+    text-decoration: underline;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    color: #b0b0b0 !important;
+}
+
+/* ===================================================
+   BOTONES
+   =================================================== */
+.btn-outline-light, .btn-primary-custom {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover, .btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+}
+
+.btn-secondary-custom {
+    background: linear-gradient(135deg, #7f8c8d, #636e72);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.button-group .btn,
+.button-group button {
+    min-width: 150px;
+}
+
+/* ===================================================
+   PÁGINA DE INICIO (HOME)
+   =================================================== */
+.home-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.home-hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+
+.home-hero p {
+    font-size: 1.2rem;
+    color: #b0b0b0;
+}
+
+/* Grid de cards para clases */
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.class-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    border-left: 4px solid #f39c12;
+    transition: all 0.3s ease;
+}
+
+.class-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.class-card h3 {
+    color: #f39c12;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.class-card .profesor {
+    color: #e74c3c;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.class-card .duracion {
+    color: #2ecc71;
+    margin-bottom: 0.5rem;
+}
+
+.class-card .fecha, .class-card .hora {
+    color: #b0b0b0;
+}
+
+/* ===================================================
+   SECCIÓN DE SELECCIÓN
+   =================================================== */
+.selection-section {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.selection-section h3 {
+    color: #f39c12;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.selection-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+.selection-box h4 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+}
+
+.selection-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.selection-box ul li {
+    padding: 8px 0;
+    color: #e0e0e0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.selection-box ul li:hover {
+    color: #f39c12;
+}
+
+/* ===================================================
+   PERFIL DE USUARIO
+   =================================================== */
+.profile-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+}
+
+.profile-info p {
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.profile-info strong {
+    color: #f39c12;
+}
+
+/* ===================================================
+   RUTINA
+   =================================================== */
+.routine-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.routine-day {
+    color: #f39c12;
+    font-size: 1.3rem;
+    border-left: 3px solid #f39c12;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.routine-exercise {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===================================================
+   MÓDULO COMPLETO: CREAR PLAN + VER PLANES
+   =================================================== */
+
+.plans-module {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 24px;
+    padding: 2rem;
+    margin: 1rem 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Cabecera del módulo */
+.module-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.module-header h2 {
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.module-header p {
+    color: #b0b0b0;
+    font-size: 1rem;
+}
+
+/* Sección del botón Crear Plan */
+.create-plan-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-create-plan {
+    background: linear-gradient(135deg, #00702f, #005e27);
+    color: white !important;
+    padding: 12px 32px;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-create-plan:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+}
+
+/* Sección del listado */
+.list-plans-section h3 {
+    color: #f39c12;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    border-left: 3px solid #f39c12;
+    padding-left: 15px;
+}
+
+/* Tabla (mismo estilo que antes) */
+.plans-table-container {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    overflow-x: auto;
+}
+
+.plans-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.plans-table thead tr {
+    background: rgba(243, 156, 18, 0.15);
+    border-bottom: 2px solid #f39c12;
+}
+
+.plans-table th {
+    text-align: left;
+    padding: 1rem;
+    color: #f39c12;
+}
+
+.plans-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.plans-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.plans-table td {
+    padding: 1rem;
+    color: #e0e0e0;
+}
+
+.plan-name-cell {
+    font-weight: 600;
+    color: #e74c3c;
+}
+
+.plan-price-cell {
+    font-weight: 700;
+    color: #2ecc71;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    margin-right: 8px;
+}
+
+.edit-btn {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db !important;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.edit-btn:hover {
+    background: #3498db;
+    color: white !important;
+}
+
+.delete-btn {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c !important;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.delete-btn:hover {
+    background: #e74c3c;
+    color: white !important;
+}
+
+.empty-row {
+    text-align: center;
+    padding: 2rem !important;
+    color: #b0b0b0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .plans-module {
+        padding: 1.5rem;
+    }
+    
+    .module-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .plans-table,
+    .plans-table thead,
+    .plans-table tbody,
+    .plans-table tr,
+    .plans-table td {
+        display: block;
+    }
+    
+    .plans-table thead {
+        display: none;
+    }
+    
+    .plans-table tbody tr {
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.3);
+    }
+    
+    .plans-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem 1rem;
+    }
+    
+    .plans-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #f39c12;
+        width: 35%;
+    }
+    
+    .plan-name-cell::before {
+        content: "Plan";
+    }
+    
+    .plan-description-cell::before {
+        content: "Descripción";
+    }
+    
+    .plan-price-cell::before {
+        content: "Precio";
+    }
+    
+    .plan-actions-cell::before {
+        content: "Acciones";
+    }
+}
+/* ===================================================
+   TUTORIALES
+   =================================================== */
+.tutorials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.tutorial-card {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-5px);
+}
+
+.tutorial-image {
+    height: 180px;
+    background: linear-gradient(135deg, #f39c12, #e74c3c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.tutorial-info {
+    padding: 1.5rem;
+}
+
+.tutorial-info h4 {
+    color: #f39c12;
+    margin-bottom: 0.5rem;
+}
+
+/* ===================================================
+   ALERTAS Y MENSAJES
+   =================================================== */
+.alert {
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: none;
+}
+
+.alert-error {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+}
+
+.alert-success {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border-left: 4px solid #2ecc71;
+}
+
+.alert-info {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border-left: 4px solid #3498db;
+}
+
+.alert-error ul {
+    margin-left: 1.5rem;
+}
+
+/* ===================================================
+   WARNING CARD
+   =================================================== */
+.warning-card {
+    background: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid #e74c3c;
+}
+
+.warning-card i {
+    color: #e74c3c;
+}
+
+.warning-card p {
+    color: #e74c3c;
+}
+
+.warning-card p strong {
+    color: #e74c3c;
+}
+
+/* =========RESPONSIVE GENERAL PARA HOME, LOGIN, SIGNUP Y PLANES======== */
+    .home-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .classes-grid, .tutorials-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .selection-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .login-box, .signup-box {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .signup-box h1 {
+        font-size: 1.5rem;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .button-group .btn,
+    .button-group button {
+        width: 100%;
+        min-width: unset;
+    }
+    
+    .plan-title {
+        font-size: 1.2rem;
+    }
+    
+    .plan-price {
+        font-size: 1.4rem;
+    }
+    
+    .plan-actions {
+        flex-direction: column;
+    }
+    
+    .btn-edit, .btn-delete-plan {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+@media (max-width: 480px) {
+    .container-main {
+        padding: 10px;
+    }
+    
+    .home-hero h1 {
+        font-size: 1.5rem;
+    }
+    
+    .card-modern, .info-card, .class-card {
+        padding: 1rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-modern, .info-card, .class-card, .login-box, .signup-box, .plan-card {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* ESTRUCTURA TIPO DJANGO ADMIN */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+.sidebar-logo {
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+}
+.sidebar-logo h2 {
+    background: linear-gradient(135deg, #e74c3c, #f39c12);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.sidebar-section-title {
+    color: #f39c12;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    padding: 10px 15px;
+}
+.sidebar-menu {
+    list-style: none;
+    padding-left: 0;
+}
+.sidebar-menu a {
+    display: flex;
+    padding: 10px 15px;
+    color: #e0e0e0;
+    text-decoration: none;
+    gap: 12px;
+}
+.sidebar-menu a:hover {
+    background: rgba(243,156,18,0.15);
+    color: #f39c12;
+}
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+}
+.top-navbar {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 12px 25px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(243,156,18,0.3);
+}
+.content-container {
+    padding: 25px 30px;
+}
+.user-tools span, .breadcrumbs a {
+    color: white;
+    text-decoration: none;
+}
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); position: fixed; }
+    .main-content { margin-left: 0; }
+}
+
+/* User tools en topbar */
+.user-tools {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-tools span {
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.user-tools a {
+    color: #b0b0b0;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.user-tools a:hover {
+    color: #f39c12;
+    transform: translateY(-1px);
+}

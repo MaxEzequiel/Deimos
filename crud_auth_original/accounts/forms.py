@@ -11,5 +11,3 @@ class UserEditForm(forms.ModelForm):
         widgets = {
             "is_staff" : forms.CheckboxInput()
         }
-        
-        

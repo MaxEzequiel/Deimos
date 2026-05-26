@@ -36,6 +36,13 @@
                             <a href="{% url 'edit_account' account.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar Usuario
                             </a>
+                            {% if account.is_active %}
+                            <a href="{% url 'deactivate_account' account.id %}" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Eliminar
+                            </a>
+                            {% else %}
+                            <p>Usuario No activo</p>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}

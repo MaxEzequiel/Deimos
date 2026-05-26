@@ -8,7 +8,7 @@ def plan_name_unique_validator(value):
         raise ValidationError("este nombre de plan ya se encuentra registrado")
 
 def plan_description_unique_validator(value):
-    if Plan.objects.filter(name=value).exists():
+    if Plan.objects.filter(description=value).exists():
         raise ValidationError("esta descripcion ya se encuentra en uso")
 
 
