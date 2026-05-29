@@ -892,6 +892,109 @@ CARDS Y CONTENEDORES
 .alert-error ul {
     margin-left: 1.5rem;
 }
+/* ===================================================
+   NOTIFICACIONES FLOTANTES (TOAST)
+   =================================================== */
+
+/* Contenedor fijo para mensajes flotantes */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 340px;
+}
+
+/* Estilo base de cada notificación flotante */
+.toast-notification {
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    animation: slideInRight 0.3s ease-out;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid;
+}
+
+/* Animación de entrada */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Animación de salida */
+@keyframes fadeOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Tipos de notificaciones */
+.toast-notification.toast-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.95));
+    color: white;
+    border-left-color: #6ee7b7;
+}
+
+.toast-notification.toast-error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(185, 28, 28, 0.95));
+    color: white;
+    border-left-color: #fca5a5;
+}
+
+.toast-notification.toast-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(180, 83, 9, 0.95));
+    color: white;
+    border-left-color: #fcd34d;
+}
+
+.toast-notification.toast-info {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(29, 78, 216, 0.95));
+    color: white;
+    border-left-color: #93c5fd;
+}
+
+/* Iconos antes del texto */
+.toast-notification::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+.toast-success::before {
+    content: "\f00c";
+}
+
+.toast-error::before {
+    content: "\f06a";
+}
+
+.toast-warning::before {
+    content: "\f071";
+}
+
+.toast-info::before {
+    content: "\f129";
+}
 
 /* ===================================================
    WARNING CARD
