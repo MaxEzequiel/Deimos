@@ -23,9 +23,9 @@
     <form action="" method="post">
         {% csrf_token %}
         
-        <button type="submit" class="btn-delete w-100 mt-3">
-            <i class="fas fa-trash-alt"></i> Desactivar cuenta
-        </button>
+<button type="submit" class="btn-outline-light">
+    <i class="fas fa-trash-alt"></i> Desactivar cuenta
+</button>
         
         <div class="button-group mt-3">
             <a href="{% url 'list_accounts' %}" class="btn-secondary-custom">

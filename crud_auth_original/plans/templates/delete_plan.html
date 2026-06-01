@@ -18,12 +18,12 @@
     <form action="" method="POST">
         {% csrf_token %}
         <div class="button-group">
+            <button type="submit" class="btn-outline-light">
+                <i class="fas fa-trash-alt"></i> Eliminar
+            </button>
             <a href="{% url 'list_plans' %}" class="btn-secondary-custom">
                 <i class="fas fa-times"></i> Cancelar
             </a>
-            <button type="submit" class="btn-delete">
-                <i class="fas fa-trash-alt"></i> Eliminar
-            </button>
         </div>
     </form>
 </div>

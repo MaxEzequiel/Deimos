@@ -1,11 +1,6 @@
 
-
-// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ================================================
-    // CONVERTIR MENSAJES DE DJANGO A NOTIFICACIONES FLOTANTES
-    // ================================================
     function convertDjangoMessages() {
         const messages = document.querySelectorAll('.alert');
         
@@ -142,8 +137,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
     
-    // ================================================
-    // EJECUTAR TODO
     // ================================================
     convertDjangoMessages();
     setupFormValidation();
