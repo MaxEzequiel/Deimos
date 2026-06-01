@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<div class="container-main">
-    <div class="welcome-section">
-        <h1>Usuarios Registrados</h1>
-        <p>Gestión de cuentas del sistema</p>
-    </div>
-
+<div class="container-main"></div>
     <div class="plans-module">
         <div class="module-header">
             <h2> Lista de Usuarios</h2>
             <p>Total: {{ accounts|length }} usuarios</p>
         </div>
-            <h3><a href="{% url 'create_account' %}">Crear Usuario</a></h3>
+<div class="create-plan-section">
+    <div style="text-align: left;">
+        <a href="{% url 'create_account' %}" class="btn-create-plan">
+            <i class="fas fa-plus-circle"></i> Crear Usuario
+        </a>
+    </div>
+</div>
+
         <div class="plans-table-container">
             <table class="plans-table">
                 <thead>

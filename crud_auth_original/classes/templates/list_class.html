@@ -6,7 +6,13 @@
         <div class="module-header">
             <h2>Lista de Clases</h2>
             <p>Gestión de clases disponibles</p>
-            <a href="{% url 'create_class' %}">Crear clase nueva</a>
+            <div class="create-plan-section">
+                <div style="text-align: left;">
+                    <a href="{% url 'create_class' %}" class="btn-create-plan">
+                        <i class="fas fa-plus-circle"></i> Crear clase nueva
+                    </a>
+                </div>
+            </div>
         </div>
         <div class="plans-table-container">
             <table class="plans-table">
