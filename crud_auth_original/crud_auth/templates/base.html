@@ -41,8 +41,8 @@
                     <ul class="sidebar-menu">
                         <li><a href="/home"><i class="fas fa-home"></i> Inicio</a></li>
                         {% if user.is_staff %}
-                        <li><a href="/list-plans"><i class="fas fa-dumbbell"></i> Planes</a></li>
                         <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Usuarios</a></li>
+                        <li><a href="/list-plans"><i class="fas fa-dumbbell"></i> Planes</a></li>
                         <li><a href="/list-class"><i class="fas fa-calendar-alt"></i> Clases</a></li>
                         {% endif %}
                         <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
