@@ -1,0 +1,7 @@
+Fallo en la logica de email. Existe email en user y person a la vez
+ - la recuperacion via email no es posible si no esta en el model de user
+ - no se renderiza correctamente en los template ya que toma solo uno de los 2 modelos
+
+
+bug con la cache de django, los permisos viejos se quedan almacenados en la cache
+al hacer un cambio debe actualizarse 

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib.auth import views
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import home, create_account, login_view, singout,deactivate_account, edit_account, list_accounts
+from accounts.views import home, create_account, login_view, singout,deactivate_account, edit_account, list_accounts, accounts_admin_home
 from memberships.views import edit_membership
 from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
 from classes.views import create_class, edit_class, list_class, delete_class
@@ -28,6 +28,7 @@ urlpatterns = [
     path("home/", home, name="home"),
     # modulo de usuarios
     path("accounts/", list_accounts, name="list_accounts"),
+    path("accounts/admin", accounts_admin_home, name = "accounts_admin_home"),
     path("accounts/create/", create_account, name="create_account"),
     path("accounts/logout/", singout, name="logout"),
     path("accounts/login/", login_view, name="login"),
@@ -47,6 +48,7 @@ urlpatterns = [
     path("list-class/", list_class, name="list_class"),
     path("delete_class/<int:course_id>",delete_class, name="delete_class"),
     # cure
-    path("error_403/", error_403, name="error_403")
+    path("error_403/", error_403, name="error_403"),
+    
 ]
 

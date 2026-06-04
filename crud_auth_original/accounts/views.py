@@ -138,3 +138,12 @@ def edit_account(request, account_id):
             "account_id": account_id,
         })
 
+
+
+# Admin de accounts 
+
+
+def accounts_admin_home(request):
+        if request.method == "GET":
+            users = User.objects.all().exclude(id = request.user.id)
+            return render(request, "accounts_admin_home.html",{"accounts" : users})

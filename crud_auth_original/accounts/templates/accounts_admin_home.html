@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Vista de Administracion de Usuarios</h1>
+
+{% for account in accounts %}
+
+{{ account.username }} {{ account.person.surname }}
+{{ account.person.email }}
+{{ account.person.dni }}
+
+
+{% endfor %}
+
+{% endblock content %}
