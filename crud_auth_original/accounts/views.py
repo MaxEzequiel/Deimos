@@ -18,6 +18,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 
 # vista de inicio con estado de membresia si es que existe 
+@login_required
 def home(request):
     if request.user.is_authenticated:
         try:
