@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/static/style/style.css">
 
     <!-- Noty CSS y JS -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
     <link rel="stylesheet" href="{% static 'style/responsive-fix.css' %}">
     {% block head %}{% endblock %}
@@ -42,8 +42,8 @@
                         <li><a href="/home"><i class="fas fa-home"></i> Inicio</a></li>
                         {% if user.is_staff %}
                         <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Usuarios</a></li>
-                        <li><a href="/list-plans"><i class="fas fa-dumbbell"></i> Planes</a></li>
-                        <li><a href="/list-class"><i class="fas fa-calendar-alt"></i> Clases</a></li>
+                        <li><a href="{% url 'list_plans' %}"><i class="fas fa-dumbbell"></i> Planes</a></li>
+                        <li><a href="{% url 'list_class' %}"><i class="fas fa-calendar-alt"></i> Clases</a></li>
                         {% endif %}
                         <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a></li>
                         {% if request.user.is_superuser %}

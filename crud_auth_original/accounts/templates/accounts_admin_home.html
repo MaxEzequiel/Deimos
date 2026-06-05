@@ -51,18 +51,9 @@
                             {% endif %}
                         </td>
                         <td data-label="Acciones" class="plan-actions-cell">
-                            <a href="{% url 'edit_account' account.id %}" class="action-btn edit-btn">
+                            <a href="{% url 'accounts_admin_edit' account.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            {% if account.is_active %}
-                            <a href="{% url 'deactivate_account' account.id %}" class="action-btn delete-btn">
-                                <i class="fas fa-trash-alt"></i> Desactivar
-                            </a>
-                            {% else %}
-                            <span style="color: #7f8c8d; font-size: 0.8rem;">
-                                <i class="fas fa-user-slash"></i> Usuario inactivo
-                            </span>
-                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
