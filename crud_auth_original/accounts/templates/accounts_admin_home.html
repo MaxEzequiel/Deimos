@@ -1,16 +1,80 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
+<div class="container-main">
+    <div class="plans-module">
+        <div class="module-header">
+            <h2>Lista de Usuarios</h2>
+            <p>Total: {{ accounts|length }} usuarios</p>
+        </div>
 
-<h1>Vista de Administracion de Usuarios</h1>
+        <div class="create-plan-section">
+            <div style="text-align: left;">
+                <a href="{% url 'create_account' %}" class="btn-create-plan">
+                    <i class="fas fa-plus-circle"></i> Crear Usuario
+                </a>
+            </div>
+        </div>
 
-{% for account in accounts %}
-
-{{ account.username }} {{ account.person.surname }}
-{{ account.person.email }}
-{{ account.person.dni }}
-
-
-{% endfor %}
-
+        <div class="plans-table-container">
+            <table class="plans-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre completo</th>
+                        <th>Email</th>
+                        <th>DNI</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td class="plan-name-cell" data-label="Usuario">
+                            <i class="fas fa-user-circle"></i> {{ account.username }}
+                        </td>
+                        <td data-label="Nombre completo">
+                            <i class="fas fa-user"></i> {{ account.person.surname }}, {{ account.person.name }}
+                        </td>
+                        <td data-label="Email">
+                            <i class="fas fa-envelope"></i> {{ account.person.email }}
+                        </td>
+                        <td data-label="DNI">
+                            <i class="fas fa-id-card"></i> {{ account.person.dni }}
+                        </td>
+                        <td data-label="Estado">
+                            {% if account.is_active %}
+                                <span style="color: #2ecc71;"><i class="fas fa-check-circle"></i> Activo</span>
+                            {% else %}
+                                <span style="color: #e74c3c;"><i class="fas fa-ban"></i> Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td data-label="Acciones" class="plan-actions-cell">
+                            <a href="{% url 'edit_account' account.id %}" class="action-btn edit-btn">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            {% if account.is_active %}
+                            <a href="{% url 'deactivate_account' account.id %}" class="action-btn delete-btn">
+                                <i class="fas fa-trash-alt"></i> Desactivar
+                            </a>
+                            {% else %}
+                            <span style="color: #7f8c8d; font-size: 0.8rem;">
+                                <i class="fas fa-user-slash"></i> Usuario inactivo
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="empty-row">
+                            <i class="fas fa-info-circle"></i> No hay usuarios registrados
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock content %}
