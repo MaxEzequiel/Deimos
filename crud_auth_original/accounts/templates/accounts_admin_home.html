@@ -10,6 +10,8 @@
 {{ account.person.email }}
 {{ account.person.dni }}
 
+<a href="{% url 'accounts_admin_edit' account.id %}">Editar Permisos</a>
+
 
 {% endfor %}
 

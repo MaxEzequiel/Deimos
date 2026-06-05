@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Permisos de {{ user.username }}</h1>
+
+    {% if messages %}
+    {% for msg in messages %}
+        <p>{{ msg }}</p>
+    {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for module in data %}
+            <h2>{{ module.label }}</h2>
+
+        {% for perm in module.perms %}
+            <label>
+                <input
+                type="checkbox"
+                name="{{ perm.checkbox }}"
+                {% if perm.granted %}checked{% endif %}
+            >
+            {{ perm.action }} — {{ perm.codename }}
+            </label><br>
+        {% endfor %}
+
+        {% endfor %}
+
+    <br>
+    <button type="submit">Guardar permisos</button>
+
+    </form>
+
+{% endblock %}

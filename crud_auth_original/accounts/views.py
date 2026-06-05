@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 
 # formularios de login y register
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 # modelo del usuario por defecto de django
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from accounts.forms import UserEditForm
 
 # datos del perfil persona
@@ -31,7 +33,7 @@ def home(request):
     else:
         return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
 
-
+@login_required
 def create_account(request):
     if request.method == "GET":
         return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm()})
@@ -143,8 +145,103 @@ def edit_account(request, account_id):
 
 # Admin de accounts 
 
-
+@login_required
 def accounts_admin_home(request):
         if request.method == "GET":
             users = User.objects.all().exclude(id = request.user.id)
             return render(request, "accounts_admin_home.html",{"accounts" : users})
+
+
+
+def accounts_admin_edit(request, account_id):
+    # instaciamos el usuario que recibe el get
+    
+    # Configuración de modelos para gestionar permisos
+    # app_label: nombre de la app de django que tiene el modelo de los permisos a gestionar
+    # model_name: nombre del modelo sobre el cual queremos realizar la gestion
+    # label: texto a mostrarse en el template
+    MODELS =  {
+        "planes" : {"app_label" : "plans", "model_name" : "plan", "label" : "Planes"},
+        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"}
+    }
+    if request.method == "GET":
+        target_user = User.objects.get(id = account_id)
+        if not request.user.is_staff:
+            return redirect("home")
+
+        # guardamos los id de los permisos que tiene el usuario activo actualmente
+        user_perms_ids = set(target_user.user_permissions.values_list("id", flat = True))
+        
+        modules_data = []
+        # recorre los modulos y su contenido  
+        for module_key, config in MODELS.items():
+            perms = [] 
+            # recorremos las 4 acciones que realizan como permiso dentro de un modelo
+            for action in ["add","change","delete","view"]:
+                # creamos el nombre de texto que tiene cada permiso action + _ + model name
+                codename = f"{action}_{config['model_name']}"
+                try:
+                    # content type contiene los modelos dentro de cada app y se usa de puntero en auth_permission
+                    content_type = ContentType.objects.get(
+                        app_label = config["app_label"],
+                        model = config["model_name"]
+                    )
+                    # traemos el objeto del permiso a que corresponde el content type y la accion del loop actual
+                    perm = Permission.objects.get(
+                        content_type = content_type,
+                        codename = codename
+                    )
+                    granted = perm.id in user_perms_ids
+                    # añadimos el perm y granted guarda un boolean si tiene o no el permiso activo
+                    perms.append({
+                    "action":    action,
+                    "codename":  codename,
+                    "checkbox":  f"perm_{module_key}_{action}",
+                    "granted":   granted,
+                })
+                except (ContentType.DoesNotExist, Permission.DoesNotExist):
+                    pass
+                # añadimos los permisos, el nombre del modulo y el label al diccionario final
+            modules_data.append(
+                {
+                    "key" : module_key,
+                    "label": config["label"],
+                    "perms": perms
+                }
+            )
+        # retornamos todo en una vista
+        return render(request, "accounts_admin_edit.html", {"user": target_user, "data": modules_data})
+    
+    if request.method == "POST":
+        target_user = User.objects.get(id = account_id)
+        if not request.user.is_staff:
+            return redirect("home")
+        
+        # Recopilar todos los permisos que debería tener el usuario
+        perms_to_assign = []
+        
+        for module_key, config in MODELS.items():
+            for action in ["add","change","delete","view"]:
+                codename = f"{action}_{config['model_name']}"
+                checkbox_name = f"perm_{module_key}_{action}"
+                
+                try:
+                    content_type = ContentType.objects.get(
+                        app_label=config["app_label"],
+                        model=config["model_name"],
+                    )
+                    perm = Permission.objects.get(
+                        content_type=content_type,
+                        codename=codename,
+                    )
+                except (ContentType.DoesNotExist, Permission.DoesNotExist) as e:
+                    continue
+                
+                # Si el checkbox está marcado, añadir el permiso a la lista
+                if checkbox_name in request.POST:
+                    perms_to_assign.append(perm)
+        
+        # Asignar todos los permisos de una vez (reemplaza los anteriores)
+        target_user.user_permissions.set(perms_to_assign)
+        messages.success(request, "Permisos actualizados")
+        return redirect("accounts_admin_home")
