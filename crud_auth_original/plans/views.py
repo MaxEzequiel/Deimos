@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from plans.forms import PlanForm
 
 @login_required
-@permission_required("plans.add_plan", login_url="/error_403")
+@permission_required(["plans.add_plan","plans.view_plan"], login_url="/error_403")
 def create_plan(request):
     if request.method == "POST":
         plan = PlanForm(request.POST)
@@ -32,13 +32,14 @@ def list_plans(request):
 
 @login_required
 @pdf_decorator
+@permission_required(["plans.view_plan"], login_url="/error_403")
 def plans_pdf(request):
     if request.method == "GET":
         plans = Plan.objects.all()
         return render(request, "plans_pdf.html", {"plans": plans})
 
 @login_required
-@permission_required("plans.change_plan", login_url="/error_403")
+@permission_required(["plans.change_plan","plans.view_plan"], login_url="/error_403")
 def edit_plan(request, plan_id):
     plan = Plan.objects.get(id=plan_id)
     if request.method == "GET":
@@ -54,7 +55,7 @@ def edit_plan(request, plan_id):
             return render(request, "edit_plan.html", {"form": form, "error": error})
 
 @login_required
-@permission_required("plans.delete_plan", login_url="/error_403")
+@permission_required(["plans.delete_plan","plans.view_plan"], login_url="/error_403")
 def delete_plan(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
     if request.method == "GET":
