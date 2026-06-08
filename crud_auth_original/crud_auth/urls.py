@@ -18,6 +18,7 @@ from django.contrib.auth import views
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import *
+from accounts.groups import *
 from memberships.views import edit_membership
 from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
 from classes.views import create_class, edit_class, list_class, delete_class
@@ -50,6 +51,8 @@ urlpatterns = [
     path("delete_class/<int:course_id>",delete_class, name="delete_class"),
     # cure
     path("error_403/", error_403, name="error_403"),
-    
+    # grupos de permisos
+    path("accounts/admin/groups", accounts_admin_group_list, name="accounts_admin_group_list"),
+    path("accounts/admin/groups/create", accounts_admin_group_create, name="accounts_admin_group_create")
 ]
 

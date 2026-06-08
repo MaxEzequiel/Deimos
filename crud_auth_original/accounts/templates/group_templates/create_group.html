@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form }}
+    
+    {% for module in data %}
+        <h3>{{ module.label }}</h3>
+        {% for perm in module.perms %}
+            <label>
+                <input type="checkbox" 
+                        name="{{ perm.checkbox }}" 
+                        id="{{ perm.checkbox }}">
+                {{ perm.action }}
+            </label>
+        {% endfor %}
+    {% endfor %}
+    
+    <button type="submit">Crear grupo</button>
+</form>
+
+{% endblock content %}
