@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 # modelo del usuario por defecto de django
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User, Permission, Group 
 from accounts.forms import UserEditForm
 
 # datos del perfil persona
@@ -154,4 +154,17 @@ def accounts_admin_home(request):
 
 
 def accounts_admin_edit(request, account_id):
-    pass
+    if request.method == "GET":
+        groups = Group.objects.all()
+        user = User.objects.get(id = account_id)
+        return render(request, "accounts_admin_edit.html", {"user" : user, "groups" : groups})
+    
+    if request.method == "POST":
+        group_id = request.POST.get("group_id")
+        user = User.objects.get(id = account_id)
+        user.groups.clear()
+        # Obtener el objeto Group usando el ID y asignarlo al usuario
+        if group_id:
+            group = Group.objects.get(id=group_id)
+            user.groups.add(group)
+        return redirect("accounts_admin_home")

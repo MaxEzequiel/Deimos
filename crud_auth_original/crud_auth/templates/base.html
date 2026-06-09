@@ -47,7 +47,7 @@
                         {% endif %}
                         <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a></li>
                         {% if request.user.is_superuser %}
-                        <li><a href="{% url 'accounts_admin_home' %}"><i class="fas fa-cog"></i> Administrar Usuarios</a></li>
+                        <li><a href="{% url 'accounts_admin_home' %}"><i class="fas fa-cog"></i> Administrar Grupos</a></li>
                         {% endif %}
                     </ul>
                 </div>

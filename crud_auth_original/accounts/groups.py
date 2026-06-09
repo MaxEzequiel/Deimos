@@ -63,7 +63,6 @@ def accounts_admin_group_create(request):
         # retornamos todo en una vista
         return render(request, "group_templates/create_group.html", {"data": modules_data, "form" : form})
     
-    
     if request.method == "POST":
         # Recopilar todos los permisos que deberia tener el grupo
         perms_to_assign = []
@@ -95,3 +94,104 @@ def accounts_admin_group_create(request):
         group_created.permissions.add(*perms_to_assign)
         messages.success(request, "Grupo Creado correctamente")
         return redirect("accounts_admin_home")
+
+
+def accounts_admin_group_edit(request, group_id):
+    # Definición de modelos disponibles para asignar permisos
+    MODELS =  {
+        "planes" : {"app_label" : "plans", "model_name" : "plan", "label" : "Planes"},
+        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"}
+    }
+    
+    # Obtener el grupo a editar
+    try:
+        group = Group.objects.get(id=group_id)
+    except Group.DoesNotExist:
+        messages.error(request, "El grupo no existe")
+        return redirect("accounts_admin_home")
+    
+    # Construir la estructura de módulos y permisos
+    modules_data = []
+    for module_key, config in MODELS.items():
+        perms = []
+        # Recorrer las 4 acciones (add, change, delete, view) para cada modelo
+        for action in ["add","change","delete","view"]:
+            codename = f"{action}_{config['model_name']}"
+            try:
+                content_type = ContentType.objects.get(
+                    app_label = config["app_label"],
+                    model = config["model_name"]
+                )
+                perm = Permission.objects.get(
+                    content_type = content_type,
+                    codename = codename
+                )
+                # Verificar si el grupo actual tiene este permiso
+                has_perm = group.permissions.filter(id=perm.id).exists()
+                perms.append({
+                    "action": action,
+                    "codename": codename,
+                    "checkbox": f"perm_{module_key}_{action}",
+                    "has_perm": has_perm  # Indicar si el grupo ya tiene este permiso
+                })
+            except (ContentType.DoesNotExist, Permission.DoesNotExist):
+                pass
+        
+        modules_data.append(
+            {
+                "key" : module_key,
+                "label": config["label"],
+                "perms": perms
+            }
+        )
+    
+    if request.method == "GET":
+        form = GroupForm(instance=group)
+        return render(request, "group_templates/edit_group.html", {
+            "form": form,
+            "data": modules_data,
+            "group": group
+        })
+    
+    if request.method == "POST":
+        # Actualizar nombre del grupo
+        form = GroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            
+            # Limpiar permisos anteriores
+            group.permissions.clear()
+            
+            # Recopilar nuevos permisos a asignar
+            perms_to_assign = []
+            for module_key, config in MODELS.items():
+                for action in ["add","change","delete","view"]:
+                    codename = f"{action}_{config['model_name']}"
+                    checkbox_name = f"perm_{module_key}_{action}"
+                    
+                    try:
+                        content_type = ContentType.objects.get(
+                            app_label=config["app_label"],
+                            model=config["model_name"],
+                        )
+                        perm = Permission.objects.get(
+                            content_type=content_type,
+                            codename=codename,
+                        )
+                    except (ContentType.DoesNotExist, Permission.DoesNotExist):
+                        continue
+                    
+                    # Si el checkbox está marcado, añadir el permiso a la lista
+                    if checkbox_name in request.POST:
+                        perms_to_assign.append(perm)
+            
+            # Asignar los nuevos permisos
+            group.permissions.add(*perms_to_assign)
+            messages.success(request, "Grupo actualizado correctamente")
+            return redirect("accounts_admin_home")
+        else:
+            return render(request, "group_templates/edit_group.html", {
+                "form": form,
+                "data": modules_data,
+                "group": group
+            })
