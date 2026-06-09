@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="signup-box">
+    <h1 class="text-center">
+        <i class="fas fa-user-plus"></i> Registrar Usuario
+    </h1>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-user-circle"></i> Datos de usuario
+            </h3>
+            <div class="form-group">
+                {{ user_form.username.label_tag }}
+                {{ user_form.username }}
+                {% if user_form.username.errors %}
+                <div class="error-text">{{ user_form.username.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ user_form.password1.label_tag }}
+                {{ user_form.password1 }}
+                {% if user_form.password1.errors %}
+                <div class="error-text">{{ user_form.password1.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                {{ user_form.password2.label_tag }}
+                {{ user_form.password2 }}
+                {% if user_form.password2.errors %}
+                <div class="error-text">{{ user_form.password2.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <label for="is_staff" class="form-label">
+                <i class="fas fa-user-tag"></i> Tipo de usuario:
+            </label>
+            <select name="is_staff" id="is_staff" class="form-select">
+                <option value="0">Usuario normal</option>
+                <option value="1">Administrador (Staff)</option>
+            </select>
+        </div>
+
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-address-card"></i> Datos personales
+            </h3>
+            {% for field in person_form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-text">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <button type="submit" class="btn-outline-light">
+            <i class="fas fa-save"></i> Guardar Usuario
+        </button>
+        
+        {% if error %}
+        <div class="alert alert-error mt-3">
+            <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+{% endblock %}

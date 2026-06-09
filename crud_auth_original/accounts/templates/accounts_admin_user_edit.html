@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Editar Cuenta</h1>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    
+    <h2>Datos de Usuario</h2>
+    
+    {% for field in user_form %}
+    <div>
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+        <div style="color: red;">{{ field.errors }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <h2>Datos Personales</h2>
+    {% for field in person_form %}
+    <div>
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+        <div style="color: red;">{{ field.errors }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <select name="group_id" id="">
+        {% for group in groups %}
+        <option value="{{ group.id }}" 
+            {% if group in user.groups.all %}selected{% endif %}>
+            {{ group.name }} 
+        </option>
+        {% endfor %}
+        </select>
+        
+        <button type="submit">Guardar</button>
+</form>
+{% endblock content %}

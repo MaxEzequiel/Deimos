@@ -2,6 +2,99 @@
 
 {% block content %}
 
+<style>
+  .groups-box {
+    max-width: 520px;
+    margin: 3rem auto;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 2.5rem;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    color: #f0f0f0;
+  }
 
+  .groups-box h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1.8rem;
+  }
+
+  .groups-box h1 i {
+    margin-right: 0.5rem;
+    opacity: 0.85;
+  }
+
+  .group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .group-item h4 {
+    margin: 0;
+  }
+
+  .group-item a {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #f0f0f0;
+    text-decoration: none;
+    font-size: 0.97rem;
+    font-weight: 500;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .group-item a i {
+    opacity: 0.65;
+    font-size: 0.85rem;
+  }
+
+  .group-item a:hover {
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+  }
+
+  .group-item a:hover i {
+    opacity: 1;
+  }
+
+  .groups-empty {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.92rem;
+    padding: 1.5rem 0;
+  }
+</style>
+
+<div class="groups-box">
+  <h1 class="text-center">
+    <i class="fas fa-layer-group"></i> Grupos
+  </h1>
+
+  <div class="group-list">
+    {% for group in groups %}
+    <div class="group-item">
+      <h4>
+        <a href="{% url 'accounts_admin_group_edit' group.id %}">
+          <i class="fas fa-chevron-right"></i> {{ group.name }}
+        </a>
+      </h4>
+    </div>
+    {% empty %}
+    <p class="groups-empty">
+      <i class="fas fa-inbox"></i> No hay grupos registrados.
+    </p>
+    {% endfor %}
+  </div>
+</div>
 
 {% endblock content %}
