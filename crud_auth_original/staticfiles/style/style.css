@@ -653,7 +653,7 @@ CARDS Y CONTENEDORES
 }
 
 .btn-create-plan {
-    background: linear-gradient(135deg, #00702f, #005e27);
+    background: linear-gradient(135deg, #002c13, #003516);
     color: white !important;
     padding: 12px 32px;
     border-radius: 40px;
@@ -668,7 +668,7 @@ CARDS Y CONTENEDORES
 
 .btn-create-plan:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+    box-shadow: 0 8px 20px rgba(0, 49, 21, 0.4);
 }
 
 /* Sección del listado */
