@@ -338,7 +338,7 @@ CARDS Y CONTENEDORES
 .login-box input:focus, .signup-box input:focus, .signup-box select:focus, .signup-box textarea:focus {
     outline: none;
     border-color: fdfdfd;
-    box-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
+    box-shadow: 0 0 10px rgba(250, 203, 127, 0.3);
     background-color: #353548;
 }
 
@@ -368,12 +368,12 @@ CARDS Y CONTENEDORES
 
 .forgot-password {
     color: fdfdfd;
-    text-decoration: none;
+    text-decoration: #e0e0e0;
     transition: color 0.3s ease;
 }
 
 .forgot-password:hover {
-    color: #e67e22;
+    color: #f8f3ef;
     text-decoration: underline;
 }
 
