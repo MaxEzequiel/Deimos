@@ -40,11 +40,11 @@
                     <div class="sidebar-section-title">MENÚ</div>
                     <ul class="sidebar-menu">
                         <li><a href="/home"><i class="fas fa-home"></i> Inicio</a></li>
-                        {% if user.is_staff %}
+                        
                         <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Usuarios</a></li>
                         <li><a href="{% url 'list_plans' %}"><i class="fas fa-dumbbell"></i> Planes</a></li>
                         <li><a href="{% url 'list_class' %}"><i class="fas fa-calendar-alt"></i> Clases</a></li>
-                        {% endif %}
+                        
                         <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a></li>
                         {% if request.user.is_superuser %}
                         <li><a href="{% url 'accounts_admin_home' %}"><i class="fas fa-cog"></i> Administrar Grupos</a></li>

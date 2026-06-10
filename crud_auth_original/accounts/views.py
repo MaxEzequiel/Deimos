@@ -34,18 +34,25 @@ def home(request):
         return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
 
 @login_required
+@login_required
 def create_account(request):
     if request.method == "GET":
         return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm()})
     else:
         user_form = UserCreationForm(request.POST)
         person_form = PersonForm(request.POST)
+        
         if user_form.is_valid() and person_form.is_valid():
             try:
-                # creamos el objeto del formulario recibido sin guardar para añadir el campo de is_staff
-                # al formulario final
+                # creamos el objeto del formulario recibido sin guardar para añadir campos adicionales
                 user = user_form.save(commit=False)
-                user.is_staff = request.POST.get("is_staff", False)
+                
+                # Verificar si se marcó la opción "es administrador"
+                is_admin = request.POST.get('is_admin') == 'on'
+                if is_admin:
+                    user.is_superuser = True
+                    user.is_staff = True  # También necesita is_staff para acceder al admin
+                
                 user.save()
                 
                 person = person_form.save(commit=False)
@@ -80,7 +87,7 @@ def login_view(request):
             username=request.POST["username"],
             password=request.POST["password"],
         )
-        if user is None:
+        if user is None or user.is_active == 0:
             logout(request)
             return render(
                 request,

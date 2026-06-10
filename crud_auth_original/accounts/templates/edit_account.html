@@ -1,34 +1,196 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Editar Cuenta</h1>
 
-<form action="" method="POST">
+<style>
+  .edit-account-box {
+    max-width: 680px;
+    margin: 3rem auto;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 2.5rem;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    color: #f0f0f0;
+  }
+
+  .edit-account-box h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1.8rem;
+    text-align: center;
+  }
+
+  .edit-account-box h1 i {
+    margin-right: 0.5rem;
+    opacity: 0.85;
+  }
+
+  .edit-account-box h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .edit-account-box h2:first-of-type {
+    margin-top: 0;
+  }
+
+  /* Estilos para los campos del formulario */
+  .form-field {
+    margin-bottom: 1.2rem;
+  }
+
+  .edit-account-box label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .edit-account-box input[type="text"],
+  .edit-account-box input[type="password"],
+  .edit-account-box input[type="email"],
+  .edit-account-box input[type="date"],
+  .edit-account-box select,
+  .edit-account-box textarea {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #f0f0f0;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .edit-account-box input:focus,
+  .edit-account-box select:focus,
+  .edit-account-box textarea:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Estilos para los errores */
+  .error-message {
+    color: #ff8a92;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    display: block;
+  }
+
+  .errorlist {
+    color: #ff8a92;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    padding-left: 1.2rem;
+  }
+
+  /* Estilos específicos para checkbox y radio */
+  .edit-account-box input[type="checkbox"],
+  .edit-account-box input[type="radio"] {
+    width: auto;
+    margin-right: 0.5rem;
+    accent-color: #4a9eff;
+  }
+
+  /* Estilos para el botón */
+  .btn-save {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 0.7rem 1.5rem;
+    color: #f0f0f0;
+    font-size: 0.97rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 1.5rem;
+    width: 100%;
+  }
+
+  .btn-save:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .btn-save i {
+    margin-right: 0.5rem;
+  }
+
+  /* Estilo para campos deshabilitados */
+  .edit-account-box input:disabled,
+  .edit-account-box select:disabled,
+  .edit-account-box textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Texto de ayuda */
+  .helptext {
+    display: block;
+    margin-top: 0.25rem;
+    opacity: 0.6;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+</style>
+
+<div class="edit-account-box">
+  <h1>
+    <i class="fas fa-user-edit"></i> Editar Cuenta
+  </h1>
+
+  <form action="" method="POST">
     {% csrf_token %}
     
-    <h2>Datos de Usuario</h2>
+    <h2>
+      <i class="fas fa-user-circle"></i> Datos de Usuario
+    </h2>
     
     {% for field in user_form %}
-    <div>
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.errors %}
-        <div style="color: red;">{{ field.errors }}</div>
-        {% endif %}
+    <div class="form-field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}
+        <small class="helptext">{{ field.help_text }}</small>
+      {% endif %}
+      {% if field.errors %}
+        <div class="errorlist">{{ field.errors }}</div>
+      {% endif %}
     </div>
     {% endfor %}
 
-    <h2>Datos Personales</h2>
+    <h2>
+      <i class="fas fa-id-card"></i> Datos Personales
+    </h2>
     {% for field in person_form %}
-    <div>
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.errors %}
-        <div style="color: red;">{{ field.errors }}</div>
-        {% endif %}
+    <div class="form-field">
+      {{ field.label_tag }}
+      {{ field }}
+      {% if field.help_text %}
+        <small class="helptext">{{ field.help_text }}</small>
+      {% endif %}
+      {% if field.errors %}
+        <div class="errorlist">{{ field.errors }}</div>
+      {% endif %}
     </div>
     {% endfor %}
     
-    <button type="submit">Guardar Cambios</button>
-</form>
+    <button type="submit" class="btn-save">
+      <i class="fas fa-save"></i> Guardar Cambios
+    </button>
+  </form>
+</div>
+
 {% endblock content %}

@@ -37,16 +37,21 @@
                 <div class="error-text">{{ user_form.password2.errors }}</div>
                 {% endif %}
             </div>
-        </div>
-        
-        <div class="form-section">
-            <label for="is_staff" class="form-label">
-                <i class="fas fa-user-tag"></i> Tipo de usuario:
-            </label>
-            <select name="is_staff" id="is_staff" class="form-select">
-                <option value="0">Usuario normal</option>
-                <option value="1">Administrador (Staff)</option>
-            </select>
+
+            <!-- Campo para seleccionar si es administrador -->
+            <div class="form-group">
+                <label for="is_admin">
+                    <i class="fas fa-user-shield"></i> Es administrador
+                </label>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                    <input type="checkbox" 
+                           name="is_admin" 
+                           id="is_admin"
+                           style="width: auto; margin: 0;">
+                    <span style="opacity: 0.7; font-size: 0.85rem;">Marcar si el usuario será administrador del sistema</span>
+                </div>
+                <small style="display: block; margin-top: 0.25rem; opacity: 0.6;">Los administradores tienen acceso a todas las funcionalidades del sistema.</small>
+            </div>
         </div>
 
         <div class="form-section">
