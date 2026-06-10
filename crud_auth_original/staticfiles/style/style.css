@@ -1097,14 +1097,14 @@ CARDS Y CONTENEDORES
     animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* ESTRUCTURA TIPO DJANGO ADMIN */
+/* SIDEBAR*/
 .admin-layout {
     display: flex;
     min-height: 100vh;
 }
 .sidebar {
     width: 280px;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-right: 1px solid rgba(255,255,255,0.1);
     position: fixed;
     height: 100vh;
@@ -1139,7 +1139,7 @@ CARDS Y CONTENEDORES
     gap: 12px;
 }
 .sidebar-menu a:hover {
-    background: rgba(243,156,18,0.15);
+    background: rgba(252, 246, 211, 0.445);
     color: fdfdfd;
 }
 .main-content {
