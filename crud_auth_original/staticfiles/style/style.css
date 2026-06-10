@@ -656,9 +656,9 @@ CARDS Y CONTENEDORES
     background: linear-gradient(135deg, #002c13, #003516);
     color: white !important;
     padding: 12px 32px;
-    border-radius: 40px;
+    border-radius: 10px;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 1rem;
     display: inline-flex;
     align-items: center;
@@ -744,7 +744,7 @@ CARDS Y CONTENEDORES
 }
 
 .edit-btn:hover {
-    background: #3498db;
+    background: #03548a;
     color: white !important;
 }
 
@@ -755,7 +755,7 @@ CARDS Y CONTENEDORES
 }
 
 .delete-btn:hover {
-    background: #e74c3c;
+    background: #790d02;
     color: white !important;
 }
 
