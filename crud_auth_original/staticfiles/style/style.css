@@ -114,7 +114,7 @@ CARDS Y CONTENEDORES
 .card-info {
     flex: 1;
     min-width: 250px;
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-radius: 20px;
     padding: 1.8rem;
     text-align: center;
@@ -178,7 +178,7 @@ CARDS Y CONTENEDORES
 }
 
 .clase-card {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-radius: 20px;
     padding: 1.5rem;
     border-left: 4px solid fdfdfd;
@@ -190,7 +190,7 @@ CARDS Y CONTENEDORES
 }
 
 .clase-card h3 {
-    color: #e74c3c;
+    color: #ffffff;
     margin-bottom: 1rem;
     font-size: 1.4rem;
 }
@@ -230,7 +230,7 @@ CARDS Y CONTENEDORES
 }
 
 .seleccion-box h4 {
-    color: #e74c3c;
+    color: #ffffff;
     margin-bottom: 1.2rem;
     border-left: 3px solid fdfdfd;
     padding-left: 12px;
@@ -302,11 +302,11 @@ CARDS Y CONTENEDORES
 }
 
 .signup-box h3 {
-    color: #e74c3c;
+    color: #fcfcfc;
     font-size: 1.3rem;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(243, 156, 18, 0.3);
+    border-bottom: 2px solid rgba(255, 210, 137, 0.3);
 }
 
 .form-section {
@@ -471,7 +471,7 @@ CARDS Y CONTENEDORES
 }
 
 .class-card {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-radius: 20px;
     padding: 1.5rem;
     border-left: 4px solid fdfdfd;
@@ -490,7 +490,7 @@ CARDS Y CONTENEDORES
 }
 
 .class-card .profesor {
-    color: #e74c3c;
+    color: #ffffff;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -508,7 +508,7 @@ CARDS Y CONTENEDORES
    SECCIÓN DE SELECCIÓN
    =================================================== */
 .selection-section {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-radius: 20px;
     padding: 1.5rem;
     margin-top: 2rem;
@@ -533,7 +533,7 @@ CARDS Y CONTENEDORES
 }
 
 .selection-box h4 {
-    color: #e74c3c;
+    color: #ffffff;
     margin-bottom: 1rem;
 }
 
@@ -558,7 +558,7 @@ CARDS Y CONTENEDORES
    PERFIL DE USUARIO
    =================================================== */
 .profile-card {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-radius: 24px;
     padding: 2rem;
     text-align: center;
@@ -591,7 +591,7 @@ CARDS Y CONTENEDORES
    RUTINA
    =================================================== */
 .routine-card {
-    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3a 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-radius: 20px;
     padding: 1.5rem;
     margin-bottom: 1rem;
@@ -833,7 +833,7 @@ CARDS Y CONTENEDORES
 }
 
 .tutorial-card {
-    background: linear-gradient(135deg, #161616 0%, #19191b 100%);
+    background: linear-gradient(135deg, #232324 0%, #151516 100%);
     border-radius: 20px;
     overflow: hidden;
     transition: transform 0.3s ease;
@@ -845,7 +845,7 @@ CARDS Y CONTENEDORES
 
 .tutorial-image {
     height: 180px;
-    background: linear-gradient(135deg, fdfdfd, #e74c3c);
+    background: linear-gradient(135deg, fdfdfd, #888787);
     display: flex;
     align-items: center;
     justify-content: center;
