@@ -721,7 +721,7 @@ CARDS Y CONTENEDORES
 
 .plan-name-cell {
     font-weight: 600;
-    color: #e74c3c;
+    color: #f7f3f3;
 }
 
 .plan-price-cell {
@@ -813,6 +813,7 @@ CARDS Y CONTENEDORES
     
     .plan-name-cell::before {
         content: "Plan";
+        color: #fdfdfd;
     }
     
     .plan-description-cell::before {
@@ -1118,12 +1119,13 @@ CARDS Y CONTENEDORES
     overflow-y: auto;
 }
 .sidebar-logo {
+    color: #fdfdfd;
     padding: 25px 20px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     text-align: center;
 }
 .sidebar-logo h2 {
-    background: linear-gradient(135deg, #6d6c6b, fdfdfd);
+    background: linear-gradient(135deg, #6d6c6b, #fdfdfd);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
