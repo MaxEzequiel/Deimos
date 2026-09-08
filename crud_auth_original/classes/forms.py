@@ -1,6 +1,6 @@
 from django.core import validators
 from django import forms
-from classes.models import Course, inscription
+from classes.models import Course, Inscription
 # meow
 class CourseForm(forms.ModelForm):
     class Meta:

@@ -34,7 +34,6 @@ def home(request):
         return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
 
 @login_required
-@login_required
 def create_account(request):
     if request.method == "GET":
         return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm()})
@@ -114,13 +113,13 @@ def deactivate_account(request, account_id):
 
 
 # vistas de gestion de usuarios 
-
+@login_required
 def list_accounts(request):
     if request.method == "GET":
         users = User.objects.all().exclude(id = request.user.id)
         return render(request, "list_accounts.html",{"accounts" : users})
 
-
+@login_required
 def edit_account(request, account_id):
     user = get_object_or_404(User, id=account_id)
     person = get_object_or_404(Person, user=user)
@@ -159,7 +158,7 @@ def accounts_admin_home(request):
             return render(request, "accounts_admin_home.html",{"accounts" : users})
 
 
-
+@login_required
 def accounts_admin_edit(request, account_id):
     if request.method == "GET":
         groups = Group.objects.all()

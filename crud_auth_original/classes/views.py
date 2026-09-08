@@ -52,3 +52,4 @@ def delete_class(request, course_id):
         course = Course.objects.get(id = course_id)
         course.delete()
         return redirect("list_class")
+
