@@ -1199,3 +1199,175 @@ CARDS Y CONTENEDORES
     color: #fdfdfd;
     transform: translateY(-1px);
 }
+
+/* ===================================================
+PÁGINAS DE AUTENTICACIÓN (LOGIN, RECUPERACIÓN
+   =================================================== */
+
+/* Contenedor principal*/
+.auth-page-body {
+    background-color: #0a0a0a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+}
+
+.auth-wrapper {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* Título de autenticación */
+.auth-title {
+    text-align: center;
+    margin-bottom: 0.25rem;
+}
+
+.auth-title h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.auth-title h1 i {
+    background: linear-gradient(135deg, #fdfdfd, #c7c7c7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-right: 10px;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 30px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.auth-description {
+    text-align: center;
+    color: #b0b0b0;
+    margin-bottom: 25px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Footer de autenticación */
+.auth-footer-links {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.auth-footer-links a {
+    color: #999;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    margin: 0 10px;
+}
+
+.auth-footer-links a:hover {
+    color: #fdfdfd;
+}
+
+.auth-footer-links a i {
+    margin-right: 6px;
+}
+
+/* Íconos de éxito */
+.auth-success-icon {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.auth-success-icon i {
+    font-size: 48px;
+    color: #2ecc71;
+    margin-bottom: 20px;
+}
+
+/* Responsive para autenticación */
+@media (min-width: 992px) {
+    .auth-wrapper {
+        max-width: 520px;
+    }
+    
+    .login-box {
+        padding: 3rem 2.5rem !important;
+    }
+    
+    .auth-title h1 {
+        font-size: 2.5rem !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .auth-wrapper {
+        max-width: 480px;
+    }
+    
+    .login-box {
+        padding: 2.5rem 2rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .auth-wrapper {
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    
+    .login-box {
+        padding: 2rem 1.5rem !important;
+        margin: 0 !important;
+    }
+    
+    .auth-title h1 {
+        font-size: 1.8rem !important;
+    }
+    
+    .auth-title h1 i {
+        font-size: 2rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .auth-title h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .login-box input {
+        font-size: 14px !important;
+        padding: 10px 12px !important;
+    }
+    
+    .btn-outline-light {
+        font-size: 14px !important;
+        padding: 10px !important;
+    }
+}
+
+/* ===================================================
+   GRÁFICAS Y CHARTS
+   =================================================== */
+.chart-container {
+    background: linear-gradient(135deg, #1a1a1b 0%, #0d0d0e 100%);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chart-container canvas {
+    max-height: 300px;
+}
