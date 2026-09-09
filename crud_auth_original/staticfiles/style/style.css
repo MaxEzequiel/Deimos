@@ -125,6 +125,9 @@ CARDS Y CONTENEDORES
 
 .card-info:hover {
     transform: translateY(-5px);
+    background: linear-gradient(135deg, #2a2a2b, #1a1a1b);
+    border: 1px solid #2ecc71;
+    box-shadow: 0 0 25px rgba(46, 204, 113, 0.15);
 }
 
 .card-icon {
@@ -188,6 +191,9 @@ CARDS Y CONTENEDORES
 
 .clase-card:hover {
     transform: translateY(-5px);
+    background: linear-gradient(135deg, #2a2a2b, #1a1a1b);
+    border: 1px solid #2ecc71;
+    box-shadow: 0 0 25px rgba(46, 204, 113, 0.15);
 }
 
 .clase-card h3 {
@@ -251,8 +257,10 @@ CARDS Y CONTENEDORES
 }
 
 .seleccion-box ul li:hover {
-    color: fdfdfd;
+    color: #fdfdfd;
     transform: translateX(5px);
+    border-left: 3px solid #2ecc71;
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.1);
 }
 
 /* RESPONSIVE */
@@ -353,6 +361,13 @@ CARDS Y CONTENEDORES
     font-family: inherit;
 }
 
+.login-box input:hover, 
+.signup-box input:hover, 
+.signup-box select:hover {
+    border: 1px solid #2ecc71 !important;
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
+}
+
 .error-text {
     color: #e74c3c;
     font-size: 0.85rem;
@@ -406,6 +421,8 @@ CARDS Y CONTENEDORES
 .btn-outline-light:hover, .btn-primary-custom:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 20px rgba(243, 156, 18, 0.4);
+    border: 2px solid #2ecc71;
+    box-shadow: 0 0 25px rgba(46, 204, 113, 0.3);   
 }
 
 .btn-secondary-custom {
@@ -440,6 +457,7 @@ CARDS Y CONTENEDORES
 .button-group button {
     min-width: 150px;
 }
+
 
 /* ===================================================
    PÁGINA DE INICIO (HOME)
@@ -553,7 +571,11 @@ CARDS Y CONTENEDORES
 }
 
 .selection-box ul li:hover {
-    color: fdfdfd;
+    color: #fdfdfd;
+}
+i:hover {
+    color: #2ecc71 !important; 
+    text-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
 }
 
 /* ===================================================
@@ -711,7 +733,10 @@ CARDS Y CONTENEDORES
 }
 
 .plans-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.15);
+    border-left: 3px solid #2ecc71;
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.1);
+    
 }
 
 .plans-table td {
@@ -1105,7 +1130,7 @@ CARDS Y CONTENEDORES
     animation: fadeInUp 0.5s ease-out forwards;
 }
 
-/* SIDEBAR*/
+/* SIDEBAR */
 .admin-layout {
     display: flex;
     min-height: 100vh;
@@ -1125,13 +1150,13 @@ CARDS Y CONTENEDORES
     text-align: center;
 }
 .sidebar-logo h2 {
-    background: linear-gradient(135deg, #6d6c6b, #fdfdfd);
+    background: linear-gradient(#fdfdfd);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 .sidebar-section-title {
-    color: fdfdfd;
+    color: #fdfdfd;
     font-size: 0.75rem;
     text-transform: uppercase;
     padding: 10px 15px;
@@ -1146,11 +1171,19 @@ CARDS Y CONTENEDORES
     color: #e0e0e0;
     text-decoration: none;
     gap: 12px;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;  
 }
-.sidebar-menu a:hover {
-    background: rgba(252, 246, 211, 0.445);
-    color: fdfdfd;
+
+.sidebar-menu a:hover {         
+    background: transparent !important;
+    color: #fdfdfd;
+    border-left: 4px solid #2ecc71;
+    padding-left: 12px;
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.2);
+    transition: all 0.3s ease;
 }
+
 .main-content {
     flex: 1;
     margin-left: 280px;
