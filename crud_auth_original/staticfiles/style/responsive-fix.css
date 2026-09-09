@@ -8,7 +8,7 @@
     top: 15px;
     left: 15px;
     z-index: 1001;
-    background: linear-gradient(135deg, #181717, #acaba9);
+    background: linear-gradient(135deg, #181717, #000000);
     border: none;
     border-radius: 8px;
     width: 45px;
@@ -18,10 +18,11 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
 }
 
 .hamburger-btn-fix i {
-    background: linear-gradient(135deg, #181717, #acaba9);
+    background: linear-gradient(135deg, #181717, #0c0c0c);
     color: white;
     font-size: 1.5rem;
 }
@@ -36,6 +37,12 @@
     background: rgba(0,0,0,0.5);
     z-index: 998;
     display: none;
+}
+.hamburger-btn-fix:hover {
+    background: linear-gradient(135deg, #acaba9, #181717);
+    transform: scale(1.05);
+    border: 2px solid #2ecc71;
+    box-shadow: 0 0 30px rgba(46, 204, 113, 0.2);
 }
 
 .sidebar-overlay-fix.active {
@@ -172,7 +179,7 @@ body {
     .plans-table td::before {
         content: attr(data-label);
         font-weight: 600;
-        color: #f39c12;
+        color: #fdfcfb;
         width: 40%;
     }
 }
