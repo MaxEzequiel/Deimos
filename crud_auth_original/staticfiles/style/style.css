@@ -316,7 +316,7 @@ CARDS Y CONTENEDORES
     font-size: 1.3rem;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(255, 210, 137, 0.3);
+    border-bottom: 2px solid rgba(11, 102, 3, 0.3);
 }
 
 .form-section {
@@ -338,7 +338,7 @@ CARDS Y CONTENEDORES
     width: 100%;
     padding: 12px 15px;
     background-color: #2a2a3a;
-    border: 1px solid #3a3a4a;
+    border: 1px solid #0d4203;
     border-radius: 12px;
     color: #ffffff;
     font-size: 1rem;
