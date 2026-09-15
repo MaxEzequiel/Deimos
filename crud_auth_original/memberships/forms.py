@@ -15,5 +15,4 @@ class MembershipForm(forms.ModelForm):
 
     class Meta:
         model = Membership
-        fields = ['status', 'plan']
-        labels = {'status': 'Estado de membresía', 'plan': 'Plan asignado'}
+        fields = ['status']

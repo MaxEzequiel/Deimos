@@ -37,9 +37,6 @@
                             <a href="{% url 'edit_account' account.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar Usuario
                             </a>
-                            <a href="{% url 'edit_account_membership' account.id %}" class="action-btn edit-btn">
-                                <i class="fas fa-id-card"></i> Plan y membresía
-                            </a>
                             {% if account.is_active %}
                             <a href="{% url 'deactivate_account' account.id %}" class="action-btn delete-btn">
                                 <i class="fas fa-edit"></i> Desactivar Usuario

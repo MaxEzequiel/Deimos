@@ -21,8 +21,7 @@ from accounts.views import *
 from accounts.groups import *
 from memberships.views import edit_membership
 from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
-from classes.views import create_class, edit_class, list_class, delete_class, manage_inscriptions, delete_inscription
-from payments.views import create_payment, list_payments
+from classes.views import create_class, edit_class, list_class, delete_class
 from .core_view import error_403
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -37,7 +36,7 @@ urlpatterns = [
     path("accounts/login/", login_view, name="login"),
     path("accounts/deactivate-account/<int:account_id>", deactivate_account, name="deactivate_account"),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("accounts/<int:account_id>/membership/", edit_membership, name="edit_account_membership"),
+    path("accounts/edit-membership/", edit_membership, name="edit_membership"),
     path("accounts/edit/<int:account_id>", edit_account, name="edit_account"),
     # modulo de planes
     path("create-plan/", create_plan, name="create_plan"),
@@ -50,16 +49,11 @@ urlpatterns = [
     path("edit-class/<int:course_id>", edit_class, name="edit_class"),
     path("list-class/", list_class, name="list_class"),
     path("delete_class/<int:course_id>",delete_class, name="delete_class"),
-    path("classes/<int:course_id>/inscriptions/", manage_inscriptions, name="manage_inscriptions"),
-    path("classes/inscriptions/<int:inscription_id>/delete/", delete_inscription, name="delete_inscription"),
-    path("payments/", list_payments, name="list_payments"),
-    path("payments/create/", create_payment, name="create_payment"),
     # cure
     path("error_403/", error_403, name="error_403"),
     # grupos de permisos
     path("accounts/admin/groups", accounts_admin_group_list, name="accounts_admin_group_list"),
     path("accounts/admin/groups/create", accounts_admin_group_create, name="accounts_admin_group_create"),
-    path("accounts/admin/groups/edit/<int:group_id>", accounts_admin_group_edit, name="accounts_admin_group_edit"),
-    path("reports/", reports_home, name="reports_home")
+    path("accounts/admin/groups/edit/<int:group_id>", accounts_admin_group_edit, name="accounts_admin_group_edit")
 ]
 

@@ -2,31 +2,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from plans.models import Plan
 
 # modulo de pdf
-try:
-    from django_xhtml2pdf.utils import pdf_decorator
-except ModuleNotFoundError:
-    # Permite ejecutar el sistema sin el complemento opcional de exportación PDF.
-    def pdf_decorator(view):
-        return view
+from django_xhtml2pdf.utils import pdf_decorator
 
 # funciones para el inicio de sesion
 
-from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
-from django.contrib import messages
-from django.db import transaction
+from django.contrib.auth.decorators import login_required, permission_required
 
 from plans.forms import PlanForm
 
 @login_required
-@user_passes_test(lambda user: user.is_staff, login_url="/error_403/")
 @permission_required(["plans.add_plan","plans.view_plan"], login_url="/error_403")
 def create_plan(request):
     if request.method == "POST":
         plan = PlanForm(request.POST)
         if plan.is_valid():
-            with transaction.atomic():
-                plan.save()
-            messages.success(request, "Plan creado correctamente.")
+            plan.save()
             return redirect("home")
         else:
             return render(request, "create_plan.html", {"plan_form": plan})
@@ -49,7 +39,6 @@ def plans_pdf(request):
         return render(request, "plans_pdf.html", {"plans": plans})
 
 @login_required
-@user_passes_test(lambda user: user.is_staff, login_url="/error_403/")
 @permission_required(["plans.change_plan","plans.view_plan"], login_url="/error_403")
 def edit_plan(request, plan_id):
     plan = Plan.objects.get(id=plan_id)
@@ -59,23 +48,18 @@ def edit_plan(request, plan_id):
     else:
         form = PlanForm(request.POST, instance=plan)
         if form.is_valid():
-            with transaction.atomic():
-                form.save()
-            messages.success(request, "Plan actualizado correctamente.")
+            form.save()
             return redirect("list_plans")
         else:
             error = "form is invalid, please verify the fields"
             return render(request, "edit_plan.html", {"form": form, "error": error})
 
 @login_required
-@user_passes_test(lambda user: user.is_staff, login_url="/error_403/")
 @permission_required(["plans.delete_plan","plans.view_plan"], login_url="/error_403")
 def delete_plan(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
     if request.method == "GET":
         return render(request, "delete_plan.html")
     else:
-        with transaction.atomic():
-            plan.delete()
-        messages.success(request, "Plan eliminado correctamente.")
+        plan.delete()
         return redirect("list_plans")

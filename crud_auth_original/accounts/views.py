@@ -17,13 +17,7 @@ from routines.models import Routine
 # funciones para el inicio de sesion
 from django.contrib.auth import login, logout, authenticate
 
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db import transaction
-from django.db.models import Count
-
-
-def admin_required(view):
-    return user_passes_test(lambda user: user.is_authenticated and user.is_staff, login_url="/error_403/")(view)
+from django.contrib.auth.decorators import login_required
 
 # vista de inicio con estado de membresia si es que existe 
 @login_required
@@ -40,8 +34,6 @@ def home(request):
         return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
 
 @login_required
-@admin_required
-@transaction.atomic
 def create_account(request):
     if request.method == "GET":
         return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm()})
@@ -55,8 +47,7 @@ def create_account(request):
                 user = user_form.save(commit=False)
                 
                 # Verificar si se marcó la opción "es administrador"
-                # Los privilegios se administran sólo desde el módulo protegido de grupos.
-                is_admin = False
+                is_admin = request.POST.get('is_admin') == 'on'
                 if is_admin:
                     user.is_superuser = True
                     user.is_staff = True  # También necesita is_staff para acceder al admin
@@ -70,7 +61,6 @@ def create_account(request):
                 Routine.objects.create(client=person, name=f"Rutina de {person.name}", description="Rutina personalizada")
                 Membership.objects.create(user=user)
                 login(request, user)
-                messages.success(request, "Usuario registrado correctamente.")
                 return redirect("home")
             except Exception as e:
                 logout(request)
@@ -112,29 +102,24 @@ def login_view(request):
 
 
 @login_required
-@admin_required
 def deactivate_account(request, account_id):
-    user = get_object_or_404(User, id=account_id)
+    user = User.objects.get(id = account_id)
     if request.method == "GET":
         return render(request, "deactivate_account.html", {"user" : user})
     else:
-        user.is_active = False
-        user.save(update_fields=["is_active"])
-        messages.success(request, "La cuenta fue desactivada.")
+        user.is_active = 0
+        user.save()
         return redirect("list_accounts")
 
 
 # vistas de gestion de usuarios 
 @login_required
-@admin_required
 def list_accounts(request):
     if request.method == "GET":
         users = User.objects.all().exclude(id = request.user.id)
         return render(request, "list_accounts.html",{"accounts" : users})
 
 @login_required
-@admin_required
-@transaction.atomic
 def edit_account(request, account_id):
     user = get_object_or_404(User, id=account_id)
     person = get_object_or_404(Person, user=user)
@@ -167,7 +152,6 @@ def edit_account(request, account_id):
 # Admin de accounts 
 
 @login_required
-@admin_required
 def accounts_admin_home(request):
         if request.method == "GET":
             users = User.objects.all().exclude(id = request.user.id)
@@ -175,8 +159,6 @@ def accounts_admin_home(request):
 
 
 @login_required
-@admin_required
-@transaction.atomic
 def accounts_admin_edit(request, account_id):
     if request.method == "GET":
         groups = Group.objects.all()
@@ -192,35 +174,3 @@ def accounts_admin_edit(request, account_id):
             group = Group.objects.get(id=group_id)
             user.groups.add(group)
         return redirect("accounts_admin_home")
-
-
-@login_required
-def reports_home(request):
-    """Panel con tres gráficos generados desde las tablas reales del sistema."""
-    from classes.models import Course
-    from plans.models import Plan
-
-    # Debe usar User.is_active, que es el mismo campo mostrado por el módulo Usuarios.
-    visible_users = User.objects.exclude(id=request.user.id)
-    membership_data = [
-        {"status": "Activos", "total": visible_users.filter(is_active=True).count()},
-        {"status": "Inactivos", "total": visible_users.filter(is_active=False).count()},
-    ]
-    # Ambos conteos salen de las relaciones que el administrador carga en cada módulo.
-    plan_data = list(Plan.objects.annotate(total=Count("person", distinct=True)).values("name", "total").order_by("name"))
-    class_data = list(Course.objects.values("name").annotate(total=Count("inscription", distinct=True)).order_by("name"))
-    def chart_rows(rows, label_key):
-        maximum = max((row["total"] for row in rows), default=0)
-        return [{"label": label_key(row), "value": row["total"], "percent": round((row["total"] / maximum) * 100) if maximum else 0} for row in rows]
-
-    return render(request, "reports/report_home.html", {
-        "membership_labels": [row["status"] or "Sin estado" for row in membership_data],
-        "membership_values": [row["total"] for row in membership_data],
-        "plan_labels": [row["name"] or "Sin plan" for row in plan_data],
-        "plan_values": [row["total"] for row in plan_data],
-        "class_labels": [row["name"] for row in class_data],
-        "class_values": [row["total"] for row in class_data],
-        "membership_chart": chart_rows(membership_data, lambda row: row["status"] or "Sin estado"),
-        "plan_chart": chart_rows(plan_data, lambda row: row["name"] or "Sin plan"),
-        "class_chart": chart_rows(class_data, lambda row: row["name"]),
-    })

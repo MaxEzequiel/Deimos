@@ -41,7 +41,4 @@ class Course(models.Model):
 class Inscription(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     participant = models.ForeignKey(Person, on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=("course", "participant"), name="unique_course_participant")]
     
