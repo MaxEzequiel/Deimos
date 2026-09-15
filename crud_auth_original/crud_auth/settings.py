@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,10 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-r!zaqi1of6bkgwdq%y*+eh9&pjg%_i4=pv2^k376u=q1)cori7"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-development-only")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ENVIRONMENT = os.environ.get("DJANGO_ENV", "DEV").upper()
+DEBUG = ENVIRONMENT == "DEV"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     "people",
     "routines",
     "core",
+    "audit",
 ]
 
 MIDDLEWARE = [
@@ -55,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "audit.middleware.AuditMiddleware",
 ]
 
 ROOT_URLCONF = "crud_auth.urls"
@@ -97,6 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 8},
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -104,15 +109,18 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+    {
+        "NAME": "accounts.password_validators.UppercaseAndSpecialCharacterValidator",
+    },
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "es-ar"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/Argentina/Buenos_Aires"
 
 USE_I18N = True
 
@@ -139,10 +147,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # EMAIL CONFIG
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'maxezepy@gmail.com'
-EMAIL_HOST_PASSWORD = 'rfgz mbjk ijkp jbdg'  
-DEFAULT_FROM_EMAIL = 'maxezepy@gmail.com'
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "true").lower() == "true"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@deimos.local")

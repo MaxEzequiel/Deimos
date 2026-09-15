@@ -18,6 +18,8 @@ from routines.models import Routine
 from django.contrib.auth import login, logout, authenticate
 
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.db.models import Count
 
 # vista de inicio con estado de membresia si es que existe 
 @login_required
@@ -34,6 +36,7 @@ def home(request):
         return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
 
 @login_required
+@transaction.atomic
 def create_account(request):
     if request.method == "GET":
         return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm()})
@@ -47,7 +50,8 @@ def create_account(request):
                 user = user_form.save(commit=False)
                 
                 # Verificar si se marcó la opción "es administrador"
-                is_admin = request.POST.get('is_admin') == 'on'
+                # Los privilegios se administran sólo desde el módulo protegido de grupos.
+                is_admin = False
                 if is_admin:
                     user.is_superuser = True
                     user.is_staff = True  # También necesita is_staff para acceder al admin
@@ -61,6 +65,7 @@ def create_account(request):
                 Routine.objects.create(client=person, name=f"Rutina de {person.name}", description="Rutina personalizada")
                 Membership.objects.create(user=user)
                 login(request, user)
+                messages.success(request, "Usuario registrado correctamente.")
                 return redirect("home")
             except Exception as e:
                 logout(request)
@@ -103,12 +108,13 @@ def login_view(request):
 
 @login_required
 def deactivate_account(request, account_id):
-    user = User.objects.get(id = account_id)
+    user = get_object_or_404(User, id=account_id)
     if request.method == "GET":
         return render(request, "deactivate_account.html", {"user" : user})
     else:
-        user.is_active = 0
-        user.save()
+        user.is_active = False
+        user.save(update_fields=["is_active"])
+        messages.success(request, "La cuenta fue desactivada.")
         return redirect("list_accounts")
 
 
@@ -120,6 +126,7 @@ def list_accounts(request):
         return render(request, "list_accounts.html",{"accounts" : users})
 
 @login_required
+@transaction.atomic
 def edit_account(request, account_id):
     user = get_object_or_404(User, id=account_id)
     person = get_object_or_404(Person, user=user)
@@ -159,6 +166,7 @@ def accounts_admin_home(request):
 
 
 @login_required
+@transaction.atomic
 def accounts_admin_edit(request, account_id):
     if request.method == "GET":
         groups = Group.objects.all()
@@ -174,3 +182,22 @@ def accounts_admin_edit(request, account_id):
             group = Group.objects.get(id=group_id)
             user.groups.add(group)
         return redirect("accounts_admin_home")
+
+
+@login_required
+def reports_home(request):
+    """Panel con tres gráficos generados desde las tablas reales del sistema."""
+    from classes.models import Course
+    from plans.models import Plan
+
+    membership_data = list(Membership.objects.values("status").annotate(total=Count("id")).order_by("status"))
+    plan_data = list(Plan.objects.annotate(total=Count("person")).values("name", "total").order_by("name"))
+    class_data = list(Course.objects.values("teacher__name", "teacher__surname").annotate(total=Count("id")).order_by("teacher__surname"))
+    return render(request, "reports/report_home.html", {
+        "membership_labels": [row["status"] or "Sin estado" for row in membership_data],
+        "membership_values": [row["total"] for row in membership_data],
+        "plan_labels": [row["name"] or "Sin plan" for row in plan_data],
+        "plan_values": [row["total"] for row in plan_data],
+        "class_labels": [f'{row["teacher__name"]} {row["teacher__surname"]}' for row in class_data],
+        "class_values": [row["total"] for row in class_data],
+    })

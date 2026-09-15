@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import Membership
 
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 from memberships.forms import MembershipForm
 
@@ -11,6 +12,7 @@ from memberships.forms import MembershipForm
 
 
 @login_required
+@transaction.atomic
 def edit_membership(request):
     membership, created = Membership.objects.get_or_create(user=request.user)
 
@@ -21,7 +23,8 @@ def edit_membership(request):
     else:
         form = MembershipForm(request.POST, instance=membership)
         if form.is_valid():
-            form.save()
+            with transaction.atomic():
+                form.save()
             messages.success(request, "Membership updated")
             return redirect("home")
         return render(request, "edit_membership.html", {"form": form})

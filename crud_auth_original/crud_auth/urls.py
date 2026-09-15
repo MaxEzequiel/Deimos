@@ -22,6 +22,7 @@ from accounts.groups import *
 from memberships.views import edit_membership
 from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_pdf
 from classes.views import create_class, edit_class, list_class, delete_class
+from payments.views import create_payment, list_payments
 from .core_view import error_403
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -49,11 +50,14 @@ urlpatterns = [
     path("edit-class/<int:course_id>", edit_class, name="edit_class"),
     path("list-class/", list_class, name="list_class"),
     path("delete_class/<int:course_id>",delete_class, name="delete_class"),
+    path("payments/", list_payments, name="list_payments"),
+    path("payments/create/", create_payment, name="create_payment"),
     # cure
     path("error_403/", error_403, name="error_403"),
     # grupos de permisos
     path("accounts/admin/groups", accounts_admin_group_list, name="accounts_admin_group_list"),
     path("accounts/admin/groups/create", accounts_admin_group_create, name="accounts_admin_group_create"),
-    path("accounts/admin/groups/edit/<int:group_id>", accounts_admin_group_edit, name="accounts_admin_group_edit")
+    path("accounts/admin/groups/edit/<int:group_id>", accounts_admin_group_edit, name="accounts_admin_group_edit"),
+    path("reports/", reports_home, name="reports_home")
 ]
 

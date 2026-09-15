@@ -3,6 +3,8 @@ from .models import Course
 from people.models import Person
 from .forms import CourseForm
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
+from django.db import transaction
 # Create your views here. 
 
 
@@ -17,7 +19,9 @@ def create_class(request):
         if current_class.is_valid():
             course_instance = current_class.save(commit=False)
             course_instance.teacher = Person.objects.get(user = request.user)
-            course_instance.save()
+            with transaction.atomic():
+                course_instance.save()
+            messages.success(request, "Clase creada correctamente.")
             return redirect("list_class")
         else:
             return render(request, "create_class.html", {"course_form" : CourseForm})
@@ -39,7 +43,9 @@ def edit_class(request, course_id):
     else:
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
-            form.save()
+            with transaction.atomic():
+                form.save()
+            messages.success(request, "Clase actualizada correctamente.")
             return redirect("list_class")
         return render(request, "edit_class.html", {"edit_form" : form})
 
@@ -50,6 +56,8 @@ def delete_class(request, course_id):
         return render(request,"delete_class.html")
     else:
         course = Course.objects.get(id = course_id)
-        course.delete()
+        with transaction.atomic():
+            course.delete()
+        messages.success(request, "Clase eliminada correctamente.")
         return redirect("list_class")
 

@@ -2,11 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from plans.models import Plan
 
 # modulo de pdf
-from django_xhtml2pdf.utils import pdf_decorator
+try:
+    from django_xhtml2pdf.utils import pdf_decorator
+except ModuleNotFoundError:
+    # Permite ejecutar el sistema sin el complemento opcional de exportación PDF.
+    def pdf_decorator(view):
+        return view
 
 # funciones para el inicio de sesion
 
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
+from django.db import transaction
 
 from plans.forms import PlanForm
 
@@ -16,7 +23,9 @@ def create_plan(request):
     if request.method == "POST":
         plan = PlanForm(request.POST)
         if plan.is_valid():
-            plan.save()
+            with transaction.atomic():
+                plan.save()
+            messages.success(request, "Plan creado correctamente.")
             return redirect("home")
         else:
             return render(request, "create_plan.html", {"plan_form": plan})
@@ -48,7 +57,9 @@ def edit_plan(request, plan_id):
     else:
         form = PlanForm(request.POST, instance=plan)
         if form.is_valid():
-            form.save()
+            with transaction.atomic():
+                form.save()
+            messages.success(request, "Plan actualizado correctamente.")
             return redirect("list_plans")
         else:
             error = "form is invalid, please verify the fields"
@@ -61,5 +72,7 @@ def delete_plan(request, plan_id):
     if request.method == "GET":
         return render(request, "delete_plan.html")
     else:
-        plan.delete()
+        with transaction.atomic():
+            plan.delete()
+        messages.success(request, "Plan eliminado correctamente.")
         return redirect("list_plans")
