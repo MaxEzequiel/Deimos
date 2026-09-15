@@ -1,6 +1,6 @@
 from django.db import models
-from people.models import Person
-from django.core.validators import MinLengthValidator,MaxLengthValidator
+from django.conf import settings
+from django.core.validators import MinLengthValidator,MaxLengthValidator,MinValueValidator
 from django.core.exceptions import ValidationError
 from datetime import timedelta
 # Create your models here. 
@@ -12,11 +12,13 @@ class Course(models.Model):
     description = models.CharField(default="sin descripcion", 
         validators=[MinLengthValidator(5, "la descripcion debe tener al menos 5 caracteres"),
         MaxLengthValidator(150, "la descripcion debe tener como maximo 150 caracteres")])
-    teacher = models.ForeignKey(Person, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     starts_at = models.DateTimeField()
     ends_at = models.DateTimeField()
+    max_capacity = models.IntegerField(default=1,
+        validators=[MinValueValidator(1, "la capacidad maxima de alumnos debe ser al menos 1")])
     
     
     def clean(self):
@@ -40,5 +42,5 @@ class Course(models.Model):
 
 class Inscription(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    participant = models.ForeignKey(Person, on_delete=models.CASCADE)
+    participant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     

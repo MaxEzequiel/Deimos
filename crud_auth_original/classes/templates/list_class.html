@@ -20,6 +20,9 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Descripción</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Cupos</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -33,7 +36,21 @@
                         <td data-label="Descripción">
                             {{ course.description }}
                         </td>
+                        <td data-label="Inicio">
+                            {{ course.starts_at|date:"d/m/Y H:i" }}
+                        </td>
+                        <td data-label="Fin">
+                            {{ course.ends_at|date:"d/m/Y H:i" }}
+                        </td>
+                        <td data-label="Cupos">
+                            {{ course.free_spots }}/{{ course.max_capacity }} cupos
+                        </td>
                         <td data-label="Acciones" class="plan-actions-cell">
+                            {% if course.has_spots %}
+                            <a href="{% url 'inscription_question' course.id %}" class="action-btn edit-btn">
+                                <i class="fas fa-user-plus"></i> Inscribirse
+                            </a>
+                            {% endif %}
                             <a href="{% url 'edit_class' course.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
@@ -44,7 +61,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="empty-row">
+                        <td colspan="6" class="empty-row">
                             <i class="fas fa-info-circle"></i> No hay clases para mostrar
                         </td>
                     </tr>
