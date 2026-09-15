@@ -40,6 +40,9 @@
                             <a href="{% url 'delete_class' course.id %}" class="action-btn delete-btn">
                                 <i class="fas fa-trash"></i> Eliminar
                             </a>
+                            <a href="{% url 'manage_inscriptions' course.id %}" class="action-btn edit-btn">
+                                <i class="fas fa-user-plus"></i> Inscriptos
+                            </a>
                         </td>
                     </tr>
                     {% empty %}

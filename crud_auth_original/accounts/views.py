@@ -17,9 +17,13 @@ from routines.models import Routine
 # funciones para el inicio de sesion
 from django.contrib.auth import login, logout, authenticate
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
 from django.db.models import Count
+
+
+def admin_required(view):
+    return user_passes_test(lambda user: user.is_authenticated and user.is_staff, login_url="/error_403/")(view)
 
 # vista de inicio con estado de membresia si es que existe 
 @login_required
@@ -36,6 +40,7 @@ def home(request):
         return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
 
 @login_required
+@admin_required
 @transaction.atomic
 def create_account(request):
     if request.method == "GET":
@@ -107,6 +112,7 @@ def login_view(request):
 
 
 @login_required
+@admin_required
 def deactivate_account(request, account_id):
     user = get_object_or_404(User, id=account_id)
     if request.method == "GET":
@@ -120,12 +126,14 @@ def deactivate_account(request, account_id):
 
 # vistas de gestion de usuarios 
 @login_required
+@admin_required
 def list_accounts(request):
     if request.method == "GET":
         users = User.objects.all().exclude(id = request.user.id)
         return render(request, "list_accounts.html",{"accounts" : users})
 
 @login_required
+@admin_required
 @transaction.atomic
 def edit_account(request, account_id):
     user = get_object_or_404(User, id=account_id)
@@ -159,6 +167,7 @@ def edit_account(request, account_id):
 # Admin de accounts 
 
 @login_required
+@admin_required
 def accounts_admin_home(request):
         if request.method == "GET":
             users = User.objects.all().exclude(id = request.user.id)
@@ -166,6 +175,7 @@ def accounts_admin_home(request):
 
 
 @login_required
+@admin_required
 @transaction.atomic
 def accounts_admin_edit(request, account_id):
     if request.method == "GET":
@@ -190,14 +200,27 @@ def reports_home(request):
     from classes.models import Course
     from plans.models import Plan
 
-    membership_data = list(Membership.objects.values("status").annotate(total=Count("id")).order_by("status"))
-    plan_data = list(Plan.objects.annotate(total=Count("person")).values("name", "total").order_by("name"))
-    class_data = list(Course.objects.values("teacher__name", "teacher__surname").annotate(total=Count("id")).order_by("teacher__surname"))
+    # Debe usar User.is_active, que es el mismo campo mostrado por el módulo Usuarios.
+    visible_users = User.objects.exclude(id=request.user.id)
+    membership_data = [
+        {"status": "Activos", "total": visible_users.filter(is_active=True).count()},
+        {"status": "Inactivos", "total": visible_users.filter(is_active=False).count()},
+    ]
+    # Ambos conteos salen de las relaciones que el administrador carga en cada módulo.
+    plan_data = list(Plan.objects.annotate(total=Count("person", distinct=True)).values("name", "total").order_by("name"))
+    class_data = list(Course.objects.values("name").annotate(total=Count("inscription", distinct=True)).order_by("name"))
+    def chart_rows(rows, label_key):
+        maximum = max((row["total"] for row in rows), default=0)
+        return [{"label": label_key(row), "value": row["total"], "percent": round((row["total"] / maximum) * 100) if maximum else 0} for row in rows]
+
     return render(request, "reports/report_home.html", {
         "membership_labels": [row["status"] or "Sin estado" for row in membership_data],
         "membership_values": [row["total"] for row in membership_data],
         "plan_labels": [row["name"] or "Sin plan" for row in plan_data],
         "plan_values": [row["total"] for row in plan_data],
-        "class_labels": [f'{row["teacher__name"]} {row["teacher__surname"]}' for row in class_data],
+        "class_labels": [row["name"] for row in class_data],
         "class_values": [row["total"] for row in class_data],
+        "membership_chart": chart_rows(membership_data, lambda row: row["status"] or "Sin estado"),
+        "plan_chart": chart_rows(plan_data, lambda row: row["name"] or "Sin plan"),
+        "class_chart": chart_rows(class_data, lambda row: row["name"]),
     })

@@ -16,3 +16,10 @@ class CourseForm(forms.ModelForm):
             'starts_at': forms.DateTimeInput(attrs={"type": "datetime-local"}),
             'ends_at': forms.DateTimeInput(attrs={"type": "datetime-local"})
         }
+
+
+class InscriptionForm(forms.ModelForm):
+    class Meta:
+        model = Inscription
+        fields = ["participant"]
+        labels = {"participant": "Usuario a inscribir"}

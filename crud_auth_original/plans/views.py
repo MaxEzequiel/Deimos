@@ -11,13 +11,14 @@ except ModuleNotFoundError:
 
 # funciones para el inicio de sesion
 
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.contrib import messages
 from django.db import transaction
 
 from plans.forms import PlanForm
 
 @login_required
+@user_passes_test(lambda user: user.is_staff, login_url="/error_403/")
 @permission_required(["plans.add_plan","plans.view_plan"], login_url="/error_403")
 def create_plan(request):
     if request.method == "POST":
@@ -48,6 +49,7 @@ def plans_pdf(request):
         return render(request, "plans_pdf.html", {"plans": plans})
 
 @login_required
+@user_passes_test(lambda user: user.is_staff, login_url="/error_403/")
 @permission_required(["plans.change_plan","plans.view_plan"], login_url="/error_403")
 def edit_plan(request, plan_id):
     plan = Plan.objects.get(id=plan_id)
@@ -66,6 +68,7 @@ def edit_plan(request, plan_id):
             return render(request, "edit_plan.html", {"form": form, "error": error})
 
 @login_required
+@user_passes_test(lambda user: user.is_staff, login_url="/error_403/")
 @permission_required(["plans.delete_plan","plans.view_plan"], login_url="/error_403")
 def delete_plan(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)

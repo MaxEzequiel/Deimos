@@ -1,16 +1,12 @@
 {% extends "base.html" %}
-
 {% block title %}Informes | Deimos Gym{% endblock %}
-
+{% block head %}<style>.chart-panel{background:linear-gradient(145deg,#242529,#17181b);border:1px solid #383a40;border-radius:16px;color:#fff;padding:1.25rem;height:100%}.chart-panel h4{font-size:1rem;margin-bottom:1rem}.chart-box{height:290px;position:relative}.chart-empty{color:#adb5bd;text-align:center;padding-top:6rem}</style>{% endblock %}
 {% block content %}
-<div class="welcome-section">
-    <h1><i class="fas fa-chart-line"></i> Informes operativos</h1>
-    <p>Indicadores actualizados desde las tablas del sistema.</p>
-</div>
+<div class="welcome-section"><h1><i class="fas fa-chart-line"></i> Informes operativos</h1><p>Indicadores actualizados desde los módulos Usuarios, Planes y Clases.</p></div>
 <div class="row g-4">
-    <div class="col-lg-4"><div class="card p-3 h-100"><h4>Membresías por estado</h4><canvas id="membershipChart"></canvas></div></div>
-    <div class="col-lg-4"><div class="card p-3 h-100"><h4>Usuarios por plan</h4><canvas id="planChart"></canvas></div></div>
-    <div class="col-lg-4"><div class="card p-3 h-100"><h4>Clases por profesor</h4><canvas id="classChart"></canvas></div></div>
+<div class="col-lg-4"><section class="chart-panel"><h4>Usuarios por estado</h4><div class="chart-box"><canvas id="membershipChart"></canvas></div></section></div>
+<div class="col-lg-4"><section class="chart-panel"><h4>Usuarios asignados por plan</h4><div class="chart-box"><canvas id="planChart"></canvas></div></section></div>
+<div class="col-lg-4"><section class="chart-panel"><h4>Inscriptos por clase</h4><div class="chart-box"><canvas id="classChart"></canvas></div></section></div>
 </div>
 {{ membership_labels|json_script:"membership-labels" }}{{ membership_values|json_script:"membership-values" }}
 {{ plan_labels|json_script:"plan-labels" }}{{ plan_values|json_script:"plan-values" }}
@@ -19,11 +15,16 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
-const reportData = (id) => JSON.parse(document.getElementById(id).textContent);
-const palette = ['#6f42c1', '#20c997', '#0d6efd', '#fd7e14', '#dc3545', '#6c757d'];
-const options = {responsive:true, plugins:{legend:{position:'bottom'}}};
-new Chart(document.getElementById('membershipChart'), {type:'doughnut',data:{labels:reportData('membership-labels'),datasets:[{data:reportData('membership-values'),backgroundColor:palette}]},options});
-new Chart(document.getElementById('planChart'), {type:'bar',data:{labels:reportData('plan-labels'),datasets:[{label:'Usuarios',data:reportData('plan-values'),backgroundColor:'#6f42c1'}]},options:{...options,scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
-new Chart(document.getElementById('classChart'), {type:'polarArea',data:{labels:reportData('class-labels'),datasets:[{data:reportData('class-values'),backgroundColor:palette}]},options});
+(() => {
+  const read = (id) => JSON.parse(document.getElementById(id).textContent);
+  const palette = ['#7c4dff','#2ecc71','#00bcd4','#ff9800','#e91e63','#607d8b'];
+  const labels = { users: read('membership-labels'), plans: read('plan-labels'), classes: read('class-labels') };
+  const values = { users: read('membership-values'), plans: read('plan-values'), classes: read('class-values') };
+  const common = { responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{color:'#fff'}}} };
+  if (!window.Chart) { console.error('No se pudo cargar Chart.js'); return; }
+  new Chart(document.getElementById('membershipChart'), {type:'doughnut',data:{labels:labels.users,datasets:[{data:values.users,backgroundColor:palette,borderColor:'#17181b',borderWidth:2}]},options:common});
+  new Chart(document.getElementById('planChart'), {type:'bar',data:{labels:labels.plans,datasets:[{label:'Usuarios',data:values.plans,backgroundColor:'#7c4dff',borderRadius:6}]},options:{...common,scales:{x:{ticks:{color:'#fff'},grid:{color:'#34363b'}},y:{beginAtZero:true,ticks:{color:'#fff',precision:0},grid:{color:'#34363b'}}}}});
+  new Chart(document.getElementById('classChart'), {type:'polarArea',data:{labels:labels.classes,datasets:[{data:values.classes,backgroundColor:palette,borderColor:'#17181b',borderWidth:2}]},options:common});
+})();
 </script>
 {% endblock %}
