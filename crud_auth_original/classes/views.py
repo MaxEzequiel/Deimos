@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Course, Inscription
 from .forms import CourseForm
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.mail import send_mail
 # Create your views here. 
 
 
@@ -78,5 +79,17 @@ def inscription_question(request, course_id):
         inscription.course = course
         inscription.participant = request.user
         inscription.save()
+        try:
+            student = request.user.person
+            if student.email:
+                subject = "Inscripcion a la clase " + course.name
+                message = ("Te inscribiste a la clase: " + course.name + "\n" +
+                           "Descripcion: " + course.description + "\n" +
+                           "Inicio: " + course.starts_at.strftime("%d/%m/%Y %H:%M") + "\n" +
+                           "Fin: " + course.ends_at.strftime("%d/%m/%Y %H:%M") + "\n" +
+                           "Profesor: " + course.teacher.username)
+                send_mail(subject, message, None, [student.email])
+        except Exception:
+            pass
         return redirect("list_class")
 
