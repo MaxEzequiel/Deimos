@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="signup-box"><h1>Inscriptos: {{ course.name }}</h1><form method="post">{% csrf_token %}<div class="form-group">{{ form.participant.label_tag }}{{ form.participant }}{{ form.participant.errors }}</div><button class="btn-outline-light" type="submit">Inscribir usuario</button></form></div>
+<div class="plans-table-container mt-4"><table class="plans-table"><thead><tr><th>Usuario</th><th>Nombre</th><th>Acción</th></tr></thead><tbody>{% for inscription in inscriptions %}<tr><td>{{ inscription.participant.user.username }}</td><td>{{ inscription.participant.name }} {{ inscription.participant.surname }}</td><td><form method="post" action="{% url 'delete_inscription' inscription.id %}">{% csrf_token %}<button class="action-btn delete-btn" type="submit">Desinscribir</button></form></td></tr>{% empty %}<tr><td colspan="3">Aún no hay usuarios inscriptos.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

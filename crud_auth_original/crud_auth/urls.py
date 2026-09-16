@@ -55,6 +55,8 @@ urlpatterns = [
     # grupos de permisos
     path("accounts/admin/groups", accounts_admin_group_list, name="accounts_admin_group_list"),
     path("accounts/admin/groups/create", accounts_admin_group_create, name="accounts_admin_group_create"),
-    path("accounts/admin/groups/edit/<int:group_id>", accounts_admin_group_edit, name="accounts_admin_group_edit")
+    path("accounts/admin/groups/edit/<int:group_id>", accounts_admin_group_edit, name="accounts_admin_group_edit"),
+    # modulo de estadisticas
+    path("estadisticas/", include("accounts.urls_estadisticas")),
 ]
 
