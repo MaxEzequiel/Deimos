@@ -41,29 +41,29 @@
         <a href="{% url 'estadisticas_dashboard' %}" class="btn-create-plan"><i class="fas fa-redo"></i> Reset</a>
     </form>
 
-    <h2 style="margin:1rem 0;"><i class="fas fa-users"></i> Usuarios</h2>
-    <div class="cards-row">
-        <div class="card-info"><div class="card-icon"><i class="fas fa-users"></i></div><h4>Total</h4><p>{{ resumen.total }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-user-check"></i></div><h4>Activos</h4><p>{{ resumen.activos }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-user-slash"></i></div><h4>Inactivos</h4><p>{{ resumen.inactivos }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-user-shield"></i></div><h4>Staff</h4><p>{{ resumen.staff }}</p></div>
-    </div>
+<h2 style="margin:1rem 0;"><i class="fas fa-users"></i> Usuarios</h2>
+<div class="stats-cards-compact">
+    <div class="stat-card"><i class="fas fa-users stat-icon"></i><div class="stat-data"><span class="stat-label">Total</span><span class="stat-value">{{ resumen.total }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-user-check stat-icon"></i><div class="stat-data"><span class="stat-label">Activos</span><span class="stat-value">{{ resumen.activos }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-user-slash stat-icon"></i><div class="stat-data"><span class="stat-label">Inactivos</span><span class="stat-value">{{ resumen.inactivos }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-user-shield stat-icon"></i><div class="stat-data"><span class="stat-label">Staff</span><span class="stat-value">{{ resumen.staff }}</span></div></div>
+</div>
 
-    <h2 style="margin:2rem 0 1rem;"><i class="fas fa-id-card"></i> Membresías</h2>
-    <div class="cards-row">
-        <div class="card-info"><div class="card-icon"><i class="fas fa-id-card"></i></div><h4>Total</h4><p>{{ resumen_membresias.total }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-check-circle"></i></div><h4>Activas</h4><p>{{ resumen_membresias.activas }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-times-circle"></i></div><h4>Vencidas</h4><p>{{ resumen_membresias.vencidas }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-user-times"></i></div><h4>Sin membresía</h4><p>{{ resumen_membresias.sin_membresia }}</p></div>
-    </div>
+<h2 style="margin:2rem 0 1rem;"><i class="fas fa-id-card"></i> Membresías</h2>
+<div class="stats-cards-compact">
+    <div class="stat-card"><i class="fas fa-id-card stat-icon"></i><div class="stat-data"><span class="stat-label">Total</span><span class="stat-value">{{ resumen_membresias.total }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-check-circle stat-icon"></i><div class="stat-data"><span class="stat-label">Activas</span><span class="stat-value">{{ resumen_membresias.activas }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-times-circle stat-icon"></i><div class="stat-data"><span class="stat-label">Vencidas</span><span class="stat-value">{{ resumen_membresias.vencidas }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-user-times stat-icon"></i><div class="stat-data"><span class="stat-label">Sin membresía</span><span class="stat-value">{{ resumen_membresias.sin_membresia }}</span></div></div>
+</div>
 
-    <h2 style="margin:2rem 0 1rem;"><i class="fas fa-dumbbell"></i> Rutinas</h2>
-    <div class="cards-row">
-        <div class="card-info"><div class="card-icon"><i class="fas fa-dumbbell"></i></div><h4>Total</h4><p>{{ resumen_rutinas.total }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-user-tag"></i></div><h4>Con cliente</h4><p>{{ resumen_rutinas.con_cliente }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-user-slash"></i></div><h4>Sin cliente</h4><p>{{ resumen_rutinas.sin_cliente }}</p></div>
-        <div class="card-info"><div class="card-icon"><i class="fas fa-chart-simple"></i></div><h4>Prom./cliente</h4><p>{{ resumen_rutinas.promedio_por_cliente }}</p></div>
-    </div>
+<h2 style="margin:2rem 0 1rem;"><i class="fas fa-dumbbell"></i> Rutinas</h2>
+<div class="stats-cards-compact">
+    <div class="stat-card"><i class="fas fa-dumbbell stat-icon"></i><div class="stat-data"><span class="stat-label">Total</span><span class="stat-value">{{ resumen_rutinas.total }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-user-tag stat-icon"></i><div class="stat-data"><span class="stat-label">Con cliente</span><span class="stat-value">{{ resumen_rutinas.con_cliente }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-user-slash stat-icon"></i><div class="stat-data"><span class="stat-label">Sin cliente</span><span class="stat-value">{{ resumen_rutinas.sin_cliente }}</span></div></div>
+    <div class="stat-card"><i class="fas fa-chart-simple stat-icon"></i><div class="stat-data"><span class="stat-label">Prom./cliente</span><span class="stat-value">{{ resumen_rutinas.promedio_por_cliente }}</span></div></div>
+</div>
 
     <div class="create-plan-section" style="margin:2rem 0;">
         <a href="{% url 'estadisticas_informe' %}" class="btn-create-plan"><i class="fas fa-file-alt"></i> Ver Informe</a>
@@ -71,17 +71,26 @@
         <a href="{% url 'estadisticas_pdf' %}" class="btn-create-plan"><i class="fas fa-file-pdf"></i> PDF</a>
     </div>
 
-    <div class="clases-grid" style="grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));">
-        <div class="clase-card"><h3><i class="fas fa-chart-line"></i> Usuarios registrados por mes</h3><canvas id="graficoMesUsuarios" height="220"></canvas></div>
-        <div class="clase-card"><h3><i class="fas fa-chart-line"></i> Membresías creadas por mes</h3><canvas id="graficoMesMembresias" height="220"></canvas></div>
-        <div class="clase-card"><h3><i class="fas fa-chart-line"></i> Rutinas creadas por mes</h3><canvas id="graficoMesRutinas" height="220"></canvas></div>
-        <div class="clase-card"><h3><i class="fas fa-chart-pie"></i> Usuarios por grupo</h3><canvas id="graficoGrupo" height="220"></canvas></div>
-        <div class="clase-card"><h3><i class="fas fa-chart-pie"></i> Membresías por estado</h3><canvas id="graficoMembresiasEstado" height="220"></canvas></div>
-        <div class="clase-card"><h3><i class="fas fa-chart-bar"></i> Activos vs Inactivos</h3><canvas id="graficoActivos" height="220"></canvas></div>
-        <div class="clase-card" style="grid-column: 1 / -1;"><h3><i class="fas fa-trophy"></i> Top 10 clientes con más rutinas</h3><canvas id="graficoTopClientes" height="180"></canvas></div>
+<div class="clases-grid" style="grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));">
+    <div class="clase-card">
+        <h3><i class="fas fa-chart-line"></i> Usuarios registrados por mes</h3>
+        <canvas id="graficoMesUsuarios" height="220"></canvas>
+    </div>
+    <div class="clase-card">
+        <h3><i class="fas fa-chart-pie"></i> Usuarios por grupo</h3>
+        <canvas id="graficoGrupo" height="220"></canvas>
+    </div>
+    <div class="clase-card">
+        <h3><i class="fas fa-chart-pie"></i> Membresías por estado</h3>
+        <canvas id="graficoMembresiasEstado" height="220"></canvas>
+    </div>
+    <div class="clase-card">
+        <h3><i class="fas fa-chart-bar"></i> Activos vs Inactivos</h3>
+        <canvas id="graficoActivos" height="220"></canvas>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/static/js/estadisticas.js"></script>
+<script src="/static/js/estadisticas.js?v=2"></script>
+
 {% endblock content %}

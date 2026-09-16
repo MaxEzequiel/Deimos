@@ -24,13 +24,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Helper: solo crea el gráfico si el canvas existe
+    function crear(id, config) {
+        const el = document.getElementById(id);
+        if (!el) return;  // canvas no existe → no hace nada
+        new Chart(el, config);
+    }
+
     fetch(url)
         .then(r => r.json())
         .then(data => {
 
             const labelsMes = data.mes ? [meses[data.mes - 1]] : meses;
 
-            new Chart(document.getElementById("graficoMesUsuarios"), {
+            // --- Línea: usuarios por mes ---
+            crear("graficoMesUsuarios", {
                 type: "line",
                 data: { labels: labelsMes, datasets: [{
                     label: "Usuarios", data: data.por_mes.map(m => m.cantidad),
@@ -40,7 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: lineOpts()
             });
 
-            new Chart(document.getElementById("graficoMesMembresias"), {
+            // --- Línea: membresías por mes (solo si el canvas existe) ---
+            crear("graficoMesMembresias", {
                 type: "line",
                 data: { labels: labelsMes, datasets: [{
                     label: "Membresías", data: data.membresias_mes.map(m => m.cantidad),
@@ -50,7 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: lineOpts()
             });
 
-            new Chart(document.getElementById("graficoMesRutinas"), {
+            // --- Línea: rutinas por mes (solo si el canvas existe) ---
+            crear("graficoMesRutinas", {
                 type: "line",
                 data: { labels: labelsMes, datasets: [{
                     label: "Rutinas", data: data.rutinas_mes.map(m => m.cantidad),
@@ -60,7 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: lineOpts()
             });
 
-            new Chart(document.getElementById("graficoGrupo"), {
+            // --- Dona: usuarios por grupo ---
+            crear("graficoGrupo", {
                 type: "doughnut",
                 data: {
                     labels: data.por_grupo.map(g => g.grupo),
@@ -69,7 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: { plugins: { legend: { position: "bottom", labels: { color: "#e0e0e0" } } } }
             });
 
-            new Chart(document.getElementById("graficoMembresiasEstado"), {
+            // --- Torta: membresías por estado ---
+            crear("graficoMembresiasEstado", {
                 type: "pie",
                 data: {
                     labels: data.membresias_estado.map(m => m.estado),
@@ -78,7 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: { plugins: { legend: { position: "bottom", labels: { color: "#e0e0e0" } } } }
             });
 
-            new Chart(document.getElementById("graficoActivos"), {
+            // --- Barras: activos vs inactivos ---
+            crear("graficoActivos", {
                 type: "bar",
                 data: {
                     labels: ["Activos", "Inactivos"],
@@ -92,7 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
                               y: { ticks: { color: "#b0b0b0" }, beginAtZero: true } } }
             });
 
-            new Chart(document.getElementById("graficoTopClientes"), {
+            // --- Barras horizontales: top clientes ---
+            crear("graficoTopClientes", {
                 type: "bar",
                 data: {
                     labels: data.top_clientes.map(c => c.nombre || `Cliente #${c.cliente_id}`),
