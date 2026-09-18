@@ -18,6 +18,7 @@ from routines.models import Routine
 from django.contrib.auth import login, logout, authenticate
 
 from django.contrib.auth.decorators import login_required
+from core.audit import audit
 
 # vista de inicio con estado de membresia si es que existe 
 @login_required
@@ -61,6 +62,7 @@ def create_account(request):
                 Routine.objects.create(client=person, name=f"Rutina de {person.name}", description="Rutina personalizada")
                 Membership.objects.create(user=user)
                 login(request, user)
+                audit(request, "CREATE", "usuario: " + str(user.id) + " - " + user.username)
                 return redirect("home")
             except Exception as e:
                 logout(request)
@@ -109,6 +111,7 @@ def deactivate_account(request, account_id):
     else:
         user.is_active = 0
         user.save()
+        audit(request, "DELETE", "usuario: " + str(user.id) + " - " + user.username)
         return redirect("list_accounts")
 
 
@@ -139,6 +142,7 @@ def edit_account(request, account_id):
         if user_form.is_valid() and person_form.is_valid():
             user_form.save()
             person_form.save()
+            audit(request, "UPDATE", "usuario: " + str(user.id) + " - " + user.username)
             return redirect("list_accounts")
         
         return render(request, "edit_account.html", {

@@ -10,6 +10,7 @@ from accounts.forms import GroupForm
 # funciones para el inicio de sesion
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from core.audit import audit
 
 def accounts_admin_group_list(request):
     if request.method == "GET":
@@ -69,6 +70,7 @@ def accounts_admin_group_create(request):
         form = GroupForm(request.POST)
         if form.is_valid():
             group_created = form.save()
+            audit(request, "CREATE", "grupo: " + str(group_created.id) + " - " + group_created.name)
             for module_key, config in MODELS.items():
                 for action in ["add","change","delete","view"]:
                     codename = f"{action}_{config['model_name']}"
@@ -158,6 +160,7 @@ def accounts_admin_group_edit(request, group_id):
         form = GroupForm(request.POST, instance=group)
         if form.is_valid():
             form.save()
+            audit(request, "UPDATE", "grupo: " + str(group.id) + " - " + group.name)
             
             # Limpiar permisos anteriores
             group.permissions.clear()
