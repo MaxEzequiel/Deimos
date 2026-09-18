@@ -3,6 +3,7 @@ from .models import Course, Inscription
 from .forms import CourseForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.mail import send_mail
+from core.audit import audit
 # Create your views here. 
 
 
@@ -18,6 +19,7 @@ def create_class(request):
             course_instance = current_class.save(commit=False)
             course_instance.teacher = request.user
             course_instance.save()
+            audit(request, "CREATE", "clase: " + str(course_instance.id) + " - " + course_instance.name)
             return redirect("list_class")
         else:
             return render(request, "create_class.html", {"course_form" : CourseForm})
@@ -48,6 +50,7 @@ def edit_class(request, course_id):
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
             form.save()
+            audit(request, "UPDATE", "clase: " + str(course.id) + " - " + course.name)
             return redirect("list_class")
         return render(request, "edit_class.html", {"edit_form" : form})
 
@@ -58,6 +61,7 @@ def delete_class(request, course_id):
         return render(request,"delete_class.html")
     else:
         course = Course.objects.get(id = course_id)
+        audit(request, "DELETE", "clase: " + str(course.id) + " - " + course.name)
         course.delete()
         return redirect("list_class")
 
@@ -79,6 +83,7 @@ def inscription_question(request, course_id):
         inscription.course = course
         inscription.participant = request.user
         inscription.save()
+        audit(request, "INSCRIBE", "clase: " + str(course.id) + " - " + course.name)
         try:
             student = request.user.person
             if student.email:
