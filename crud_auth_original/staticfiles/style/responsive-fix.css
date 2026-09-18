@@ -183,3 +183,9 @@ body {
         width: 40%;
     }
 }
+
+.audit_block {
+    background-color: #1b0f4b;
+    margin-top: 4em;
+    padding: 1em;
+}

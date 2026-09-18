@@ -48,6 +48,9 @@
                         {% if request.user.is_superuser %}
                         <li><a href="{% url 'estadisticas_dashboard' %}"><i class="fas fa-chart-line"></i> Estadísticas</a></li>
                         <li><a href="{% url 'accounts_admin_home' %}"><i class="fas fa-cog"></i> Administrar Grupos</a></li>
+                        <div class = "audit_block">
+                        <li><a href="{% url 'list_audit' %}"><i class="fa-solid fa-folder-open"></i> Auditoria</a></li>
+                        </div>
                         {% endif %}
                     </ul>
                 </div>
