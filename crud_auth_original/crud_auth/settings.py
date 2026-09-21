@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "people",
     "routines",
     "core",
+    "checkin",
 ]
 
 MIDDLEWARE = [

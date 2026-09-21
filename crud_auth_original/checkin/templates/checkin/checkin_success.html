@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in registrado - Deimos Gym{% endblock %}
+
+{% block content %}
+<div class="container-main">
+    <div class="cards-row" style="justify-content: center;">
+        <div class="login-box" style="max-width: 500px; width: 100%; text-align: center;">
+            <div class="auth-success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1>
+                <i class="fas fa-fingerprint"></i> ¡Registro exitoso!
+            </h1>
+
+            <div class="info-card" style="margin-top: 1.5rem;">
+                <p><strong>DNI:</strong> {{ checkin.dni }}</p>
+                {% if checkin.person %}
+                <p><strong>Nombre:</strong> {{ checkin.person }}</p>
+                {% endif %}
+                <p><strong>Entrada:</strong> {{ checkin.hora_entrada|date:"d/m/Y H:i" }}</p>
+                {% if checkin.hora_salida %}
+                <p><strong>Salida:</strong> {{ checkin.hora_salida|date:"d/m/Y H:i" }}</p>
+                <p><strong>Duración:</strong> {{ checkin.hora_salida|timeuntil:checkin.hora_entrada }}</p>
+                {% endif %}
+                {% if checkin.observaciones %}
+                <p><strong>Observaciones:</strong> {{ checkin.observaciones }}</p>
+                {% endif %}
+            </div>
+
+            <div class="button-group" style="margin-top: 2rem;">
+                <a href="{% url 'checkin_home' %}" class="btn-outline-light">
+                    <i class="fas fa-redo"></i> Nuevo check-in
+                </a>
+                <a href="{% url 'checkin_history' %}" class="btn-secondary-custom">
+                    <i class="fas fa-history"></i> Ver historial
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
