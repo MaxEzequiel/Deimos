@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Deimos Gym{% endblock %}</title>
+        <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-mode-preload');
+            }
+        })();
+    </script>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -65,6 +73,7 @@
                     <span><i class="fas fa-user"></i> HOLA, {{ user.username|upper }}</span>
                     <a href="{% url 'password_reset' %}"> Cambiar contraseña </a>
                     <a href="{% url 'logout' %}">Salir</a>
+                    <button id="theme-toggle" class="theme-toggle" title="Cambiar tema"><i class="fas fa-moon" id="theme-icon"></i></button>
                 </div>
             </nav>
             <div class="content-container">
@@ -126,6 +135,50 @@
             sidebar.classList.remove('mobile-open-fix');
         }
     });
+})();
+</script>
+<script>
+// ===== CAMBIO DE TEMA (CLARO / OSCURO) =====
+(function() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const body = document.body;
+    
+    // Aplicar tema guardado
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+        if (themeIcon) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+    }
+    
+    // Detectar preferencia del sistema si no hay nada guardado
+    if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        body.classList.add('light-mode');
+        if (themeIcon) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+    }
+    
+    // Click del botón
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    }
 })();
 </script>
 </body>
