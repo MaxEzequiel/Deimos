@@ -61,5 +61,7 @@ urlpatterns = [
     path("accounts/admin/groups/edit/<int:group_id>", accounts_admin_group_edit, name="accounts_admin_group_edit"),
     # modulo de estadisticas
     path("estadisticas/", include("accounts.urls_estadisticas")),
+    path('checkin/', include('checkin.urls')),
+
 ]
 

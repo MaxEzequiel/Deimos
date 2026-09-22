@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in - Deimos Gym{% endblock %}
+
+{% block content %}
+<div class="container-main">
+    <div class="welcome-section">
+        <h1><i class="fas fa-fingerprint"></i> Check-in del Gimnasio</h1>
+        <p>Ingresá tu DNI para registrar tu entrada o salida</p>
+    </div>
+
+    <div class="cards-row" style="justify-content: center;">
+        <div class="login-box" style="max-width: 500px; width: 100%;">
+            <h1>
+                <i class="fas fa-id-card"></i> Registrar ingreso
+            </h1>
+
+            <form method="POST" autocomplete="off">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="id_dni">
+                        <i class="fas fa-user"></i> DNI
+                    </label>
+                    {{ form.dni }}
+                    {% if form.dni.errors %}
+                    <div class="error-text">{{ form.dni.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_observaciones">
+                        <i class="fas fa-comment"></i> Observaciones
+                    </label>
+                    {{ form.observaciones }}
+                </div>
+
+                <button type="submit" class="btn-outline-light">
+                    <i class="fas fa-sign-in-alt"></i> Registrar
+                </button>
+            </form>
+
+            <div class="auth-footer-links">
+                <a href="{% url 'checkin_history' %}">
+                    <i class="fas fa-history"></i> Ver historial
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if ultimos %}
+    <div class="cards-row" style="margin-top: 2rem;">
+        <div class="card-info" style="width: 100%;">
+            <h4><i class="fas fa-clock"></i> Últimos ingresos de hoy</h4>
+            <div class="plans-table-container" style="margin-top: 1rem;">
+                <table class="plans-table">
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in ultimos %}
+                        <tr>
+                            <td>{{ c.dni }}</td>
+                            <td>{{ c.hora_entrada|date:"H:i" }}</td>
+                            <td>{{ c.hora_salida|date:"H:i"|default:"—" }}</td>
+                            <td>
+                                {% if c.hora_salida %}
+                                    <span style="color:#e74c3c;">Salió</span>
+                                {% else %}
+                                    <span style="color:#2ecc71;">Dentro</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
