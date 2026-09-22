@@ -1,8 +1,4 @@
-/* style.css - Versión completa con modo claro/oscuro */
 
-/* ===================================================
-   VARIABLES DE TEMA (CLARO / OSCURO)
-   =================================================== */
 
 :root {
     /* Tema oscuro (por defecto) */
@@ -24,12 +20,12 @@
     --box-subtle-bg: rgba(255, 255, 255, 0.05);
 }
 
-/* Tema claro - Moderno violeta con fondo vibrante */
+/* Tema claro */
 body.light-mode {
     /* Fondos */
     --bg-primary: #ece9f7;
     --bg-secondary: #ffffff;
-    --bg-card: linear-gradient(135deg, #ffffff 0%, #f3f0ff 100%);
+    --bg-card: linear-gradient(135deg, #ffffff 0%, #dcd5f7 100%);
     --bg-input: #ffffff;
     --bg-input-focus: #f5f3ff;
     
@@ -52,9 +48,6 @@ body.light-mode {
     --table-hover-bg: rgba(139, 92, 246, 0.08);
     --box-subtle-bg: rgba(109, 40, 217, 0.04);
 }
-/* ===================================================
-   MEJORAS EXCLUSIVAS DEL TEMA CLARO (VIOLETA MODERNO)
-   =================================================== */
 
 /* ---- Cards con efecto de vidrio (glassmorphism) ---- */
 body.light-mode .card-info,
@@ -89,7 +82,7 @@ body.light-mode .class-card:hover {
     border-color: rgba(167, 139, 250, 0.6);
 }
 
-/* ---- Sidebar con efecto vidrio y borde violeta ---- */
+/* ---- Sidebar ---- */
 body.light-mode .sidebar {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px);
@@ -189,7 +182,7 @@ body.light-mode .home-hero h1 {
 
 /* ---- Tablas modernas ---- */
 body.light-mode .plans-table-container {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(228, 213, 236, 0.671);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(167, 139, 250, 0.15);
