@@ -1,12 +1,68 @@
 {% extends "base.html" %}
+{% block title %}Auditoría | Deimos{% endblock %}
 
 {% block content %}
 <div class="container-main">
     <div class="plans-module">
+
         <div class="module-header">
-            <h2>Registros de Auditoría</h2>
-            <p>Historial de acciones realizadas por los usuarios</p>
+            <h2><i class="fas fa-shield-alt"></i> Registros de Auditoría</h2>
+            <p>Historial de acciones realizadas por los usuarios · Total: {{ total }}</p>
         </div>
+
+        <form method="get" class="audit-filters">
+            <div class="audit-filter-row">
+
+                <div class="audit-filter-field audit-search">
+                    <label><i class="fas fa-search"></i> Buscar</label>
+                    <input type="text" name="q" value="{{ filtros.q }}"
+                           placeholder="Usuario, acción, detalle, ruta...">
+                </div>
+
+                <div class="audit-filter-field">
+                    <label>Usuario</label>
+                    <input type="text" name="usuario" value="{{ filtros.usuario }}"
+                           placeholder="username">
+                </div>
+
+                <div class="audit-filter-field">
+                    <label>Acción</label>
+                    <select name="accion">
+                        <option value="">— Todas —</option>
+                        {% for a in acciones_disponibles %}
+                            <option value="{{ a }}" {% if filtros.accion == a %}selected{% endif %}>{{ a }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="audit-filter-field">
+                    <label>Ruta</label>
+                    <input type="text" name="ruta" value="{{ filtros.ruta }}"
+                           placeholder="/accounts/">
+                </div>
+
+                <div class="audit-filter-field">
+                    <label>Desde</label>
+                    <input type="date" name="desde" value="{{ filtros.desde }}">
+                </div>
+
+                <div class="audit-filter-field">
+                    <label>Hasta</label>
+                    <input type="date" name="hasta" value="{{ filtros.hasta }}">
+                </div>
+
+                <div class="audit-filter-actions">
+                    <button type="submit" class="btn-audit btn-audit-filter">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                    <a href="{% url 'list_audit' %}" class="btn-audit btn-audit-reset">
+                        <i class="fas fa-redo"></i> Reset
+                    </a>
+                </div>
+
+            </div>
+        </form>
+
         <div class="plans-table-container">
             <table class="plans-table">
                 <thead>
@@ -19,24 +75,20 @@
                     </tr>
                 </thead>
                 <tbody>
-
                     {% for log in audit_logs %}
                     <tr>
                         <td data-label="Usuario" class="plan-name-cell">
-                            {{ log.user.username }}
+                            <i class="fas fa-user-circle"></i>
+                            {{ log.user.username|default:"anónimo" }}
                         </td>
                         <td data-label="Acción">
-                            {{ log.action }}
+                            <span class="audit-badge audit-badge-{{ log.action }}">
+                                {{ log.action }}
+                            </span>
                         </td>
-                        <td data-label="Detalle">
-                            {{ log.detail }}
-                        </td>
-                        <td data-label="Ruta">
-                            {{ log.path }}
-                        </td>
-                        <td data-label="Fecha">
-                            {{ log.modify_date|date:"d/m/Y H:i" }}
-                        </td>
+                        <td data-label="Detalle">{{ log.detail|default:"—" }}</td>
+                        <td data-label="Ruta"><code>{{ log.path|default:"—" }}</code></td>
+                        <td data-label="Fecha">{{ log.modify_date|date:"d/m/Y H:i" }}</td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -48,6 +100,29 @@
                 </tbody>
             </table>
         </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="audit-pagination">
+            {% if page_obj.has_previous %}
+                <a href="?{% for k, v in filtros.items %}{% if v %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                   class="btn-create-plan">
+                    <i class="fas fa-chevron-left"></i> Anterior
+                </a>
+            {% endif %}
+
+            <span class="audit-page-info">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?{% for k, v in filtros.items %}{% if v %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                   class="btn-create-plan">
+                    Siguiente <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
     </div>
 </div>
 {% endblock content %}

@@ -1801,3 +1801,564 @@ i:hover {
         font-size: 1.4rem;
     }
 }
+
+/* ============================================
+   Módulo de Auditoría — Filtros
+   ============================================ */
+
+.audit-filters {
+    margin: 1.5rem 0 2rem 0;
+    padding: 1.25rem 1.25rem 1.4rem 1.25rem;
+    background: var(--box-subtle-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    transition: background .3s ease, border-color .3s ease;
+}
+
+.audit-filter-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr auto;
+    gap: 0.85rem;
+    align-items: end;
+}
+
+/* ---- Cada campo ---- */
+.audit-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.audit-filter-field label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+}
+
+.audit-filter-field label i {
+    font-size: 0.68rem;
+    opacity: 0.7;
+    color: var(--accent);
+}
+
+/* ---- Inputs, selects, date ---- */
+.audit-filter-field input[type="text"],
+.audit-filter-field input[type="date"],
+.audit-filter-field select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: 7px;
+    padding: 0.55rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-family: inherit;
+    width: 100%;
+    height: 38px;
+    box-sizing: border-box;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+    outline: none;
+}
+
+.audit-filter-field input[type="text"]:hover,
+.audit-filter-field input[type="date"]:hover,
+.audit-filter-field select:hover {
+    border-color: var(--accent);
+}
+
+.audit-filter-field input[type="text"]:focus,
+.audit-filter-field input[type="date"]:focus,
+.audit-filter-field select:focus {
+    border-color: var(--accent);
+    background: var(--bg-input-focus);
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.12);
+}
+
+.audit-filter-field input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* ---- Select con flecha custom (usa currentColor vía máscara) ---- */
+.audit-filter-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b0b0b0' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+    cursor: pointer;
+}
+
+/* En modo claro, invertimos el color de la flecha */
+body.light-mode .audit-filter-field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6a83' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+.audit-filter-field select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* ---- Icono del calendario en inputs date ---- */
+.audit-filter-field input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity .15s;
+    filter: invert(0.7); /* modo oscuro por defecto */
+}
+
+body.light-mode .audit-filter-field input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.3); /* modo claro */
+}
+
+.audit-filter-field input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* ---- Buscador ---- */
+.audit-search input {
+    border-color: rgba(2, 134, 13, 0.5) !important;
+    background: rgba(243, 156, 18, 0.06) !important;
+}
+
+.audit-search input:focus {
+    border-color: var(--accent) !important;
+    background: var(--bg-input-focus) !important;
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15) !important;
+}
+
+/* ---- Botones Filtrar / Reset ---- */
+.audit-filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.audit-filter-actions .btn-audit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0 1rem;
+    height: 38px;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    border: 1px solid transparent;
+    line-height: 1;
+    transition: all .15s ease;
+    box-sizing: border-box;
+}
+
+.audit-filter-actions .btn-audit i {
+    font-size: 0.8rem;
+}
+
+/* ============================================
+boton filtrar (primario)
+   ============================================ */
+
+.audit-filter-actions .btn-audit-filter {
+    background: linear-gradient(135deg, #002c13, #003516);
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.audit-filter-actions .btn-audit-filter:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(3, 133, 59, 0.4);
+    border-color: #2ecc71;
+}
+
+.audit-filter-actions .btn-audit-filter:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(3, 133, 59, 0.25);
+}
+
+/* Modo claro: violeta */
+body.light-mode .audit-filter-actions .btn-audit-filter {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+body.light-mode .audit-filter-actions .btn-audit-filter:hover {
+    background: linear-gradient(135deg, #7c3aed, #5b21b6);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+    transform: translateY(-3px);
+    border-color: transparent;
+}
+
+body.light-mode .audit-filter-actions .btn-audit-filter:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+/* ============================================
+   BOTÓN RESET (secundario)
+   ============================================ */
+
+.audit-filter-actions .btn-audit-reset {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border-input);
+}
+
+.audit-filter-actions .btn-audit-reset:hover {
+    background: rgba(46, 204, 113, 0.08);
+    color: #2ecc71;
+    border-color: #2ecc71;
+    transform: translateY(-1px);
+}
+
+.audit-filter-actions .btn-audit-reset:active {
+    transform: translateY(0);
+}
+
+/* Modo claro: violeta fantasma */
+body.light-mode .audit-filter-actions .btn-audit-reset {
+    background: transparent;
+    color: #6d28d9;
+    border-color: rgba(139, 92, 246, 0.35);
+}
+
+body.light-mode .audit-filter-actions .btn-audit-reset:hover {
+    background: rgba(139, 92, 246, 0.08);
+    color: #5b21b6;
+    border-color: #8b5cf6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+body.light-mode .audit-filter-actions .btn-audit-reset:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+.audit-badge-login  { background: rgba(46, 204, 113, 0.15);  color: #27ae60; }
+.audit-badge-logout { background: rgba(149, 165, 166, 0.15); color: #7f8c8d; }
+.audit-badge-create { background: rgba(52, 152, 219, 0.15);  color: #2980b9; }
+.audit-badge-update { background: rgba(243, 156, 18, 0.15);  color: #248606; }
+.audit-badge-delete { background: rgba(231, 76, 60, 0.15);   color: #c0392b; }
+.audit-badge-other  { background: rgba(155, 89, 182, 0.15);  color: #8e44ad; }
+
+/* En modo claro ajustamos los colores de texto para contraste */
+body.light-mode .audit-badge-login  { color: #1e8449; }
+body.light-mode .audit-badge-logout { color: #566573; }
+body.light-mode .audit-badge-create { color: #1f618d; }
+body.light-mode .audit-badge-update { color: #610274; }
+body.light-mode .audit-badge-delete { color: #a93226; }
+body.light-mode .audit-badge-other  { color: #6c3483; }
+
+/* ---- Paginación ---- */
+.audit-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.audit-page-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1200px) {
+    .audit-filter-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .audit-filter-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .audit-filter-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    .audit-filter-actions {
+        grid-column: 1 / -1;
+    }
+    .audit-filter-actions .btn-audit {
+        flex: 1;
+    }
+}
+
+@media (max-width: 500px) {
+    .audit-filter-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
+   Filtro de Estadísticas (reutiliza estilos de auditoría)
+   ============================================ */
+
+/* Grid específico: 2 selects anchos + botones */
+.stats-filter-row {
+    grid-template-columns: 1fr 1fr auto !important;
+    align-items: end;
+}
+
+/* En responsive: se apilan bien */
+@media (max-width: 1200px) {
+    .stats-filter-row {
+        grid-template-columns: 1fr 1fr !important;
+    }
+    .stats-filter-row .audit-filter-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-filter-row {
+        grid-template-columns: 1fr !important;
+    }
+    .stats-filter-row .audit-filter-actions {
+        grid-column: 1 / -1;
+        justify-content: stretch;
+    }
+    .stats-filter-row .audit-filter-actions .btn-audit {
+        flex: 1;
+    }
+}
+/* ============================================
+   Módulo de Estadísticas — Cards de módulo
+   (mismo estilo que list_class)
+   ============================================ */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-list-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+.stat-list-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ---- Cabecera ---- */
+.stat-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    background: rgba(46, 204, 113, 0.08);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stat-list-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.stat-list-header h3 i {
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+/* Colores por tipo de card (modo oscuro) */
+.stat-list-users .stat-list-header {
+    background: linear-gradient(90deg, rgba(46, 204, 113, 0.12), rgba(46, 204, 113, 0.02));
+}
+.stat-list-users .stat-list-header h3 i {
+    color: #2ecc71;
+}
+
+.stat-list-memberships .stat-list-header {
+    background: linear-gradient(90deg, rgba(52, 152, 219, 0.12), rgba(52, 152, 219, 0.02));
+}
+.stat-list-memberships .stat-list-header h3 i {
+    color: #3498db;
+}
+
+.stat-list-routines .stat-list-header {
+    background: linear-gradient(90deg, rgba(243, 156, 18, 0.12), rgba(243, 156, 18, 0.02));
+}
+.stat-list-routines .stat-list-header h3 i {
+    color: #f39c12;
+}
+
+/* ---- Badges de cabecera ---- */
+.stat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    background: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+}
+
+.stat-badge i {
+    font-size: 0.7rem;
+}
+
+.stat-badge-info {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+}
+
+.stat-badge-warn {
+    background: rgba(243, 156, 18, 0.15);
+    color: #f39c12;
+}
+
+/* ---- Cuerpo: filas label + valor ---- */
+.stat-list-body {
+    padding: 0.5rem 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 1.1rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: background .15s ease;
+}
+
+.stat-list-item:last-child {
+    border-bottom: none;
+}
+
+.stat-list-item:hover {
+    background: var(--box-subtle-bg);
+}
+
+.stat-list-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stat-list-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+/* ============================================
+   MODO CLARO — ajustes violeta
+   ============================================ */
+
+body.light-mode .stat-list-header {
+    background: rgba(139, 92, 246, 0.06);
+}
+
+body.light-mode .stat-list-users .stat-list-header {
+    background: linear-gradient(90deg, rgba(109, 40, 217, 0.10), rgba(139, 92, 246, 0.02));
+}
+body.light-mode .stat-list-users .stat-list-header h3 i {
+    color: #6d28d9;
+}
+
+body.light-mode .stat-list-memberships .stat-list-header {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.10), rgba(139, 92, 246, 0.02));
+}
+body.light-mode .stat-list-memberships .stat-list-header h3 i {
+    color: #3b82f6;
+}
+
+body.light-mode .stat-list-routines .stat-list-header {
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.10), rgba(139, 92, 246, 0.02));
+}
+body.light-mode .stat-list-routines .stat-list-header h3 i {
+    color: #d97706;
+}
+
+body.light-mode .stat-badge {
+    background: rgba(109, 40, 217, 0.12);
+    color: #6d28d9;
+}
+body.light-mode .stat-badge-info {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+}
+body.light-mode .stat-badge-warn {
+    background: rgba(245, 158, 11, 0.15);
+    color: #b45309;
+}
+
+/* ============================================
+   Acciones (Ver Informe / Excel / PDF)
+   ============================================ */
+
+.stats-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.stats-actions .btn-audit {
+    flex: 0 0 auto;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .stats-actions {
+        flex-direction: column;
+    }
+    .stats-actions .btn-audit {
+        width: 100%;
+        justify-content: center;
+    }
+    .stat-list-item {
+        padding: 0.6rem 1rem;
+    }
+}
