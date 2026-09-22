@@ -4,6 +4,7 @@ from .forms import CourseForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.mail import send_mail
 from core.audit import audit
+from django.db import transaction
 # Create your views here. 
 
 
@@ -16,10 +17,11 @@ def create_class(request):
     else:
         current_class = CourseForm(request.POST)
         if current_class.is_valid():
-            course_instance = current_class.save(commit=False)
-            course_instance.teacher = request.user
-            course_instance.save()
-            audit(request, "CREATE", "clase: " + str(course_instance.id) + " - " + course_instance.name)
+            with transaction.atomic():
+                course_instance = current_class.save(commit=False)
+                course_instance.teacher = request.user
+                course_instance.save()
+                audit(request, "CREATE", "clase: " + str(course_instance.id) + " - " + course_instance.name)
             return redirect("list_class")
         else:
             return render(request, "create_class.html", {"course_form" : CourseForm})
@@ -49,8 +51,9 @@ def edit_class(request, course_id):
     else:
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
-            form.save()
-            audit(request, "UPDATE", "clase: " + str(course.id) + " - " + course.name)
+            with transaction.atomic():
+                form.save()
+                audit(request, "UPDATE", "clase: " + str(course.id) + " - " + course.name)
             return redirect("list_class")
         return render(request, "edit_class.html", {"edit_form" : form})
 
@@ -61,8 +64,9 @@ def delete_class(request, course_id):
         return render(request,"delete_class.html")
     else:
         course = Course.objects.get(id = course_id)
-        audit(request, "DELETE", "clase: " + str(course.id) + " - " + course.name)
-        course.delete()
+        with transaction.atomic():
+            audit(request, "DELETE", "clase: " + str(course.id) + " - " + course.name)
+            course.delete()
         return redirect("list_class")
 
 @login_required
@@ -82,8 +86,9 @@ def inscription_question(request, course_id):
         inscription = Inscription()
         inscription.course = course
         inscription.participant = request.user
-        inscription.save()
-        audit(request, "INSCRIBE", "clase: " + str(course.id) + " - " + course.name)
+        with transaction.atomic():
+            inscription.save()
+            audit(request, "INSCRIBE", "clase: " + str(course.id) + " - " + course.name)
         try:
             student = request.user.person
             if student.email:

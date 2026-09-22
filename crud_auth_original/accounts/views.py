@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 
+# atomizacion de transacciones
+
+from django.db import transaction
 # formularios de login y register
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
@@ -44,25 +47,29 @@ def create_account(request):
         
         if user_form.is_valid() and person_form.is_valid():
             try:
-                # creamos el objeto del formulario recibido sin guardar para añadir campos adicionales
-                user = user_form.save(commit=False)
+                with transaction.atomic():
+                    # creamos el objeto del formulario recibido sin guardar para añadir campos adicionales
+                    user = user_form.save(commit=False)
                 
-                # Verificar si se marcó la opción "es administrador"
-                is_admin = request.POST.get('is_admin') == 'on'
-                if is_admin:
-                    user.is_superuser = True
-                    user.is_staff = True  # También necesita is_staff para acceder al admin
+                    # Verificar si se marcó la opción "es administrador"
+                    is_admin = request.POST.get('is_admin') == 'on'
+                    if is_admin:
+                        user.is_superuser = True
+                        user.is_staff = True  # También necesita is_staff para acceder al admin
+                    
+                    user.save()
+                    
+                    person = person_form.save(commit=False)
+                    person.user = user
+                    person.save()
+                    
+                    Routine.objects.create(client=person, name=f"Rutina de {person.name}", description="Rutina personalizada")
+                    Membership.objects.create(user=user)
+                    audit(request, "CREATE", "usuario: " + str(user.id) + " - " + user.username)
+                    #//
                 
-                user.save()
-                
-                person = person_form.save(commit=False)
-                person.user = user
-                person.save()
-                
-                Routine.objects.create(client=person, name=f"Rutina de {person.name}", description="Rutina personalizada")
-                Membership.objects.create(user=user)
                 login(request, user)
-                audit(request, "CREATE", "usuario: " + str(user.id) + " - " + user.username)
+
                 return redirect("home")
             except Exception as e:
                 logout(request)
@@ -109,9 +116,10 @@ def deactivate_account(request, account_id):
     if request.method == "GET":
         return render(request, "deactivate_account.html", {"user" : user})
     else:
-        user.is_active = 0
-        user.save()
-        audit(request, "DELETE", "usuario: " + str(user.id) + " - " + user.username)
+        with transaction.atomic():
+            user.is_active = 0
+            user.save()
+            audit(request, "DELETE", "usuario: " + str(user.id) + " - " + user.username)
         return redirect("list_accounts")
 
 
@@ -140,9 +148,10 @@ def edit_account(request, account_id):
         person_form = PersonForm(request.POST, instance=person)
         
         if user_form.is_valid() and person_form.is_valid():
-            user_form.save()
-            person_form.save()
-            audit(request, "UPDATE", "usuario: " + str(user.id) + " - " + user.username)
+            with transaction.atomic():
+                user_form.save()
+                person_form.save()
+                audit(request, "UPDATE", "usuario: " + str(user.id) + " - " + user.username)
             return redirect("list_accounts")
         
         return render(request, "edit_account.html", {
@@ -172,9 +181,10 @@ def accounts_admin_edit(request, account_id):
     if request.method == "POST":
         group_id = request.POST.get("group_id")
         user = User.objects.get(id = account_id)
-        user.groups.clear()
-        # Obtener el objeto Group usando el ID y asignarlo al usuario
-        if group_id:
-            group = Group.objects.get(id=group_id)
-            user.groups.add(group)
+        with transaction.atomic():
+            user.groups.clear()
+            # Obtener el objeto Group usando el ID y asignarlo al usuario
+            if group_id:
+                group = Group.objects.get(id=group_id)
+                user.groups.add(group)
         return redirect("accounts_admin_home")
