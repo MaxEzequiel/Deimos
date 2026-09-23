@@ -120,3 +120,82 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Error cargando estadísticas:", err));
 });
+
+// ============================================
+// EXPORTAR Y ENVIAR ESTADÍSTICAS
+// ============================================
+
+function capturarGraficos() {
+    const titulos = {
+        graficoMesUsuarios: "Usuarios por mes",
+        graficoGrupo: "Usuarios por grupo",
+        graficoMembresiasEstado: "Membresías por estado",
+        graficoActivos: "Activos vs Inactivos",
+    };
+
+    const imagenes = {};
+    for (const id in titulos) {
+        const canvas = document.getElementById(id);
+        if (canvas) {
+            imagenes[titulos[id]] = canvas.toDataURL("image/png");
+        }
+    }
+    return imagenes;
+}
+
+function getCSRF() {
+    const partes = `; ${document.cookie}`.split(`; csrftoken=`);
+    return partes.length === 2 ? partes.pop().split(";").shift() : "";
+}
+
+function descargar(url, nombre) {
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRF(),
+        },
+        body: JSON.stringify({ imagenes: capturarGraficos() }),
+    })
+    .then(r => r.blob())
+    .then(blob => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = nombre;
+        a.click();
+    })
+    .catch(err => alert("Error: " + err));
+}
+
+function enviarEmail(formato) {
+    const email = prompt("Email destinatario:");
+    if (!email) return;
+
+    fetch("/estadisticas/reportes/enviar-email/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRF(),
+        },
+        body: JSON.stringify({
+            email: email,
+            formato: formato,
+            imagenes: capturarGraficos(),
+        }),
+    })
+    .then(r => r.json())
+    .then(data => alert(data.ok ? "✅ " + data.mensaje : "❌ " + data.error))
+    .catch(err => alert("❌ Error: " + err));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const e = document.getElementById("btn-excel");
+    const p = document.getElementById("btn-pdf");
+    const me = document.getElementById("btn-mail-excel");
+    const mp = document.getElementById("btn-mail-pdf");
+
+    if (e) e.onclick = () => descargar("/estadisticas/reportes/dashboard/excel/", "estadisticas.xlsx");
+    if (p) p.onclick = () => descargar("/estadisticas/reportes/dashboard/pdf/", "estadisticas.pdf");
+    if (me) me.onclick = () => enviarEmail("xlsx");
+    if (mp) mp.onclick = () => enviarEmail("pdf");
+});

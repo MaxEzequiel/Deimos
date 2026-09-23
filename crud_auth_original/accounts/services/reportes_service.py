@@ -1,3 +1,4 @@
+import base64
 from io import BytesIO
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
@@ -94,6 +95,122 @@ class ReportesService:
              [colors.white, colors.HexColor("#F2F2F2")]),
         ]))
         elementos.append(tabla)
+
+        doc.build(elementos)
+        buffer.seek(0)
+        return buffer
+	
+	
+    # ============================================
+    # ESTADÍSTICAS CON GRÁFICOS
+    # ============================================
+
+    @staticmethod
+    def _imagen_desde_base64(data_url):
+        """Convierte 'data:image/png;base64,XXX' a BytesIO."""
+        if not data_url:
+            return None
+        if "," in data_url:
+            data_url = data_url.split(",", 1)[1]
+        return BytesIO(base64.b64decode(data_url))
+
+    @staticmethod
+    def estadisticas_a_excel(datos, imagenes):
+        """Excel con hoja de datos + hoja con imágenes de gráficos."""
+        from openpyxl.drawing.image import Image as XLImage
+
+        wb = Workbook()
+
+        # --- Hoja 1: datos numéricos ---
+        ws = wb.active
+        ws.title = "Datos"
+        ws.append(["Sección", "Métrica", "Valor"])
+        ws.append(["Usuarios", "Total", datos["resumen"]["total"]])
+        ws.append(["Usuarios", "Activos", datos["resumen"]["activos"]])
+        ws.append(["Usuarios", "Inactivos", datos["resumen"]["inactivos"]])
+        ws.append(["Usuarios", "Staff", datos["resumen"]["staff"]])
+        ws.append(["Membresías", "Total", datos["resumen_membresias"]["total"]])
+        ws.append(["Membresías", "Activas", datos["resumen_membresias"]["activas"]])
+        ws.append(["Membresías", "Vencidas", datos["resumen_membresias"]["vencidas"]])
+        ws.append(["Rutinas", "Total", datos["resumen_rutinas"]["total"]])
+        ws.append(["Rutinas", "Con cliente", datos["resumen_rutinas"]["con_cliente"]])
+        ws.append(["Rutinas", "Sin cliente", datos["resumen_rutinas"]["sin_cliente"]])
+        ws.column_dimensions["A"].width = 20
+        ws.column_dimensions["B"].width = 20
+        ws.column_dimensions["C"].width = 15
+
+        # --- Hoja 2: gráficos ---
+        ws_img = wb.create_sheet("Gráficos")
+        fila = 1
+        for titulo, data_url in imagenes.items():
+            ws_img.cell(row=fila, column=1, value=titulo)
+            fila += 1
+
+            img = XLImage(ReportesService._imagen_desde_base64(data_url))
+            img.width = 500
+            img.height = 280
+            img.anchor = f"A{fila}"
+            ws_img.add_image(img)
+
+            fila += 16
+
+        buffer = BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+        return buffer
+
+    @staticmethod
+    def estadisticas_a_pdf(datos, imagenes):
+        """PDF con tabla de datos + imágenes de gráficos."""
+        from reportlab.platypus import Image as RLImage, PageBreak
+
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(
+            buffer, pagesize=A4,
+            leftMargin=1.5 * cm, rightMargin=1.5 * cm,
+            topMargin=1.5 * cm, bottomMargin=1.5 * cm,
+        )
+        styles = getSampleStyleSheet()
+        elementos = []
+
+        elementos.append(Paragraph("<b>Informe de Estadísticas</b>", styles["Title"]))
+        elementos.append(Spacer(1, 0.5 * cm))
+
+        filas = [
+            ["Sección", "Métrica", "Valor"],
+            ["Usuarios", "Total", datos["resumen"]["total"]],
+            ["Usuarios", "Activos", datos["resumen"]["activos"]],
+            ["Usuarios", "Inactivos", datos["resumen"]["inactivos"]],
+            ["Usuarios", "Staff", datos["resumen"]["staff"]],
+            ["Membresías", "Total", datos["resumen_membresias"]["total"]],
+            ["Membresías", "Activas", datos["resumen_membresias"]["activas"]],
+            ["Membresías", "Vencidas", datos["resumen_membresias"]["vencidas"]],
+            ["Rutinas", "Total", datos["resumen_rutinas"]["total"]],
+            ["Rutinas", "Con cliente", datos["resumen_rutinas"]["con_cliente"]],
+        ]
+
+        tabla = Table(filas, colWidths=[5 * cm, 5 * cm, 3 * cm])
+        tabla.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#2E7D32")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("GRID", (0, 0), (-1, -1), 0.4, colors.grey),
+            ("FONTSIZE", (0, 0), (-1, -1), 9),
+        ]))
+        elementos.append(tabla)
+
+        if imagenes:
+            elementos.append(PageBreak())
+            elementos.append(Paragraph("<b>Gráficos</b>", styles["Heading1"]))
+            elementos.append(Spacer(1, 0.5 * cm))
+
+            for titulo, data_url in imagenes.items():
+                elementos.append(Paragraph(f"<b>{titulo}</b>", styles["Heading3"]))
+                elementos.append(RLImage(
+                    ReportesService._imagen_desde_base64(data_url),
+                    width=15 * cm, height=8 * cm,
+                ))
+                elementos.append(Spacer(1, 0.5 * cm))
 
         doc.build(elementos)
         buffer.seek(0)
