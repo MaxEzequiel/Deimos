@@ -147,18 +147,12 @@
         <a href="{% url 'estadisticas_informe' %}" class="btn-audit btn-audit-reset">
             <i class="fas fa-file-alt"></i> Ver Informe
         </a>
-        <button id="btn-excel" class="btn-audit btn-audit-filter">
-            <i class="fas fa-file-excel"></i> Exportar Excel
-        </button>
-        <button id="btn-pdf" class="btn-audit btn-audit-filter">
-            <i class="fas fa-file-pdf"></i> Exportar PDF
-        </button>
-        <button id="btn-mail-excel" class="btn-audit btn-audit-reset">
-            <i class="fas fa-envelope"></i> Enviar Excel
-        </button>
-        <button id="btn-mail-pdf" class="btn-audit btn-audit-reset">
-            <i class="fas fa-envelope"></i> Enviar PDF
-        </button>
+        <a href="{% url 'estadisticas_excel' %}" class="btn-audit btn-audit-filter">
+            <i class="fas fa-file-excel"></i> Excel
+        </a>
+        <a href="{% url 'estadisticas_pdf' %}" class="btn-audit btn-audit-filter">
+            <i class="fas fa-file-pdf"></i> PDF
+        </a>
     </div>
 
     {# ============ GRÁFICOS ============ #}
@@ -184,6 +178,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/static/js/estadisticas.js?v=6"></script>
+<script src="/static/js/estadisticas.js?v=3"></script>
 
 {% endblock content %}
