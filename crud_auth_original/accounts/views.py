@@ -119,7 +119,7 @@ def deactivate_account(request, account_id):
         with transaction.atomic():
             user.is_active = 0
             user.save()
-            audit(request, "DELETE", "usuario: " + str(user.id) + " - " + user.username)
+            audit(request, "DEACTIVATE", "usuario: " + str(user.id) + " - " + user.username)
         return redirect("list_accounts")
 
 
