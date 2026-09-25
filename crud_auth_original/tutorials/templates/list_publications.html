@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Publicaciones</title>
+</head>
+<body>
+    <h1>Publicaciones</h1>
+    <a href="{% url 'create_publication' %}">Crear publicacion</a>
+    <ul>
+        {% for publication in publications %}
+        <li>
+            <a href="{% url 'detail_publication' publication.id %}">{{ publication.title }}</a>
+            <p>{{ publication.description }}</p>
+            <img src="{{ publication.image.url }}" alt="{{ publication.title }}" width="200">
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

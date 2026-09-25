@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar publicacion</title>
+</head>
+<body>
+    <h1>Editar publicacion</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ publication_form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+    <a href="{% url 'list_publications' %}">Volver a la lista</a>
+</body>
+</html>

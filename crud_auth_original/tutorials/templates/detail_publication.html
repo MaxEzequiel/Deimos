@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ publication.title }}</title>
+</head>
+<body>
+    <h1>{{ publication.title }}</h1>
+    <p>{{ publication.description }}</p>
+    <img src="{{ publication.image.url }}" alt="{{ publication.title }}" width="400">
+    <p>{{ publication.content }}</p>
+    <a href="{% url 'edit_publication' publication.id %}">Editar</a>
+    <a href="{% url 'delete_publication' publication.id %}">Eliminar</a>
+    <a href="{% url 'list_publications' %}">Volver a la lista</a>
+</body>
+</html>

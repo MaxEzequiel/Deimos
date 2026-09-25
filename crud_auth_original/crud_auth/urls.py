@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib.auth import views
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from accounts.views import *
 from accounts.groups import *
 from memberships.views import edit_membership
@@ -62,6 +64,11 @@ urlpatterns = [
     # modulo de estadisticas
     path("estadisticas/", include("accounts.urls_estadisticas")),
     path('checkin/', include('checkin.urls')),
+    # modulo de publicaciones
+    path("tutorials/", include("tutorials.urls")),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "routines",
     "core",
     "checkin",
+    "tutorials",
 ]
 
 MIDDLEWARE = [
@@ -149,6 +150,10 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "static"
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = BASE_DIR / "media"
 
 LOGIN_URL = "/accounts/login/"
 # Default primary key field type
