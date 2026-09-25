@@ -15,6 +15,7 @@
     </div>
 
     <!-- Botón para CREAR NUEVO PLAN -->
+    {% if user.is_staff or user.is_superuser %}
     <div class="create-plan-section">
         <div style="text-align: left;">
         <a href="{% url 'create_plan' %}" class="btn-create-plan">
@@ -22,7 +23,7 @@
         </a>
         </div>
     </div>
-
+    {% endif %}
     <!-- Listado de planes existentes -->
     <div class="list-plans-section">
         <h3><i class="fas fa-list"></i> Planes disponibles</h3>
@@ -34,7 +35,9 @@
                         <th>Plan</th>
                         <th>Descripción</th>
                         <th>Precio</th>
+                        {% if user.is_staff or user.is_superuser %}
                         <th>Acciones</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -47,13 +50,20 @@
                         <td class="plan-price-cell">
                             <i class="fas fa-dollar-sign"></i> {{ plan.base_price }}
                         </td>
+                        {% if user.is_staff or user.is_superuser %}
                         <td class="plan-actions-cell">
+                            
                             <a href="{% url 'edit_plan' plan.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
                             <a href="{% url 'delete_plan' plan.id %}" class="action-btn delete-btn">
                                 <i class="fas fa-trash-alt"></i> Eliminar
                             </a>
+                        {% else %}
+                            <span class="empty-row" style="border:none;">
+                                <i class="fas fa-lock"></i> Solo lectura
+                            </span>
+                        {% endif %}
                         </td>
                     </tr>
                     {% empty %}

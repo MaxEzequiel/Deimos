@@ -3,61 +3,145 @@
 {% block title %}Inicio | Deimos Gym{% endblock %}
 
 {% block content %}
+<div class="container-main">
 
-<!-- TITULO PRINCIPAL -->
-<div class="welcome-section">
-    <h1>Te damos la bienvenida a Deimos</h1>
-    <p>Gestioná tu entrenamiento y membresía de forma simple</p>
-</div>
+    {# ========== HERO DE BIENVENIDA ========== #}
+    <section class="hero-welcome">
+        <div class="hero-content">
+            <div class="hero-greeting">Bienvenido de nuevo</div>
+            <h1 class="hero-username">{{ user.username }}</h1>
+            <p class="hero-subtitle">
+                {% if membership and membership.status == "active" %}
+                    Tu membresía está activa. ¡A entrenar!
+                {% elif membership %}
+                    Recordá renovar tu membresía para seguir entrenando.
+                {% else %}
+                    Adquirí una membresía para comenzar tu entrenamiento.
+                {% endif %}
+            </p>
 
-<!-- CARDS DE ESTADO Y ACCIONES -->
-<div class="cards-row">
-    <div class="card-info">
-        <div class="card-icon">
-            <i class="fas fa-id-card"></i>
+            <div class="hero-actions">
+                <a href="{% url 'list_class' %}" class="hero-btn hero-btn-primary">
+                    <i class="fas fa-calendar-alt"></i> Ver clases
+                </a>
+                <a href="{% url 'list_plans' %}" class="hero-btn hero-btn-secondary">
+                    <i class="fas fa-list"></i> Ver planes
+                </a>
+            </div>
         </div>
-        <h4>Estado de membresía</h4>
-        <p>{{ estado }}</p>
+
+        <div class="hero-icon">
+            <i class="fas fa-dumbbell"></i>
+        </div>
+    </section>
+
+    {# ========== TARJETAS DE INFO ========== #}
+    <div class="home-info-grid">
+
+        {# --- Membresía --- #}
+        <div class="home-info-card">
+            <div class="home-info-icon {% if membership and membership.status == 'active' %}icon-success{% else %}icon-danger{% endif %}">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Membresía</span>
+                <span class="home-info-value">
+                    {% if membership %}
+                        {{ membership.status|upper }}
+                    {% else %}
+                        Sin membresía
+                    {% endif %}
+                </span>
+                {% if membership and membership.plan %}
+                <span class="home-info-hint">Plan: {{ membership.plan.name }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {# --- Rutinas --- #}
+        <div class="home-info-card">
+            <div class="home-info-icon icon-info">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Rutinas</span>
+                <span class="home-info-value">{{ total_rutinas }}</span>
+                <span class="home-info-hint">
+                    {% if total_rutinas == 0 %}Sin asignar{% else %}Asignadas{% endif %}
+                </span>
+            </div>
+        </div>
+
+        {# --- Próxima clase --- #}
+        <div class="home-info-card">
+            <div class="home-info-icon icon-warn">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Próximas clases</span>
+                <span class="home-info-value">{{ proximas_clases|length }}</span>
+                <span class="home-info-hint">
+                    {% if proximas_clases %}Disponibles{% else %}Sin programar{% endif %}
+                </span>
+            </div>
+        </div>
+
     </div>
 
-    <div class="card-info">
-        <div class="card-icon">
-            <i class="fas fa-bolt"></i>
+    {# ========== PRÓXIMAS CLASES ========== #}
+    <section class="home-classes-section">
+        <header class="home-section-header">
+            <h2><i class="fas fa-calendar-alt"></i> Próximas clases</h2>
+            <a href="{% url 'list_class' %}" class="home-section-link">
+                Ver todas <i class="fas fa-arrow-right"></i>
+            </a>
+        </header>
+
+        {% if proximas_clases %}
+        <div class="home-classes-grid">
+            {% for course in proximas_clases %}
+            <article class="home-class-card">
+                <div class="home-class-top">
+                    <h3>{{ course.name }}</h3>
+                    {% if course.has_spots %}
+                        <span class="home-class-badge home-class-badge-open">
+                            <i class="fas fa-check"></i> {{ course.free_spots }} cupos
+                        </span>
+                    {% else %}
+                        <span class="home-class-badge home-class-badge-full">
+                            <i class="fas fa-times"></i> Lleno
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if course.description %}
+                <p class="home-class-desc">{{ course.description|truncatechars:70 }}</p>
+                {% endif %}
+
+                <div class="home-class-meta">
+                    <span><i class="fas fa-user"></i> {{ course.teacher }}</span>
+                    <span><i class="fas fa-clock"></i> {{ course.starts_at|date:"d/m H:i" }}</span>
+                </div>
+
+                {% if course.has_spots %}
+                <a href="{% url 'inscription_question' course.id %}" class="home-class-btn">
+                    <i class="fas fa-user-plus"></i> Inscribirse
+                </a>
+                {% else %}
+                <button class="home-class-btn home-class-btn-disabled" disabled>
+                    <i class="fas fa-ban"></i> Sin cupos
+                </button>
+                {% endif %}
+            </article>
+            {% endfor %}
         </div>
-        <h4>Acciones rápidas</h4>
-        </a>
-    </div>
+        {% else %}
+        <div class="home-empty">
+            <i class="fas fa-calendar-times"></i>
+            <p>No hay clases programadas por el momento</p>
+        </div>
+        {% endif %}
+    </section>
+
 </div>
-
-<!-- SECCION CLASES -->
-<div class="section-clases">
-    <h2><i class="fas fa-calendar-alt"></i> Próximas Clases</h2>
-    <div class="clases-grid">
-        <div class="clase-card">
-            <h3>ZUMBA</h3>
-            <p><i class="fas fa-user"></i> Profesor: Zarate Julian</p>
-            <p><i class="fas fa-clock"></i> Duración: 1h 40m</p>
-            <p><i class="fas fa-calendar"></i> Fecha: 02/08/2025</p>
-            <p><i class="fas fa-hourglass-start"></i> Hora: 11:25am</p>
-        </div>
-        
-        <div class="clase-card">
-            <h3>CALISTENIA</h3>
-            <p><i class="fas fa-user"></i> Profesor: Juan Ignacio</p>
-            <p><i class="fas fa-clock"></i> Duración: 1h</p>
-            <p><i class="fas fa-calendar"></i> Fecha: 03/08/2025</p>
-            <p><i class="fas fa-hourglass-start"></i> Hora: 05:00pm</p>
-        </div>
-        
-        <div class="clase-card">
-            <h3>BOXEO</h3>
-            <p><i class="fas fa-user"></i> Profesor: Hugo Villalba</p>
-            <p><i class="fas fa-clock"></i> Duración: 2h</p>
-            <p><i class="fas fa-calendar"></i> Fecha: 06/08/2025</p>
-            <p><i class="fas fa-hourglass-start"></i> Hora: 08:20pm</p>
-        </div>
-    </div>
-</div>
-
-
-{% endblock %}
+{% endblock content %}

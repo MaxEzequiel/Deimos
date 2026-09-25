@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{%if user.is_staff or user.is_superuser %}
 {% block content %}
 
 <div class="login-box" style="max-width: 500px;">
@@ -27,5 +27,5 @@
         </div>
     </form>
 </div>
-
+{% endif %}
 {% endblock content %}

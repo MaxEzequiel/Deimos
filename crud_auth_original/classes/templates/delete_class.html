@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+{if user.is_staff or user.is_superuser %}
+
 <div class="login-box">
     <h1 class="text-center">
         <i class="fas fa-trash-alt"></i> Eliminar Clase
@@ -24,5 +26,15 @@
         </div>
     </form>
 </div>
+{% else %}
+
+<div class="login-box text-center">
+    <h1><i class="fas fa-ban"></i> Acceso denegado</h1>
+    <p>No tienes permisos para eliminar clases.</p>
+    <a href="{% url 'list_class' %}" class="btn-secondary-custom">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+{% endif %}
 
 {% endblock content %}
