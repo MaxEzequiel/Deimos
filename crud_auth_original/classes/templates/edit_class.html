@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 {if user.is_staff or user.is_superuser %}
 <div class="signup-box">
@@ -28,7 +27,6 @@
             </div>
             {% endfor %}
         </div>
-        
         <div class="button-group mt-4">
             <button type="submit" class="btn-outline-light">
                 <i class="fas fa-save"></i> Guardar Cambios

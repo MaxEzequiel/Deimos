@@ -2,6 +2,7 @@
 
 {% block content %}
 {if user.is_staff or user.is_superuser %}
+
 <div class="login-box">
     <h1 class="text-center">
         <i class="fas fa-trash-alt"></i> Eliminar Clase
@@ -26,6 +27,7 @@
     </form>
 </div>
 {% else %}
+
 <div class="login-box text-center">
     <h1><i class="fas fa-ban"></i> Acceso denegado</h1>
     <p>No tienes permisos para eliminar clases.</p>

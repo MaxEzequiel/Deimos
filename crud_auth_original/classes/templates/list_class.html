@@ -25,7 +25,9 @@
                         <th>Inicio</th>
                         <th>Fin</th>
                         <th>Cupos</th>
+                        {% if user.is_staff or user.is_superuser %}
                         <th>Acciones</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
