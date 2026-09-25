@@ -6,6 +6,7 @@
         <div class="module-header">
             <h2>Lista de Clases</h2>
             <p>Gestión de clases disponibles</p>
+            {% if user.is_staff or user.is_superuser %}
             <div class="create-plan-section">
                 <div style="text-align: left;">
                     <a href="{% url 'create_class' %}" class="btn-create-plan">
@@ -13,6 +14,7 @@
                     </a>
                 </div>
             </div>
+            {% endif %}
         </div>
         <div class="plans-table-container">
             <table class="plans-table">
@@ -46,17 +48,24 @@
                             {{ course.free_spots }}/{{ course.max_capacity }} cupos
                         </td>
                         <td data-label="Acciones" class="plan-actions-cell">
+
+                            {# Botón Inscribirse: visible para todos si hay cupos #}
                             {% if course.has_spots %}
-                            <a href="{% url 'inscription_question' course.id %}" class="action-btn edit-btn">
+                            <a href="{% url 'inscription_question' course.id %}" class="action-btn enroll-btn">
                                 <i class="fas fa-user-plus"></i> Inscribirse
                             </a>
                             {% endif %}
+
+                            {# Botones de admin/staff: Crear, Editar, Eliminar #}
+                            {% if user.is_staff or user.is_superuser %}
                             <a href="{% url 'edit_class' course.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
                             <a href="{% url 'delete_class' course.id %}" class="action-btn delete-btn">
                                 <i class="fas fa-trash"></i> Eliminar
                             </a>
+                            {% endif %}
+
                         </td>
                     </tr>
                     {% empty %}
