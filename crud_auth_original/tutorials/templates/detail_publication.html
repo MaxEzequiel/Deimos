@@ -1,15 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ publication.title }}</title>
-</head>
-<body>
-    <h1>{{ publication.title }}</h1>
-    <p>{{ publication.description }}</p>
-    <img src="{{ publication.image.url }}" alt="{{ publication.title }}" width="400">
-    <p>{{ publication.content }}</p>
-    <a href="{% url 'edit_publication' publication.id %}">Editar</a>
-    <a href="{% url 'delete_publication' publication.id %}">Eliminar</a>
-    <a href="{% url 'list_publications' %}">Volver a la lista</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}{{ publication.title }} | Deimos{% endblock %}
+
+{% block content %}
+<div class="container-main">
+
+    <div class="welcome-section">
+        <h1><i class="fas fa-file-alt"></i> {{ publication.title }}</h1>
+        <p>{{ publication.description }}</p>
+    </div>
+
+    {% if publication.image %}
+    <div class="clase-card" style="text-align:center; margin-bottom:2rem;">
+        <img src="{{ publication.image.url }}" alt="{{ publication.title }}"
+             style="max-width: 100%; max-height: 450px; border-radius: 12px; object-fit: cover;">
+    </div>
+    {% endif %}
+
+    <div class="clase-card" style="margin-bottom:2rem;">
+        <h3><i class="fas fa-align-left"></i> Contenido</h3>
+        <p>{{ publication.content|linebreaks }}</p>
+    </div>
+
+    <div class="stats-actions" style="justify-content:flex-start;">
+        {% if puede_editar %}
+        <a href="{% url 'edit_publication' publication.id %}" class="btn-audit btn-audit-filter">
+            <i class="fas fa-edit"></i> Editar
+        </a>
+        <a href="{% url 'delete_publication' publication.id %}" class="btn-audit btn-audit-reset">
+            <i class="fas fa-trash-alt"></i> Eliminar
+        </a>
+        {% endif %}
+        <a href="{% url 'list_publications' %}" class="btn-audit btn-audit-reset">
+            <i class="fas fa-arrow-left"></i> Volver a la lista
+        </a>
+    </div>
+
+</div>
+{% endblock content %}

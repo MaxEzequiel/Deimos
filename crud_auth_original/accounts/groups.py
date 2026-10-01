@@ -21,7 +21,8 @@ def accounts_admin_group_list(request):
 def accounts_admin_group_create(request):
     MODELS =  {
         "planes" : {"app_label" : "plans", "model_name" : "plan", "label" : "Planes"},
-        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"}
+        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"},
+        "tutorials" : {"app_label" : "tutorials", "model_name" : "publication", "label" : "Publicaciones"}
     }
     form = GroupForm()
     modules_data = []
@@ -102,7 +103,8 @@ def accounts_admin_group_edit(request, group_id):
     # Definición de modelos disponibles para asignar permisos
     MODELS =  {
         "planes" : {"app_label" : "plans", "model_name" : "plan", "label" : "Planes"},
-        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"}
+        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"},
+        "tutorials" : {"app_label" : "tutorials", "model_name" : "publication", "label" : "Publicaciones"}
     }
     
     # Obtener el grupo a editar

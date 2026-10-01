@@ -51,7 +51,7 @@
                         
                         <li><a href="{% url 'list_plans' %}"><i class="fas fa-dumbbell"></i> Planes</a></li>
                         <li><a href="{% url 'list_class' %}"><i class="fas fa-calendar-alt"></i> Clases</a></li>
-                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a></li>
+                        <li><a href="{% url 'list_publications' %}"><i class="fas fa-file-alt"></i> Publicaciones</a></li>
                         {% if request.user.is_superuser %}
                                                 <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Usuarios</a></li>
                         <li><a href="{% url 'checkin_home' %}"><i class="fas fa-fingerprint"></i> Check-in</a></li>
@@ -61,8 +61,8 @@
                         <div class = "audit_block">
                         <li><a href="{% url 'list_audit' %}"><i class="fa-solid fa-folder-open"></i> Auditoria</a></li>
                         </div>
-                        <li><a href="{% url 'list_publications' %}"><i class="fa-solid fa-folder-open"></i> Tutoriales</a></li>
                         {% endif %}
+                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a></li>
                     </ul>
                 </div>
             </nav>

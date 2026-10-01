@@ -1,15 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Eliminar publicacion</title>
-</head>
-<body>
-    <h1>Eliminar publicacion</h1>
-    <p>Seguro que queres eliminar "{{ publication.title }}"?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Eliminar</button>
-    </form>
-    <a href="{% url 'list_publications' %}">Cancelar</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Eliminar Publicación | Deimos{% endblock %}
+
+{% block content %}
+<div class="container-main">
+
+    <div class="welcome-section">
+        <h1><i class="fas fa-trash-alt"></i> Eliminar Publicación</h1>
+        <p>Esta acción no se puede deshacer</p>
+    </div>
+
+    <div class="signup-box" style="max-width: 550px; margin: 0 auto;">
+        <div class="info-card warning-card text-center mb-4">
+            <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem;"></i>
+            <p class="mt-2">
+                <strong>¿Deseas eliminar "{{ publication.title }}"?</strong>
+            </p>
+            <p>Esta acción no se puede deshacer.</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="stats-actions" style="justify-content:center;">
+                <button type="submit" class="btn-audit btn-audit-reset">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+                <a href="{% url 'list_publications' %}" class="btn-audit btn-audit-filter">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock content %}
