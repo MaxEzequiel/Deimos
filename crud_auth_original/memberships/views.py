@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import permission_required
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Membership
@@ -11,6 +13,8 @@ from memberships.forms import MembershipForm
 
 
 @login_required
+@permission_required("membresias.change_membership", raise_exception=True)
+@require_http_methods(['GET', 'POST'])
 def edit_membership(request):
     membership, created = Membership.objects.get_or_create(user=request.user)
 

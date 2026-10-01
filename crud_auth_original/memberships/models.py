@@ -9,3 +9,8 @@ class Membership(models.Model):
 
     def __str__(self):
         return f"Membership {self.user.username}: {self.status}"
+
+    @property
+    def effective_status(self):
+        from .services import effective_membership_status
+        return effective_membership_status(self)
