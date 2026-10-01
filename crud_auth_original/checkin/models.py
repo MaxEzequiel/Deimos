@@ -37,9 +37,7 @@ class CheckIn(models.Model):
     def save(self, *args, **kwargs):
         # Asociar persona por id_number (DNI)
         if not self.person and self.dni:
-            try:
-                from people.models import Person
-                self.person = Person.objects.filter(id_number=self.dni).first()
-            except Exception:
-                pass
+            from people.models import Person
+            if self.dni.isascii() and self.dni.isdecimal() and len(self.dni) <= 10:
+                self.person = Person.objects.filter(id_number=int(self.dni)).first()
         super().save(*args, **kwargs)

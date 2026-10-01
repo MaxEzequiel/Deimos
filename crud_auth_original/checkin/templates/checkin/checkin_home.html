@@ -6,7 +6,7 @@
 <div class="container-main">
     <div class="welcome-section">
         <h1><i class="fas fa-fingerprint"></i> Check-in del Gimnasio</h1>
-        <p>Ingresá tu DNI para registrar tu entrada o salida</p>
+        <p>Ingresá el DNI de un socio registrado para registrar su entrada</p>
     </div>
 
     <div class="cards-row" style="justify-content: center;">
@@ -17,7 +17,7 @@
 
             <form method="POST" autocomplete="off">
                 {% csrf_token %}
-                
+
                 <div class="form-group">
                     <label for="id_dni">
                         <i class="fas fa-user"></i> DNI
@@ -40,11 +40,13 @@
                 </button>
             </form>
 
+            {% if perms.checkin.view_checkin %}
             <div class="auth-footer-links">
                 <a href="{% url 'checkin_history' %}">
                     <i class="fas fa-history"></i> Ver historial
                 </a>
             </div>
+            {% endif %}
         </div>
     </div>
 
@@ -58,8 +60,7 @@
                         <tr>
                             <th>DNI</th>
                             <th>Entrada</th>
-                            <th>Salida</th>
-                            <th>Estado</th>
+                            <th>Socio</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,14 +68,7 @@
                         <tr>
                             <td>{{ c.dni }}</td>
                             <td>{{ c.hora_entrada|date:"H:i" }}</td>
-                            <td>{{ c.hora_salida|date:"H:i"|default:"—" }}</td>
-                            <td>
-                                {% if c.hora_salida %}
-                                    <span style="color:#e74c3c;">Salió</span>
-                                {% else %}
-                                    <span style="color:#2ecc71;">Dentro</span>
-                                {% endif %}
-                            </td>
+                            <td>{% if c.person %}{{ c.person.name }} {{ c.person.surname }}{% else %}Sin socio asociado{% endif %}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

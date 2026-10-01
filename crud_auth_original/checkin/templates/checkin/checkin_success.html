@@ -1,42 +1,121 @@
 {% extends "base.html" %}
-
 {% block title %}Check-in registrado - Deimos Gym{% endblock %}
+
+{% block head %}
+<style>
+.member-checkin {
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+}
+.membership-indicator {
+    --state-color: #22c55e;
+    --ring-fill: 100%;
+}
+.membership-indicator.expiring {
+    --state-color: #f59e0b;
+    --ring-fill: 50%;
+}
+.membership-indicator.expired {
+    --state-color: #ef4444;
+}
+.member-initials {
+    width: 116px;
+    height: 116px;
+    margin: 0 auto 1rem;
+    padding: 7px;
+    border-radius: 50%;
+    background: conic-gradient(var(--state-color) var(--ring-fill), #64748b33 0);
+}
+.member-initials span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #17202c;
+    color: #fff;
+    font-size: 2.1rem;
+    font-weight: 700;
+}
+.membership-label {
+    color: var(--state-color);
+    font-weight: 700;
+    margin-bottom: .4rem;
+}
+.membership-track {
+    height: 6px;
+    background: #64748b33;
+    border-radius: 9px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+.membership-track span {
+    display: block;
+    height: 100%;
+    width: var(--ring-fill);
+    background: var(--state-color);
+}
+.member-details {
+    text-align: left;
+    margin: 1.5rem 0;
+}
+.member-details div {
+    padding: .65rem 0;
+    border-bottom: 1px solid #64748b33;
+}
+.member-details dt {
+    opacity: .75;
+    font-size: .9rem;
+}
+.member-details dd {
+    margin: .2rem 0 0;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+.member-checkin .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .75rem;
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container-main">
     <div class="cards-row" style="justify-content: center;">
-        <div class="login-box" style="max-width: 500px; width: 100%; text-align: center;">
-            <div class="auth-success-icon">
-                <i class="fas fa-check-circle"></i>
+        <section class="login-box member-checkin membership-indicator {{ membership_status }}" aria-label="Check-in y estado de mensualidad">
+            <div class="member-initials" aria-hidden="true"><span>{{ member_initials }}</span></div>
+            <h1>{{ member_name }}</h1>
+            <p><i class="fas fa-check-circle" aria-hidden="true"></i> Ingreso registrado</p>
+            <div role="status">
+                <p class="membership-label">{{ membership_label }}</p>
+                <p>{{ membership_detail }}</p>
             </div>
-            <h1>
-                <i class="fas fa-fingerprint"></i> ¡Registro exitoso!
-            </h1>
+            <div class="membership-track" aria-hidden="true"><span></span></div>
 
-            <div class="info-card" style="margin-top: 1.5rem;">
-                <p><strong>DNI:</strong> {{ checkin.dni }}</p>
-                {% if checkin.person %}
-                <p><strong>Nombre:</strong> {{ checkin.person }}</p>
-                {% endif %}
-                <p><strong>Entrada:</strong> {{ checkin.hora_entrada|date:"d/m/Y H:i" }}</p>
-                {% if checkin.hora_salida %}
-                <p><strong>Salida:</strong> {{ checkin.hora_salida|date:"d/m/Y H:i" }}</p>
-                <p><strong>Duración:</strong> {{ checkin.hora_salida|timeuntil:checkin.hora_entrada }}</p>
+            <dl class="member-details">
+                <div><dt>DNI</dt><dd>{{ checkin.dni }}</dd></div>
+                <div><dt>Fecha de registro del socio</dt><dd>{{ member_registered_at|date:"d/m/Y"|default:"Sin datos" }}</dd></div>
+                <div><dt>Entrada registrada</dt><dd>{{ checkin.hora_entrada|date:"d/m/Y H:i" }}</dd></div>
+                <div><dt>Fecha del último pago</dt><dd>{{ last_paid_on|date:"d/m/Y"|default:"Sin pago registrado" }}</dd></div>
+                {% if membership_expires_at %}
+                <div><dt>Vencimiento de la mensualidad</dt><dd>{{ membership_expires_at|date:"d/m/Y" }}</dd></div>
                 {% endif %}
                 {% if checkin.observaciones %}
-                <p><strong>Observaciones:</strong> {{ checkin.observaciones }}</p>
+                <div><dt>Observaciones</dt><dd>{{ checkin.observaciones }}</dd></div>
                 {% endif %}
-            </div>
+            </dl>
 
             <div class="button-group" style="margin-top: 2rem;">
-                <a href="{% url 'checkin_home' %}" class="btn-outline-light">
-                    <i class="fas fa-redo"></i> Nuevo check-in
-                </a>
-                <a href="{% url 'checkin_history' %}" class="btn-secondary-custom">
-                    <i class="fas fa-history"></i> Ver historial
-                </a>
+                <a href="{% url 'checkin_home' %}" class="btn-outline-light"><i class="fas fa-redo" aria-hidden="true"></i> Nuevo check-in</a>
+                {% if perms.checkin.view_checkin %}
+                <a href="{% url 'checkin_history' %}" class="btn-secondary-custom"><i class="fas fa-history" aria-hidden="true"></i> Ver historial</a>
+                {% endif %}
             </div>
-        </div>
+        </section>
     </div>
 </div>
 {% endblock %}
