@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Registrar pago | Deimos Gym{% endblock %}
+{% block content %}
+<div class="card p-4 mx-auto" style="max-width: 640px; width: 100%;">
+    <h2>Registrar pago</h2>
+    <p>Socio: <strong>{{ payment.member.username }}</strong><br>Mes: {{ payment.period|date:"m/Y" }}<br>Importe a cobrar: <strong>${{ payment.amount|floatformat:2 }}</strong></p>
+    <p>Este registro confirma el pago completo de la cuota.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Confirmar pago</button>
+        <a href="{% url 'payment_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

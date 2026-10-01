@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Generar mensualidades | Deimos Gym{% endblock %}
+{% block content %}
+<div class="card p-4 mx-auto" style="max-width: 640px; width: 100%;">
+    <h2>Generar cuotas del mes</h2>
+    <p>Se crea una cuota por socio con cuenta activa y perfil personal, usando el precio de su plan. Si el perfil no tiene plan, se utiliza el de su membresía. Los socios sin un precio válido se omiten.</p>
+    <p>Las cuotas existentes conservan su importe, vencimiento y pagos. No se generan cuotas para socios dados de alta después del mes seleccionado.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Generar cuotas</button>
+        <a href="{% url 'payment_list' %}" class="btn btn-outline-secondary">Volver</a>
+    </form>
+</div>
+{% endblock %}
