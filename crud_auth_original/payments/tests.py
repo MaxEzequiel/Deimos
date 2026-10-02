@@ -11,6 +11,7 @@ from django.utils import timezone
 
 from core.models import AuditLog
 from memberships.models import Membership
+from memberships.services import next_month_expiry
 from people.models import Person
 from plans.models import Plan
 from .models import MonthlyPayment
@@ -78,11 +79,33 @@ class MonthlyPaymentTests(TestCase):
         self.assertEqual(self.payment.status, "paid")
         self.assertEqual(self.payment.recorded_by, self.other)
         self.assertEqual(self.payment.reference, "REF-123")
+        self.assertEqual(self.payment.coverage_start, self.today)
+        self.assertEqual(self.payment.coverage_end.day, self.today.day)
         self.assertEqual(AuditLog.objects.count(), 1)
         self.client.post(reverse("record_payment", args=[self.payment.pk]), {"paid_on": self.today.isoformat(), "method": "cash"})
         self.payment.refresh_from_db()
         self.assertEqual(self.payment.method, "transfer")
         self.assertEqual(AuditLog.objects.count(), 1)
+
+    def test_each_member_keeps_individual_coverage_dates(self):
+        coverage_period = (self.today - timedelta(days=40)).replace(day=1)
+        juan_date = coverage_period.replace(day=15)
+        maria_date = coverage_period.replace(day=20)
+        juan = get_user_model().objects.create_user(username="juan")
+        maria = get_user_model().objects.create_user(username="maria")
+        Person.objects.create(user=juan, plan=self.plan, id_number=24567890, name="Juan", surname="Perez")
+        Person.objects.create(user=maria, plan=self.plan, id_number=34567890, name="Maria", surname="Gomez")
+        juan_payment = MonthlyPayment.objects.create(member=juan, period=coverage_period, amount=self.plan.base_price, due_date=coverage_period.replace(day=10))
+        maria_payment = MonthlyPayment.objects.create(member=maria, period=coverage_period, amount=self.plan.base_price, due_date=coverage_period.replace(day=10))
+        self.client.force_login(self.admin)
+        self.client.post(reverse("record_payment", args=[juan_payment.pk]), {"paid_on": juan_date.isoformat(), "method": "cash"})
+        self.client.post(reverse("record_payment", args=[maria_payment.pk]), {"paid_on": maria_date.isoformat(), "method": "transfer"})
+        juan_payment.refresh_from_db()
+        maria_payment.refresh_from_db()
+        self.assertEqual(juan_payment.coverage_start, juan_date)
+        self.assertEqual(juan_payment.coverage_end, next_month_expiry(juan_date))
+        self.assertEqual(maria_payment.coverage_start, maria_date)
+        self.assertEqual(maria_payment.coverage_end, next_month_expiry(maria_date))
 
     def test_delete_payment_requires_permission_and_audits(self):
         self.other.user_permissions.add(*Permission.objects.filter(content_type__app_label="pagos", codename__in=["view_monthlypayment", "delete_monthlypayment"]))
@@ -106,8 +129,10 @@ class MonthlyPaymentTests(TestCase):
         self.client.force_login(self.admin)
         response = self.client.post(reverse("generate_payments"), {"period": f"{self.today.year}-02", "due_day": 31})
         self.assertIn("due_day", response.context["form"].errors)
-        response = self.client.get(reverse("payment_list"), {"period": "invalid"})
-        self.assertIn("period", response.context["period_form"].errors)
+        response = self.client.get(reverse("payment_list"), {"period_from": "invalid"})
+        self.assertIn("period_from", response.context["period_form"].errors)
+        response = self.client.get(reverse("payment_list"), {"period_from": self.period.strftime("%Y-%m"), "period_to": (self.period - timedelta(days=1)).strftime("%Y-%m")})
+        self.assertIn("period_to", response.context["period_form"].errors)
 
     def test_generation_view_and_filters(self):
         self.client.force_login(self.admin)
@@ -115,10 +140,13 @@ class MonthlyPaymentTests(TestCase):
         self.assertEqual(self.client.get(reverse("record_payment", args=[self.payment.pk])).status_code, 200)
         response = self.client.post(reverse("generate_payments"), {"period": self.period.strftime("%Y-%m"), "due_day": 10})
         self.assertRedirects(response, reverse("payment_list"))
-        response = self.client.get(reverse("payment_list"), {"period": self.period.strftime("%Y-%m"), "q": "Ana", "status": self.payment.status})
+        next_period = (self.period + timedelta(days=32)).replace(day=1)
+        outside_payment = MonthlyPayment.objects.create(member=self.member, period=next_period, amount=self.plan.base_price, due_date=next_period.replace(day=10))
+        response = self.client.get(reverse("payment_list"), {"period_from": self.period.strftime("%Y-%m"), "period_to": self.period.strftime("%Y-%m"), "q": "Ana", "status": self.payment.status})
         self.assertEqual(list(response.context["payments"]), [self.payment])
         self.assertEqual(response.context["outstanding"], Decimal("18000"))
         self.assertEqual(response.context["collected"], 0)
+        self.assertNotIn(outside_payment, response.context["payments"])
         response = self.client.get(reverse("payment_list"), {"status": "paid"})
         self.assertEqual(list(response.context["payments"]), [])
 

@@ -47,6 +47,19 @@ class MemberManagementTests(TestCase):
         self.assertFalse(Membership.objects.exists())
         self.assertFalse(MonthlyPayment.objects.exists())
 
+    def test_home_panel_changes_by_role(self):
+        admin_home = self.client.get(reverse('home'))
+        self.assertTrue(admin_home.context['is_admin_home'])
+        self.assertContains(admin_home, 'Panel administrativo')
+        self.assertContains(admin_home, 'Accesos de gestion')
+        self.assertNotContains(admin_home, 'Bienvenido de nuevo')
+        self.client.force_login(self.member)
+        member_home = self.client.get(reverse('home'))
+        self.assertFalse(member_home.context['is_admin_home'])
+        self.assertContains(member_home, 'Bienvenido de nuevo')
+        self.assertContains(member_home, 'Mensualidad')
+        self.assertNotContains(member_home, 'Panel administrativo')
+
     def test_search_by_dni_and_name(self):
         for q in ['12345678', 'Ana', 'Pérez']:
             response = self.client.get(reverse('member_list'), {'q': q})
@@ -79,6 +92,9 @@ class MemberManagementTests(TestCase):
         self.assertEqual(MonthlyPayment.objects.get(member=self.member).amount, Decimal('18000'))
         response = self.client.get(self.url)
         self.assertEqual(response.context['payment_form'].initial['amount'], Decimal('18000'))
+        self.assertEqual(Decimal(response.context['plan_prices'][str(self.plan.pk)]), Decimal('18000'))
+        self.assertTrue(response.context['payment_amount_locked'])
+        self.assertContains(response, 'plan-prices-data')
 
     def test_invalid_plan_or_status_does_not_save_membership(self):
         for data in [{'plan': 999999, 'status': 'active'}, {'plan': self.plan.pk, 'status': 'invalid'}]:
@@ -105,7 +121,12 @@ class MemberManagementTests(TestCase):
         self.client.force_login(self.member)
         home = self.client.get(reverse('home'))
         self.assertEqual(home.context['membership'].plan_id, self.plan.pk)
+        self.assertEqual(home.context['monthly_status']['membership_status'], 'active')
+        self.assertEqual(home.context['monthly_status']['membership_expires_at'], next_month_expiry(self.today))
+        self.assertEqual(home.context['monthly_status']['days_remaining'], (next_month_expiry(self.today) - self.today).days)
         self.assertContains(home, 'Tu membresía está activa')
+        self.assertContains(home, 'Mensualidad')
+        self.assertContains(home, 'Renovar antes del')
         self.assertEqual(list(self.client.get(reverse('payment_list')).context['payments']), [payment])
 
     def test_existing_pending_charge_is_paid_without_duplicate(self):
@@ -130,7 +151,9 @@ class MemberManagementTests(TestCase):
         pending = MonthlyPayment.objects.create(member=self.member, period=self.period, amount=10000, due_date=self.period)
         other_plan = Plan.objects.create(name='Nuevo', description='Otro plan', base_price=25000)
         self.client.post(self.url, {'action': 'membership', 'plan': other_plan.pk, 'status': 'active'})
-        self.assertEqual(self.client.get(self.url).context['payment_form'].initial['amount'], Decimal('10000'))
+        response = self.client.get(self.url)
+        self.assertEqual(response.context['payment_form'].initial['amount'], Decimal('10000'))
+        self.assertTrue(response.context['payment_amount_locked'])
         response = self.client.post(self.url, self.payment_data(amount='25000'))
         self.assertIn('amount', response.context['payment_form'].errors)
         pending.refresh_from_db()

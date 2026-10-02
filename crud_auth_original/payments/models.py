@@ -18,6 +18,8 @@ class MonthlyPayment(models.Model):
     amount = models.DecimalField("Importe", max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
     due_date = models.DateField("Vencimiento")
     paid_on = models.DateField("Fecha de pago", null=True, blank=True)
+    coverage_start = models.DateField("Inicio de vigencia", null=True, blank=True)
+    coverage_end = models.DateField("Fin de vigencia", null=True, blank=True)
     method = models.CharField("Medio de pago", max_length=12, choices=Method.choices, blank=True)
     reference = models.CharField("Referencia del comprobante", max_length=100, blank=True)
     recorded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="recorded_monthly_payments", editable=False)
@@ -54,6 +56,10 @@ class MonthlyPayment(models.Model):
             errors["paid_on"] = "La fecha de pago no puede ser futura."
         if bool(self.paid_on) != bool(self.method):
             errors["method"] = "Indicá la fecha y el medio de pago juntos."
+        if bool(self.coverage_start) != bool(self.coverage_end):
+            errors["coverage_start"] = "Indicá inicio y fin de vigencia juntos."
+        if self.coverage_start and self.coverage_end and self.coverage_end <= self.coverage_start:
+            errors["coverage_end"] = "El fin de vigencia debe ser posterior al inicio."
         if errors:
             raise ValidationError(errors)
 

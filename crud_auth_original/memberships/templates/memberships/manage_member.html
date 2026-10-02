@@ -45,19 +45,45 @@
     <h3>Últimas mensualidades</h3>
     <div class="plans-table-container table-responsive">
         <table class="plans-table">
-            <thead><tr><th>Mensualidad</th><th>Importe</th><th>Estado</th><th>Fecha de pago</th><th>Medio / referencia</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Mensualidad</th><th>Importe</th><th>Estado</th><th>Fecha de pago</th><th>Vigencia</th><th>Medio / referencia</th><th>Acciones</th></tr></thead>
             <tbody>
             {% for payment in payments %}
             <tr>
                 <td data-label="Mensualidad">{{ payment.period|date:"m/Y" }}</td><td data-label="Importe">${{ payment.amount|floatformat:2 }}</td>
                 <td data-label="Estado">{{ payment.status_label }}</td><td data-label="Pago">{{ payment.paid_on|date:"d/m/Y"|default:"Sin pagar" }}</td>
+                <td data-label="Vigencia">{% if payment.coverage_start and payment.coverage_end %}{{ payment.coverage_start|date:"d/m/Y" }} al {{ payment.coverage_end|date:"d/m/Y" }}{% else %}Sin activar{% endif %}</td>
                 <td data-label="Medio">{{ payment.get_method_display|default:"—" }}{% if payment.reference %}<br>{{ payment.reference }}{% endif %}</td>
                 <td data-label="Acciones">{% if not payment.paid_on %}<a href="{% url 'record_payment' payment.pk %}" class="action-btn edit-btn">Registrar pago</a>{% else %}Pago registrado{% endif %}</td>
             </tr>
-            {% empty %}<tr><td colspan="6" class="empty-row">Este usuario no tiene mensualidades registradas.</td></tr>{% endfor %}
+            {% empty %}<tr><td colspan="7" class="empty-row">Este usuario no tiene mensualidades registradas.</td></tr>{% endfor %}
             </tbody>
         </table>
     </div>
     <a class="btn-audit btn-audit-reset mt-3" href="{% url 'payment_list' %}?q={{ member.username|urlencode }}">Ver mensualidades</a>
 </div>
+{{ plan_prices|json_script:"plan-prices-data" }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const planSelect = document.getElementById('id_plan');
+    const amountInput = document.getElementById('id_amount');
+    const pricesElement = document.getElementById('plan-prices-data');
+    const amountLocked = "{{ payment_amount_locked|yesno:'true,false' }}" === "true";
+
+    if (!planSelect || !amountInput || !pricesElement || amountLocked) {
+        return;
+    }
+
+    const planPrices = JSON.parse(pricesElement.textContent);
+
+    function syncAmountWithPlan() {
+        const selectedPrice = planPrices[planSelect.value];
+        if (!selectedPrice) {
+            return;
+        }
+        amountInput.value = Number(selectedPrice).toFixed(2);
+    }
+
+    planSelect.addEventListener('change', syncAmountWithPlan);
+});
+</script>
 {% endblock %}

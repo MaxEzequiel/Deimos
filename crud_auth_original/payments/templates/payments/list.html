@@ -8,12 +8,10 @@
     </div>
     {% if user.is_superuser %}<p><a href="{% url 'member_list' %}" class="btn-audit btn-audit-filter">Gestionar planes, membresías y pagos por socio</a></p>{% endif %}
     {% for message in messages %}<div class="info-card" role="status">{{ message }}</div>{% endfor %}
-    {% if perms.pagos.add_monthlypayment and can_view_all %}
-    <p><a href="{% url 'generate_payments' %}" class="btn-audit btn-audit-filter">Generar cuotas del mes</a></p>
-    {% endif %}
     <form method="get" class="audit-filters payment-filters">
         <div class="module-filter-row">
-        <div class="audit-filter-field">{{ period_form.period.label_tag }}{{ period_form.period }}{% if period_form.period.errors %}<div class="error-text" role="alert">{{ period_form.period.errors }}</div>{% endif %}</div>
+        <div class="audit-filter-field">{{ period_form.period_from.label_tag }}{{ period_form.period_from }}{% if period_form.period_from.errors %}<div class="error-text" role="alert">{{ period_form.period_from.errors }}</div>{% endif %}</div>
+        <div class="audit-filter-field">{{ period_form.period_to.label_tag }}{{ period_form.period_to }}{% if period_form.period_to.errors %}<div class="error-text" role="alert">{{ period_form.period_to.errors }}</div>{% endif %}</div>
         <div class="audit-filter-field"><label for="status" class="module-field-label">Estado</label>
             <select name="status" id="status" class="module-status-select">
                 <option value="">Todos</option>
@@ -33,7 +31,7 @@
     </div>
     <div class="plans-table-container table-responsive">
         <table class="plans-table">
-            <thead><tr><th>Socio</th><th>Mes</th><th>Importe</th><th>Vencimiento</th><th>Estado</th><th>Pago</th><th>Acciones</th></tr></thead>
+            <thead><tr><th>Socio</th><th>Mes</th><th>Importe</th><th>Vencimiento</th><th>Vigencia</th><th>Estado</th><th>Pago</th><th>Acciones</th></tr></thead>
             <tbody>
             {% for payment in payments %}
                 <tr>
@@ -41,6 +39,7 @@
                     <td data-label="Mes">{{ payment.period|date:"m/Y" }}</td>
                     <td data-label="Importe">${{ payment.amount|floatformat:2 }}</td>
                     <td data-label="Vencimiento">{{ payment.due_date|date:"d/m/Y" }}</td>
+                    <td data-label="Vigencia">{% if payment.coverage_start and payment.coverage_end %}{{ payment.coverage_start|date:"d/m/Y" }} al {{ payment.coverage_end|date:"d/m/Y" }}{% else %}Sin activar{% endif %}</td>
                     <td data-label="Estado"><span class="stat-badge {% if payment.status == 'paid' %}audit-badge-login{% elif payment.status == 'overdue' %}audit-badge-delete{% else %}audit-badge-update{% endif %}">{{ payment.status_label }}</span></td>
                     <td data-label="Pago">{% if payment.paid_on %}{{ payment.paid_on|date:"d/m/Y" }}<br>{{ payment.get_method_display }}{% if payment.reference %}<br><small>{{ payment.reference }}</small>{% endif %}{% else %}Sin registrar{% endif %}</td>
                     <td data-label="Acciones">
@@ -56,7 +55,7 @@
                     </td>
                 </tr>
             {% empty %}
-                <tr><td colspan="7" class="empty-row">No hay mensualidades para mostrar.</td></tr>
+                <tr><td colspan="8" class="empty-row">No hay mensualidades para mostrar.</td></tr>
             {% endfor %}
             </tbody>
         </table>

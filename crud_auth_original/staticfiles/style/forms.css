@@ -54,6 +54,12 @@
 }
 .deimos-ui .form-group > label,
 .deimos-ui .form-group legend { color: var(--text-secondary); font-weight: 500; margin-bottom: .5rem; }
+.required-marker,
+.deimos-ui .required-marker {
+    color: #ff4d5f;
+    font-weight: 700;
+    margin-left: .25rem;
+}
 .deimos-ui .form-group fieldset { min-width: 0; border: 0; padding: 0; }
 .deimos-ui .form-text,
 .deimos-ui .helptext { display: block; margin-top: .5rem; color: var(--text-muted); font-size: .85rem; }

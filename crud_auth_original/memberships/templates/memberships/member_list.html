@@ -3,6 +3,11 @@
 {% block content %}
 <div class="plans-module">
     <div class="module-header"><h2>Gestión de socios</h2><p>Asigná planes, administrá membresías y registrá pagos de los usuarios existentes.</p></div>
+    <div class="stats-actions">
+        <a href="{% url 'list_accounts' %}" class="btn-audit btn-audit-reset">Cuentas de usuario</a>
+        <a href="{% url 'payment_list' %}" class="btn-audit btn-audit-reset">Historial de mensualidades</a>
+        <a href="{% url 'checkin_home' %}" class="btn-audit btn-audit-reset">Check-in de socios</a>
+    </div>
     <form method="get" class="audit-filters member-filters">
         <div class="module-search-row">
         <div class="audit-filter-field"><label for="member-search" class="module-field-label">Buscar por usuario, nombre o DNI</label><input type="search" name="q" id="member-search" value="{{ search }}" class="module-search-input"></div>

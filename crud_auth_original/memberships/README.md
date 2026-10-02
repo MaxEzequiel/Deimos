@@ -1,27 +1,60 @@
-# Gestión de socios
+# Gestion de socios
 
-Ingresar como administrador y abrir **Gestión de socios** en el menú, o acceder a `/members/`. También hay accesos desde Usuarios y Mensualidades.
+Este proyecto mantiene varias apps Django separadas por responsabilidad tecnica, pero en la interfaz se presentan como un solo modulo funcional: **Gestion de socios**.
 
-1. Buscar al usuario por nombre, nombre de usuario o DNI.
-2. Abrir **Gestionar socio**.
-3. Seleccionar un plan y el estado de la membresía; guardar los cambios.
-4. Completar mensualidad, importe, fecha de pago, medio y referencia opcional; confirmar el pago.
+## Por que se unifica visualmente
 
-Guardar un plan propone su precio para los nuevos pagos. Si ya existe una cuota pendiente del mes, debe pagarse por el importe original. Los registros pagados no se sobrescriben y se permite una mensualidad por usuario y mes.
+El flujo real de administracion de un gimnasio no ocurre en pantallas aisladas. Cuando se administra un socio se necesita ver y modificar informacion relacionada:
 
-La cuota pagada se refleja en Mensualidades y Check-in. Si su cobertura sigue vigente, activa la membresía. El vencimiento es el mismo día del mes siguiente al pago, utilizando el último día del mes si la fecha original no existe.
+- cuenta de usuario
+- datos personales
+- plan asignado
+- membresia
+- mensualidades y pagos
+- vigencia del ultimo pago
+- estado para check-in
 
-Los planes asignados se sincronizan entre el perfil y la membresía para que la generación de cuotas use el mismo plan. Los cambios de plan no modifican los importes de cuotas existentes. Inicio, Gestión de socios y Estadísticas consultan el estado vigente de la membresía y reflejan el vencimiento de los pagos sin requerir una actualización manual diaria.
+Por eso, aunque el codigo siga distribuido en apps tecnicas, la entrada principal del menu es **Gestion de socios**.
 
-El estado administrativo de una membresía puede establecerse manualmente. La vigencia del pago que muestra Check-in se calcula por separado: mantener una membresía activa sin pago no genera un pago ni cambia el indicador de mensualidad.
+## Apps tecnicas que participan
 
-Los usuarios que todavía no tienen perfil personal pueden recibir un plan, una membresía y un pago. La pantalla permite completar sus datos y DNI para habilitar su identificación en Check-in. Los planes previamente asignados se conservan al completar ese perfil.
+- `accounts`: cuentas de usuario, login, permisos y administracion de usuarios.
+- `people`: perfil personal del socio, DNI, nombre, telefono y plan asociado.
+- `plans`: planes y precios.
+- `memberships`: pantalla central de gestion del socio y estado de membresia.
+- `payments`: historial de mensualidades, registro de pagos y vigencias.
+- `checkin`: consulta si el socio tiene la mensualidad activa, vencida o proxima a vencer.
+- `core`: auditoria de acciones importantes.
 
-El módulo de gestión requiere una cuenta de administrador. Los socios pueden consultar sus mensualidades desde la pantalla habitual, sin modificar pagos ni asignaciones. Cada modificación realizada desde este módulo queda registrada en auditoría y se guarda dentro de una transacción.
+## Flujo principal
 
-## Validación
+1. Entrar como administrador.
+2. Abrir **Gestion de socios** desde el menu lateral.
+3. Buscar el socio por usuario, nombre o DNI.
+4. Entrar a **Gestionar socio**.
+5. Desde la misma pantalla:
+   - asignar o cambiar plan
+   - modificar estado administrativo de membresia
+   - registrar una mensualidad
+   - consultar ultimos pagos
+   - ver la vigencia usada por check-in
+
+## Mensualidades dentro del flujo
+
+Las mensualidades se registran por socio. Cada pago tiene una vigencia individual:
+
+- Juan paga el 15/10: vigencia del 15/10 al 15/11.
+- Maria paga el 20/10: vigencia del 20/10 al 20/11.
+
+El historial completo sigue disponible desde el acceso **Historial de mensualidades**, pero la carga principal del pago se hace desde la ficha del socio.
+
+## Relacion con rollback
+
+Las operaciones sensibles se guardan en transacciones. Por ejemplo, al eliminar una mensualidad se borra el pago y se registra auditoria dentro de una misma transaccion. Si falla una parte, se ejecuta rollback para no dejar datos inconsistentes.
+
+## Validacion
 
 ```powershell
-python manage.py test --noinput
+python manage.py test payments memberships checkin
 python manage.py makemigrations --check --dry-run
 ```

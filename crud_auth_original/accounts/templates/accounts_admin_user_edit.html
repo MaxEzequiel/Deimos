@@ -10,7 +10,7 @@
 
     {% for field in user_form %}
     <div>
-        {{ field.label_tag }}
+        {{ field.label_tag }}{% if field.field.required %}<span class="required-marker">*</span>{% endif %}
         {{ field }}
         {% if field.errors %}
         <div style="color: red;">{{ field.errors }}</div>
@@ -21,7 +21,7 @@
     <h2>Datos Personales</h2>
     {% for field in person_form %}
     <div>
-        {{ field.label_tag }}
+        {{ field.label_tag }}{% if field.field.required %}<span class="required-marker">*</span>{% endif %}
         {{ field }}
         {% if field.errors %}
         <div style="color: red;">{{ field.errors }}</div>

@@ -3,8 +3,8 @@
 {% block content %}
 <div class="signup-box" style="max-width: 640px; width: 100%;">
     <h2>Registrar pago</h2>
-    <p>Socio: <strong>{{ payment.member.username }}</strong><br>Mes: {{ payment.period|date:"m/Y" }}<br>Importe a cobrar: <strong>${{ payment.amount|floatformat:2 }}</strong></p>
-    <p>Este registro confirma el pago completo de la cuota.</p>
+    <p>Socio: <strong>{{ payment.member.username }}</strong><br>Mes administrativo: {{ payment.period|date:"m/Y" }}<br>Importe a cobrar: <strong>${{ payment.amount|floatformat:2 }}</strong></p>
+    <p>Este registro confirma el pago completo de la cuota. La vigencia inicia en la fecha de pago y finaliza el mismo dÃ­a del mes siguiente.</p>
     <form method="post">
         {% csrf_token %}
         {% include "includes/styled_form_fields.html" with form=form %}

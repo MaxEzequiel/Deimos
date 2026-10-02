@@ -32,7 +32,7 @@ def member_checkin_status(person, today=None):
     payment = MonthlyPayment.objects.filter(member_id=person.user_id, paid_on__isnull=False, paid_on__lte=today).order_by("-paid_on", "-period", "-pk").first()
     if payment is None:
         return context
-    expiry = next_month_expiry(payment.paid_on)
+    expiry = payment.coverage_end or next_month_expiry(payment.paid_on)
     days_remaining = (expiry - today).days
     if days_remaining < 0:
         context.update({

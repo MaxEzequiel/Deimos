@@ -1,24 +1,45 @@
 # Seguimiento de mensualidades
 
-Abrí **Mensualidades** en el menú lateral (`/payments/`).
+Abrir **Mensualidades** en el menu lateral (`/payments/`) para consultar pagos, deudas y vigencias.
 
-1. Como administrador, elegí **Generar cuotas del mes**, el mes calendario y el día de vencimiento (10 por defecto).
-2. Se genera una cuota por cuenta activa con perfil en `Person`. Se utiliza el precio del plan del perfil; si no tiene plan, se utiliza el de su membresía. Las cuentas dadas de alta después de ese mes y los perfiles sin plan con precio positivo no generan cuota.
-3. En **Registrar pago**, ingresá la fecha, el medio de pago y, opcionalmente, la referencia del comprobante. Se registra el pago completo del importe de la cuota y quién lo registró.
-4. Filtrá por mes, socio o estado para consultar importes cobrados y pendientes. Una cuota impaga pasa a vencida al día siguiente de su vencimiento.
+## Flujo principal
 
-Los socios pueden consultar únicamente sus propias cuotas. Los superusuarios tienen acceso completo. Para delegar la gestión, asigná al grupo los permisos de **Mensualidades** desde la administración de grupos: **Ver** para consultar todas las cuotas, **Añadir** junto con **Ver** para generarlas, y **Cambiar** junto con **Ver** para registrar cobros.
+1. Como administrador, abrir **Gestion de socios** (`/members/`).
+2. Elegir el socio y entrar a **Gestionar**.
+3. En **Registrar mensualidad**, ingresar el periodo administrativo, importe, fecha de pago, medio de pago y referencia opcional.
+4. Al confirmar el pago, se registra la mensualidad y se calcula la vigencia individual:
+   - inicio de vigencia = fecha de pago
+   - fin de vigencia = mismo dia del mes siguiente
 
-La generación repetida no duplica cuotas ni actualiza sus importes históricos. Los cambios posteriores de precio del plan afectan a las nuevas cuotas. Las cuotas se generan manualmente cada mes; no se crea deuda histórica automáticamente. El pago se registra manualmente y no procesa cobros bancarios. No se contemplan pagos parciales ni cambios automáticos del estado de membresía.
+Ejemplo:
 
-Para instalar la tabla en otra copia del proyecto, desde la raíz del repositorio:
+- Juan paga el 15/10: vigencia del 15/10 al 15/11.
+- Maria paga el 20/10: vigencia del 20/10 al 20/11.
+
+El listado de **Mensualidades** permite filtrar por periodo, socio y estado. Tambien muestra importe, vencimiento administrativo, fecha de pago y rango de vigencia.
+
+## Relacion con otros modulos
+
+- **Personas/Socios**: cada mensualidad pertenece a un usuario socio.
+- **Planes**: el precio sugerido del pago sale del plan asignado al socio.
+- **Membresias**: el estado activo o inactivo se calcula usando la vigencia del ultimo pago.
+- **Check-in**: usa la vigencia de la mensualidad para mostrar si el socio esta activo, proximo a vencer o vencido.
+- **Auditoria**: registrar, eliminar o generar mensualidades deja una accion registrada.
+
+## Generacion masiva
+
+La funcion interna de generacion masiva de cuotas existe para crear deudas administrativas por periodo, pero no es el flujo principal visible. Para este proyecto se prioriza el registro por socio, porque cada socio puede iniciar y vencer en fechas diferentes.
+
+## Verificacion
+
+Para instalar cambios de base de datos:
 
 ```powershell
-.\venv\Scripts\python.exe crud_auth_original\manage.py migrate pagos
+python manage.py migrate
 ```
 
-Para verificar el módulo:
+Para verificar el modulo:
 
 ```powershell
-.\venv\Scripts\python.exe crud_auth_original\manage.py test payments
+python manage.py test payments
 ```

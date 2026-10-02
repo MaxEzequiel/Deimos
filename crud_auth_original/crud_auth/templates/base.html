@@ -50,15 +50,15 @@
                     <ul class="sidebar-menu">
                         <li><a href="/home"><i class="fas fa-home"></i> Inicio</a></li>
 
+                        {% if request.user.is_superuser %}
+                        <li><a href="{% url 'member_list' %}"><i class="fas fa-id-card"></i> Gestion de socios</a></li>
+                        {% endif %}
                         <li><a href="{% url 'list_plans' %}"><i class="fas fa-dumbbell"></i> Planes</a></li>
-                        <li><a href="{% url 'payment_list' %}"><i class="fas fa-wallet"></i> Mensualidades</a></li>
                         <li><a href="{% url 'list_class' %}"><i class="fas fa-calendar-alt"></i> Clases</a></li>
                         <li><a href="{% url 'list_publications' %}"><i class="fas fa-file-alt"></i> Publicaciones</a></li>
-                        <li><a href="{% url 'payment_list' %}"><i class="fas fa-money-bill-wave"></i> Mensualidades</a></li>
                         {% if request.user.is_superuser %}
-                        <li><a href="{% url 'member_list' %}"><i class="fas fa-id-card"></i> Gestión de socios</a></li>
-                                                <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Usuarios</a></li>
-                        <li><a href="{% url 'checkin_home' %}"><i class="fas fa-fingerprint"></i> Check-in</a></li>
+                        <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Cuentas de usuario</a></li>
+                        <li><a href="{% url 'checkin_home' %}"><i class="fas fa-fingerprint"></i> Check-in de socios</a></li>
                         <li><a href="{% url 'estadisticas_dashboard' %}"><i class="fas fa-chart-line"></i> Estadísticas</a></li>
                         <li><a href="{% url 'accounts_admin_home' %}"><i class="fas fa-cog"></i> Administrar Grupos</a></li>
 

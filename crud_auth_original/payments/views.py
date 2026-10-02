@@ -9,9 +9,9 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from core.audit import audit
-from .forms import GeneratePaymentsForm, PeriodForm, RecordPaymentForm
+from .forms import GeneratePaymentsForm, PaymentFilterForm, RecordPaymentForm
 from .models import MonthlyPayment
-from .services import generate_monthly_payments
+from .services import apply_payment_coverage, generate_monthly_payments
 
 
 @login_required
@@ -21,9 +21,14 @@ def payment_list(request):
     can_view_all = request.user.has_perm("pagos.view_monthlypayment")
     if not can_view_all:
         payments = payments.filter(member=request.user)
-    period_form = PeriodForm(request.GET if "period" in request.GET else None)
+    period_form = PaymentFilterForm(request.GET if request.GET else None)
     if period_form.is_bound and period_form.is_valid():
-        payments = payments.filter(period=period_form.cleaned_data["period"])
+        period_from = period_form.cleaned_data.get("period_from")
+        period_to = period_form.cleaned_data.get("period_to")
+        if period_from:
+            payments = payments.filter(period__gte=period_from)
+        if period_to:
+            payments = payments.filter(period__lte=period_to)
     search = request.GET.get("q", "").strip()
     if search:
         payments = payments.filter(Q(member__username__icontains=search) | Q(member__person__name__icontains=search) | Q(member__person__surname__icontains=search))
@@ -66,6 +71,7 @@ def record_payment(request, payment_id):
         if request.method == "POST" and form.is_valid():
             payment = form.save(commit=False)
             payment.recorded_by = request.user
+            apply_payment_coverage(payment)
             payment.save()
             audit(request, "UPDATE", f"Pago de mensualidad {payment.pk}: {payment.member.username}, {payment.period:%m/%Y}, importe {payment.amount}")
             messages.success(request, "Pago registrado correctamente.")

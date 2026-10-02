@@ -5,6 +5,99 @@
 {% block content %}
 <div class="container-main">
 
+    {% if is_admin_home %}
+    {# ========== PANEL ADMINISTRATIVO ========== #}
+    <section class="hero-welcome">
+        <div class="hero-content">
+            <div class="hero-greeting">Panel administrativo</div>
+            <h1 class="hero-username">Gestion Deimos Gym</h1>
+            <p class="hero-subtitle">Accesos rapidos para controlar socios, mensualidades, check-in y reportes.</p>
+
+            <div class="hero-actions">
+                <a href="{% url 'member_list' %}" class="hero-btn hero-btn-primary">
+                    <i class="fas fa-id-card"></i> Gestionar socios
+                </a>
+                <a href="{% url 'payment_list' %}" class="hero-btn hero-btn-secondary">
+                    <i class="fas fa-receipt"></i> Ver mensualidades
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+    </section>
+
+    <div class="home-info-grid">
+        <div class="home-info-card">
+            <div class="home-info-icon icon-success">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Cuentas activas</span>
+                <span class="home-info-value">{{ admin_stats.active_accounts }}</span>
+                <span class="home-info-hint">Usuarios habilitados</span>
+            </div>
+        </div>
+
+        <div class="home-info-card">
+            <div class="home-info-icon icon-info">
+                <i class="fas fa-id-card"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Socios cargados</span>
+                <span class="home-info-value">{{ admin_stats.members }}</span>
+                <span class="home-info-hint">Perfiles con datos personales</span>
+            </div>
+        </div>
+
+        <div class="home-info-card">
+            <div class="home-info-icon icon-warn">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Pagos pendientes</span>
+                <span class="home-info-value">{{ admin_stats.pending_payments }}</span>
+                <span class="home-info-hint">Mensualidades por cobrar</span>
+            </div>
+        </div>
+
+        <div class="home-info-card">
+            <div class="home-info-icon icon-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Pagos vencidos</span>
+                <span class="home-info-value">{{ admin_stats.overdue_payments }}</span>
+                <span class="home-info-hint">Requieren seguimiento</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="home-classes-section">
+        <header class="home-section-header">
+            <h2><i class="fas fa-tools"></i> Accesos de gestion</h2>
+        </header>
+        <div class="home-classes-grid">
+            <article class="home-class-card">
+                <div class="home-class-top"><h3>Socios y pagos</h3></div>
+                <p class="home-class-desc">Administrar planes, membresias, pagos y vigencias individuales.</p>
+                <a href="{% url 'member_list' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Abrir gestion</a>
+            </article>
+            <article class="home-class-card">
+                <div class="home-class-top"><h3>Check-in</h3></div>
+                <p class="home-class-desc">Registrar ingreso y revisar estado de mensualidad al entrar.</p>
+                <a href="{% url 'checkin_home' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Abrir check-in</a>
+            </article>
+            <article class="home-class-card">
+                <div class="home-class-top"><h3>Reportes</h3></div>
+                <p class="home-class-desc">Consultar estadisticas, exportar informes y revisar actividad.</p>
+                <a href="{% url 'estadisticas_dashboard' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Ver reportes</a>
+            </article>
+        </div>
+    </section>
+
+    {% else %}
     {# ========== HERO DE BIENVENIDA ========== #}
     <section class="hero-welcome">
         <div class="hero-content">
@@ -54,6 +147,24 @@
                 </span>
                 {% if membership and membership.plan %}
                 <span class="home-info-hint">Plan: {{ membership.plan.name }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {# --- Mensualidad --- #}
+        <div class="home-info-card">
+            <div class="home-info-icon {% if monthly_status.membership_status == 'active' %}icon-success{% elif monthly_status.membership_status == 'expiring' %}icon-warn{% else %}icon-danger{% endif %}">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <div class="home-info-content">
+                <span class="home-info-label">Mensualidad</span>
+                <span class="home-info-value">{{ monthly_status.membership_label }}</span>
+                <span class="home-info-hint">{{ monthly_status.membership_detail }}</span>
+                {% if monthly_status.membership_expires_at %}
+                <span class="home-info-hint">Renovar antes del {{ monthly_status.membership_expires_at|date:"d/m/Y" }}</span>
+                {% endif %}
+                {% if monthly_status.last_paid_on %}
+                <span class="home-info-hint">Ultimo pago: {{ monthly_status.last_paid_on|date:"d/m/Y" }}</span>
                 {% endif %}
             </div>
         </div>
@@ -142,6 +253,7 @@
         </div>
         {% endif %}
     </section>
+    {% endif %}
 
 </div>
 {% endblock content %}

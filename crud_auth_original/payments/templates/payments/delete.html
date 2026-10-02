@@ -4,7 +4,8 @@
 <div class="signup-box" style="max-width: 640px; width: 100%;">
     <h2>Eliminar mensualidad</h2>
     <p>Vas a eliminar la cuota de <strong>{{ payment.member.username }}</strong>.</p>
-    <p>Mes: <strong>{{ payment.period|date:"m/Y" }}</strong><br>Importe: <strong>${{ payment.amount|floatformat:2 }}</strong><br>Estado: <strong>{{ payment.status_label }}</strong></p>
+    <p>Mes administrativo: <strong>{{ payment.period|date:"m/Y" }}</strong><br>Importe: <strong>${{ payment.amount|floatformat:2 }}</strong><br>Estado: <strong>{{ payment.status_label }}</strong></p>
+    <p>Vigencia: <strong>{% if payment.coverage_start and payment.coverage_end %}{{ payment.coverage_start|date:"d/m/Y" }} al {{ payment.coverage_end|date:"d/m/Y" }}{% else %}Sin activar{% endif %}</strong></p>
     <p>Esta acción cancela la cuota seleccionada y queda registrada en auditoría.</p>
     <form method="post">
         {% csrf_token %}
