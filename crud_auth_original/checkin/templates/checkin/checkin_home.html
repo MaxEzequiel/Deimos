@@ -66,9 +66,9 @@
                     <tbody>
                         {% for c in ultimos %}
                         <tr>
-                            <td>{{ c.dni }}</td>
-                            <td>{{ c.hora_entrada|date:"H:i" }}</td>
-                            <td>{% if c.person %}{{ c.person.name }} {{ c.person.surname }}{% else %}Sin socio asociado{% endif %}</td>
+                            <td data-label="DNI">{{ c.dni }}</td>
+                            <td data-label="Entrada">{{ c.hora_entrada|date:"H:i" }}</td>
+                            <td data-label="Socio">{% if c.person %}{{ c.person.name }} {{ c.person.surname }}{% else %}Sin socio asociado{% endif %}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

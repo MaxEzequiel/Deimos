@@ -64,6 +64,8 @@ urlpatterns = [
     # modulo de estadisticas
     path("estadisticas/", include("accounts.urls_estadisticas")),
     path('checkin/', include('checkin.urls')),
+    path("payments/", include("payments.urls")),
+    path("members/", include("memberships.urls")),
     # modulo de publicaciones
     path("tutorials/", include("tutorials.urls")),
 

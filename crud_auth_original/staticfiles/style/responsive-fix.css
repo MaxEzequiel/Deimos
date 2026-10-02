@@ -142,13 +142,91 @@
     }
 }
 
-/* Evitar scroll horizontal */
-body {
-    overflow-x: hidden !important;
+/* Los elementos flex y grid deben poder ajustarse al espacio disponible. */
+.main-content,
+.content-container,
+.container-main,
+.card-info,
+.clase-card,
+.stat-list-card {
+    min-width: 0;
+}
+
+.content-container {
+    overflow-wrap: anywhere;
+}
+
+.plans-table-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.content-container img,
+.content-container video,
+.content-container canvas {
+    max-width: 100%;
+}
+
+.content-container input:not([type="checkbox"]):not([type="radio"]),
+.content-container select,
+.content-container textarea {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+}
+
+@media (max-width: 991px) {
+    .sidebar {
+        max-width: calc(100vw - 70px);
+    }
+
+    .top-navbar {
+        min-height: 75px;
+        padding-left: 75px;
+        gap: 12px;
+    }
+
+    .user-tools {
+        min-width: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px 14px;
+    }
+
+    .user-tools span {
+        overflow-wrap: anywhere;
+    }
+
+    .login-box,
+    .signup-box {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .cards-row > .login-box,
+    .cards-row > .signup-box {
+        width: calc(100% - 2rem) !important;
+        max-width: calc(100% - 2rem) !important;
+        align-self: center;
+    }
+
+    .audit-filter-actions,
+    .stats-actions,
+    .plan-actions-cell {
+        flex-wrap: wrap;
+    }
 }
 
 /* móvil cards) */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+    .plans-table {
+        min-width: 0;
+        width: 100%;
+    }
+
     .plans-table,
     .plans-table thead,
     .plans-table tbody,
@@ -164,7 +242,7 @@ body {
     .plans-table tbody tr {
         margin-bottom: 1rem;
         border-radius: 12px;
-        background: rgba(0, 0, 0, 0.3);
+        background: var(--table-container-bg);
         padding: 0.5rem 0;
     }
     
@@ -174,13 +252,55 @@ body {
         align-items: center;
         padding: 0.8rem 1rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        overflow-wrap: anywhere;
+        min-width: 0;
     }
     
     .plans-table td::before {
         content: attr(data-label);
         font-weight: 600;
-        color: #fdfcfb;
-        width: 40%;
+        color: var(--text-primary);
+        flex: 0 0 40%;
+    }
+
+    .plans-table td[colspan]::before {
+        content: none;
+    }
+
+    .plans-table td:not([data-label]) {
+        display: block;
+    }
+
+    .plans-table td:not([data-label])::before {
+        content: none;
+    }
+
+    .stat-list-header,
+    .audit-pagination {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .auth-wrapper {
+        width: 100%;
+    }
+
+    .card-info {
+        padding: 1rem;
+    }
+
+    .home-info-grid,
+    .home-classes-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .button-group > *,
+    .stats-actions > * {
+        min-width: 0;
+        max-width: 100%;
+        white-space: normal;
     }
 }
 

@@ -65,12 +65,12 @@
                 <tbody>
                     {% for c in checkins %}
                     <tr>
-                        <td>{{ c.dni }}</td>
-                        <td>{{ c.person|default:"—" }}</td>
-                        <td>{{ c.fecha|date:"d/m/Y" }}</td>
-                        <td>{{ c.hora_entrada|date:"H:i" }}</td>
-                        <td>{{ c.hora_salida|date:"H:i"|default:"—" }}</td>
-                        <td>{{ c.observaciones|default:"—"|truncatechars:40 }}</td>
+                        <td data-label="DNI">{{ c.dni }}</td>
+                        <td data-label="Persona">{{ c.person|default:"—" }}</td>
+                        <td data-label="Fecha">{{ c.fecha|date:"d/m/Y" }}</td>
+                        <td data-label="Entrada">{{ c.hora_entrada|date:"H:i" }}</td>
+                        <td data-label="Salida">{{ c.hora_salida|date:"H:i"|default:"—" }}</td>
+                        <td data-label="Observaciones">{{ c.observaciones|default:"—"|truncatechars:40 }}</td>
                     </tr>
                     {% empty %}
                     <tr>

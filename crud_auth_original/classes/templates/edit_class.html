@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-{if user.is_staff or user.is_superuser %}
+{% if user.is_staff or user.is_superuser %}
 <div class="signup-box">
     <h1 class="text-center">
         <i class="fas fa-edit"></i> Editar Clase

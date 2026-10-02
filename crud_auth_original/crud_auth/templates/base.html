@@ -31,7 +31,7 @@
 </head>
 <body>
     <!-- móvil-->
-<button class="hamburger-btn-fix" id="hamburgerBtnFix">
+<button class="hamburger-btn-fix" id="hamburgerBtnFix" type="button" aria-label="Abrir menú" aria-controls="sidebarNav" aria-expanded="false">
     <i class="fas fa-bars"></i>
 </button>
 
@@ -39,7 +39,7 @@
 <div class="sidebar-overlay-fix" id="sidebarOverlayFix"></div>
     <!-- SIDEBAR + TOPBAR -->
     <div class="admin-layout">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebarNav">
             <div class="sidebar-logo">
                 <h2><i class="fas fa-dumbbell"></i> Deimos Gym</h2>
             </div>
@@ -52,7 +52,9 @@
                         <li><a href="{% url 'list_plans' %}"><i class="fas fa-dumbbell"></i> Planes</a></li>
                         <li><a href="{% url 'list_class' %}"><i class="fas fa-calendar-alt"></i> Clases</a></li>
                         <li><a href="{% url 'list_publications' %}"><i class="fas fa-file-alt"></i> Publicaciones</a></li>
+                        <li><a href="{% url 'payment_list' %}"><i class="fas fa-money-bill-wave"></i> Mensualidades</a></li>
                         {% if request.user.is_superuser %}
+                        <li><a href="{% url 'member_list' %}"><i class="fas fa-user-check"></i> Gestión de socios</a></li>
                                                 <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Usuarios</a></li>
                         <li><a href="{% url 'checkin_home' %}"><i class="fas fa-fingerprint"></i> Check-in</a></li>
                         <li><a href="{% url 'estadisticas_dashboard' %}"><i class="fas fa-chart-line"></i> Estadísticas</a></li>
@@ -101,12 +103,14 @@
         sidebar.classList.add('mobile-open-fix');
         if (overlay) overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        btn.setAttribute('aria-expanded', 'true');
     }
     
     function closeMenu() {
         sidebar.classList.remove('mobile-open-fix');
         if (overlay) overlay.classList.remove('active');
         document.body.style.overflow = '';
+        btn.setAttribute('aria-expanded', 'false');
     }
     
     btn.addEventListener('click', function(e) {
@@ -120,6 +124,9 @@
     
     if (overlay) {
         overlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeMenu();
+    });
     }
     
     // Cerrar al hacer clic en un enlace

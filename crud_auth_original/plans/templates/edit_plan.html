@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-{% if user.is_staff or user.is_superuser %}
-
 {% block content %}
+{% if user.is_staff or user.is_superuser %}
 
 <div class="signup-box" style="max-width: 600px;">
     <h1 class="text-center">
