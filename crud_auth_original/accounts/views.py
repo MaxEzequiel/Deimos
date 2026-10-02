@@ -1,4 +1,6 @@
 ﻿from django.contrib import messages
+import logging
+
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -16,6 +18,31 @@ from memberships.models import Membership
 from people.forms import PersonForm
 from people.models import Person
 from routines.models import Routine
+
+logger = logging.getLogger(__name__)
+
+
+def _create_account_with_rollback(request, user_form, person_form):
+    """Create all user records as one unit and explicitly roll back on failure."""
+    with transaction.atomic():
+        savepoint_id = transaction.savepoint()
+        try:
+            user = user_form.save(commit=False)
+            user.email = person_form.cleaned_data.get('email') or ''
+            user.is_superuser = request.POST.get('is_admin') == 'on'
+            user.is_staff = user.is_superuser
+            user.save()
+            person = person_form.save(commit=False)
+            person.user = user
+            person.save()
+            Routine.objects.create(client=person, name=f'Rutina de {person.name}', description='Rutina personalizada')
+            Membership.objects.create(user=user)
+            audit(request, 'CREATE', f'usuario: {user.id} - {user.username}')
+        except Exception:
+            transaction.savepoint_rollback(savepoint_id)
+            raise
+        transaction.savepoint_commit(savepoint_id)
+        return user
 
 
 @login_required
@@ -50,20 +77,14 @@ def create_account(request):
         user_valid = user_form.is_valid()
         person_valid = person_form.is_valid()
         if user_valid and person_valid:
-            with transaction.atomic():
-                user = user_form.save(commit=False)
-                user.email = person_form.cleaned_data.get('email') or ''
-                user.is_superuser = request.POST.get('is_admin') == 'on'
-                user.is_staff = user.is_superuser
-                user.save()
-                person = person_form.save(commit=False)
-                person.user = user
-                person.save()
-                Routine.objects.create(client=person, name=f'Rutina de {person.name}', description='Rutina personalizada')
-                Membership.objects.create(user=user)
-                audit(request, 'CREATE', f'usuario: {user.id} - {user.username}')
-            messages.success(request, 'Usuario creado correctamente')
-            return redirect('list_accounts')
+            try:
+                _create_account_with_rollback(request, user_form, person_form)
+            except Exception:
+                logger.exception('No se pudo crear la cuenta; se ejecuto rollback')
+                messages.error(request, 'No se pudo crear el usuario. Se deshicieron los cambios de la transaccion.')
+            else:
+                messages.success(request, 'Usuario creado correctamente')
+                return redirect('list_accounts')
     return render(request, 'signup.html', {'user_form': user_form, 'person_form': person_form})
 
 
