@@ -25,7 +25,13 @@
 .deimos-ui form :is(input, select, textarea):disabled { opacity: .6; cursor: not-allowed; }
 .deimos-ui form [aria-invalid="true"] { border-color: #e74c3c; }
 .deimos-ui form textarea { min-height: 120px; resize: vertical; }
-.deimos-ui form select { cursor: pointer; }
+.deimos-ui form select {
+    cursor: pointer;
+    min-height: 44px;
+    line-height: 1.35;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+}
 .deimos-ui form option { background: var(--bg-input); color: var(--text-primary); }
 .deimos-ui form input:is([type="checkbox"], [type="radio"]) {
     width: 18px;
