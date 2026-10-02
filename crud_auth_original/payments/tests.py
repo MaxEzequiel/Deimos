@@ -60,12 +60,13 @@ class MonthlyPaymentTests(TestCase):
         self.assertEqual(list(response.context["payments"]), [])
         self.assertEqual(response.context["outstanding"], 0)
         self.assertEqual(self.client.post(reverse("record_payment", args=[self.payment.pk]), {}).status_code, 403)
+        self.assertEqual(self.client.post(reverse("delete_payment", args=[self.payment.pk]), {}).status_code, 403)
         self.assertEqual(self.client.post(reverse("generate_payments"), {}).status_code, 403)
         self.client.force_login(self.member)
         self.assertContains(self.client.get(reverse("payment_list")), "18000")
 
     def test_guest_must_login(self):
-        for url in [reverse("payment_list"), reverse("generate_payments"), reverse("record_payment", args=[self.payment.pk])]:
+        for url in [reverse("payment_list"), reverse("generate_payments"), reverse("record_payment", args=[self.payment.pk]), reverse("delete_payment", args=[self.payment.pk])]:
             self.assertEqual(self.client.get(url).status_code, 302)
 
     def test_cashier_permissions_allow_recording(self):
@@ -81,6 +82,15 @@ class MonthlyPaymentTests(TestCase):
         self.client.post(reverse("record_payment", args=[self.payment.pk]), {"paid_on": self.today.isoformat(), "method": "cash"})
         self.payment.refresh_from_db()
         self.assertEqual(self.payment.method, "transfer")
+        self.assertEqual(AuditLog.objects.count(), 1)
+
+    def test_delete_payment_requires_permission_and_audits(self):
+        self.other.user_permissions.add(*Permission.objects.filter(content_type__app_label="pagos", codename__in=["view_monthlypayment", "delete_monthlypayment"]))
+        self.client.force_login(self.other)
+        self.assertEqual(self.client.get(reverse("delete_payment", args=[self.payment.pk])).status_code, 200)
+        response = self.client.post(reverse("delete_payment", args=[self.payment.pk]))
+        self.assertRedirects(response, reverse("payment_list"))
+        self.assertFalse(MonthlyPayment.objects.filter(pk=self.payment.pk).exists())
         self.assertEqual(AuditLog.objects.count(), 1)
 
     def test_future_payment_and_missing_method_are_rejected(self):

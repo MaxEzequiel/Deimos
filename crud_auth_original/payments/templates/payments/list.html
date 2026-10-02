@@ -43,7 +43,17 @@
                     <td data-label="Vencimiento">{{ payment.due_date|date:"d/m/Y" }}</td>
                     <td data-label="Estado"><span class="stat-badge {% if payment.status == 'paid' %}audit-badge-login{% elif payment.status == 'overdue' %}audit-badge-delete{% else %}audit-badge-update{% endif %}">{{ payment.status_label }}</span></td>
                     <td data-label="Pago">{% if payment.paid_on %}{{ payment.paid_on|date:"d/m/Y" }}<br>{{ payment.get_method_display }}{% if payment.reference %}<br><small>{{ payment.reference }}</small>{% endif %}{% else %}Sin registrar{% endif %}</td>
-                    <td data-label="Acciones">{% if not payment.paid_on and perms.pagos.change_monthlypayment and can_view_all %}<a class="action-btn edit-btn" href="{% url 'record_payment' payment.pk %}">Registrar pago</a>{% else %}—{% endif %}</td>
+                    <td data-label="Acciones">
+                        {% if not payment.paid_on and perms.pagos.change_monthlypayment and can_view_all %}
+                        <a class="action-btn edit-btn" href="{% url 'record_payment' payment.pk %}">Registrar pago</a>
+                        {% endif %}
+                        {% if perms.pagos.delete_monthlypayment and can_view_all %}
+                        <a class="action-btn delete-btn" href="{% url 'delete_payment' payment.pk %}">Eliminar</a>
+                        {% endif %}
+                        {% if not can_view_all or not perms.pagos.delete_monthlypayment %}
+                            {% if payment.paid_on or not perms.pagos.change_monthlypayment %}&mdash;{% endif %}
+                        {% endif %}
+                    </td>
                 </tr>
             {% empty %}
                 <tr><td colspan="7" class="empty-row">No hay mensualidades para mostrar.</td></tr>

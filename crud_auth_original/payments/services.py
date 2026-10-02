@@ -33,20 +33,26 @@ def register_member_payment(member, data, operator):
 @transaction.atomic
 def generate_monthly_payments(period, due_day):
     """Snapshot plan prices; repeating generation preserves existing charges."""
-    due_date = date(period.year, period.month, due_day)
-    last_day = date(period.year, period.month, monthrange(period.year, period.month)[1])
-    members = Person.objects.filter(user__is_active=True, user__date_joined__date__lte=last_day).select_related("user", "plan", "user__membership__plan")
-    created = existing = skipped = 0
-    for person in members:
-        if MonthlyPayment.objects.filter(member=person.user, period=period).exists():
-            existing += 1
-            continue
-        membership = getattr(person.user, "membership", None)
-        plan = person.plan or (membership.plan if membership else None)
-        if not plan or not plan.base_price or plan.base_price <= 0:
-            skipped += 1
-            continue
-        _, was_created = MonthlyPayment.objects.get_or_create(member=person.user, period=period, defaults={"amount": plan.base_price, "due_date": due_date})
-        created += int(was_created)
-        existing += int(not was_created)
+    savepoint_id = transaction.savepoint()
+    try:
+        due_date = date(period.year, period.month, due_day)
+        last_day = date(period.year, period.month, monthrange(period.year, period.month)[1])
+        members = Person.objects.filter(user__is_active=True, user__date_joined__date__lte=last_day).select_related("user", "plan", "user__membership__plan")
+        created = existing = skipped = 0
+        for person in members:
+            if MonthlyPayment.objects.filter(member=person.user, period=period).exists():
+                existing += 1
+                continue
+            membership = getattr(person.user, "membership", None)
+            plan = person.plan or (membership.plan if membership else None)
+            if not plan or not plan.base_price or plan.base_price <= 0:
+                skipped += 1
+                continue
+            _, was_created = MonthlyPayment.objects.get_or_create(member=person.user, period=period, defaults={"amount": plan.base_price, "due_date": due_date})
+            created += int(was_created)
+            existing += int(not was_created)
+    except Exception:
+        transaction.savepoint_rollback(savepoint_id)
+        raise
+    transaction.savepoint_commit(savepoint_id)
     return created, existing, skipped

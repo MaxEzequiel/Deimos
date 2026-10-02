@@ -71,3 +71,25 @@ def record_payment(request, payment_id):
             messages.success(request, "Pago registrado correctamente.")
             return redirect("payment_list")
     return render(request, "payments/record.html", {"form": form, "payment": payment})
+
+
+@login_required
+@permission_required(["pagos.delete_monthlypayment", "pagos.view_monthlypayment"], raise_exception=True)
+@require_http_methods(["GET", "POST"])
+def delete_payment(request, payment_id):
+    payment = get_object_or_404(MonthlyPayment.objects.select_related("member"), pk=payment_id)
+    if request.method == "POST":
+        with transaction.atomic():
+            savepoint_id = transaction.savepoint()
+            try:
+                payment = get_object_or_404(MonthlyPayment.objects.select_for_update().select_related("member"), pk=payment_id)
+                detail = f"Mensualidad {payment.pk}: {payment.member.username}, {payment.period:%m/%Y}, importe {payment.amount}"
+                payment.delete()
+                audit(request, "DELETE", detail)
+            except Exception:
+                transaction.savepoint_rollback(savepoint_id)
+                raise
+            transaction.savepoint_commit(savepoint_id)
+        messages.success(request, "Mensualidad eliminada correctamente.")
+        return redirect("payment_list")
+    return render(request, "payments/delete.html", {"payment": payment})

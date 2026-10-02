@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Eliminar mensualidad | Deimos Gym{% endblock %}
+{% block content %}
+<div class="signup-box" style="max-width: 640px; width: 100%;">
+    <h2>Eliminar mensualidad</h2>
+    <p>Vas a eliminar la cuota de <strong>{{ payment.member.username }}</strong>.</p>
+    <p>Mes: <strong>{{ payment.period|date:"m/Y" }}</strong><br>Importe: <strong>${{ payment.amount|floatformat:2 }}</strong><br>Estado: <strong>{{ payment.status_label }}</strong></p>
+    <p>Esta acción cancela la cuota seleccionada y queda registrada en auditoría.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="stats-actions">
+        <button type="submit" class="btn-audit btn-audit-reset">Eliminar mensualidad</button>
+        <a href="{% url 'payment_list' %}" class="btn-audit btn-audit-filter">Volver</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
