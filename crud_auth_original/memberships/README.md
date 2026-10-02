@@ -25,5 +25,3 @@ El módulo de gestión requiere una cuenta de administrador. Los socios pueden c
 python manage.py test --noinput
 python manage.py makemigrations --check --dry-run
 ```
-
-71 pruebas aprobadas, incluidas 20 pruebas de esta gestión e integración con los otros módulos. No requiere cambios de esquema ni migraciones nuevas. No se cargaron pagos de prueba en la base de datos del proyecto.

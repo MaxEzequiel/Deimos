@@ -1,0 +1,53 @@
+/* Deimos identity for the technical administration modules. */
+html[data-theme], :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1b;
+    --bg-input: #2a2a3a;
+    --bg-input-focus: #353548;
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #b0b0b0;
+    --border-input: #3a3a4a;
+    --accent: #2ecc71;
+    --primary: #1a1a1b;
+    --secondary: #151516;
+    --accent-color: #2ecc71;
+    --body-fg: #e0e0e0;
+    --body-bg: #0a0a0a;
+    --body-quiet-color: #b0b0b0;
+    --body-loud-color: #ffffff;
+    --header-color: #ffffff;
+    --header-branding-color: #ffffff;
+    --header-bg: #1a1a1b;
+    --header-link-color: #ffffff;
+    --breadcrumbs-fg: #e0e0e0;
+    --breadcrumbs-link-fg: #ffffff;
+    --breadcrumbs-bg: #151516;
+    --link-fg: #2ecc71;
+    --link-hover-color: #a3efc3;
+    --link-selected-fg: #a3efc3;
+    --hairline-color: #303034;
+    --border-color: #3a3a4a;
+    --darkened-bg: #151516;
+    --selected-bg: #232324;
+    --selected-row: #22332a;
+    --button-bg: #215e37;
+    --button-hover-bg: #2c7b49;
+    --default-button-bg: #215e37;
+    --default-button-hover-bg: #2c7b49;
+    --close-button-bg: #3a3a4a;
+    --close-button-hover-bg: #505060;
+}
+.deimos-ui { font-family: system-ui, sans-serif; }
+.deimos-ui #header { padding: 20px 32px; border-bottom: 1px solid var(--border-color); }
+.deimos-ui #content { padding: 28px; }
+.deimos-ui .module { border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: var(--bg-secondary); }
+.deimos-ui .module :is(h2, caption) { padding: 14px; font-weight: 600; }
+.deimos-ui :is(.button, input[type="submit"], input[type="button"], .submit-row a.deletelink) { border-radius: 10px; padding: 12px 18px; font-weight: 600; }
+.deimos-ui .submit-row { border-radius: 12px; }
+.deimos-ui form .form-row :is(input, select, textarea) { max-width: 640px; }
+.deimos-ui form input:is([type="checkbox"], [type="radio"]) { display: inline-block; }
+@media (max-width: 767px) {
+    .deimos-ui #content { padding: 16px; }
+    .deimos-ui #header { padding: 16px; }
+}

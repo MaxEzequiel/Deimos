@@ -71,6 +71,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "crud_auth.urls"
 
+FORM_RENDERER = "core.form_renderers.DeimosFormRenderer"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

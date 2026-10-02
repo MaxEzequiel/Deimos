@@ -2,5 +2,3 @@
 
 - Correo duplicado entre User y Person: sincronización al guardar ambos modelos y migración de datos existentes. Recuperación y reportes usan el correo de la cuenta.
 - Caché de permisos: invalidación al modificar permisos o grupos del usuario y en las vistas de administración.
-
-Detalle, comprobaciones y límites de la revisión: CORRECCIONES.md.

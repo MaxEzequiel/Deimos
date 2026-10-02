@@ -23,3 +23,7 @@ env/
 _inspect.py
 conceptos.txt
 notas.txt
+
+# Local notes and database backups
+CORRECCIONES.md
+/backups/
