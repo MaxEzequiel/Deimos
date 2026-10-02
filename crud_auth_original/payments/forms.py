@@ -7,14 +7,14 @@ from .models import MonthlyPayment
 
 
 class PeriodForm(forms.Form):
-    period = forms.DateField(label="Mes", input_formats=["%Y-%m"], widget=forms.DateInput(format="%Y-%m", attrs={"type": "month", "class": "form-control"}))
+    period = forms.DateField(label="Mes", input_formats=["%Y-%m"], widget=forms.DateInput(format="%Y-%m", attrs={"type": "month", "class": "module-input"}))
 
     def clean_period(self):
         return self.cleaned_data["period"].replace(day=1)
 
 
 class GeneratePaymentsForm(PeriodForm):
-    due_day = forms.IntegerField(label="Día de vencimiento", min_value=1, max_value=31, initial=10, widget=forms.NumberInput(attrs={"class": "form-control"}))
+    due_day = forms.IntegerField(label="Día de vencimiento", min_value=1, max_value=31, initial=10, widget=forms.NumberInput(attrs={"class": "module-input"}))
 
     def clean(self):
         data = super().clean()
@@ -27,22 +27,22 @@ class GeneratePaymentsForm(PeriodForm):
 
 
 class RecordPaymentForm(forms.ModelForm):
-    paid_on = forms.DateField(label="Fecha de pago", initial=timezone.localdate, widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date", "class": "form-control"}))
-    method = forms.ChoiceField(label="Medio de pago", choices=[("", "Seleccionar")] + list(MonthlyPayment.Method.choices), widget=forms.Select(attrs={"class": "form-control"}))
+    paid_on = forms.DateField(label="Fecha de pago", initial=timezone.localdate, widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date", "class": "module-input"}))
+    method = forms.ChoiceField(label="Medio de pago", choices=[("", "Seleccionar")] + list(MonthlyPayment.Method.choices), widget=forms.Select(attrs={"class": "module-input"}))
 
     class Meta:
         model = MonthlyPayment
         fields = ["paid_on", "method", "reference"]
-        widgets = {"reference": forms.TextInput(attrs={"class": "form-control"})}
+        widgets = {"reference": forms.TextInput(attrs={"class": "module-input"})}
 
 
 class MemberPaymentForm(RecordPaymentForm):
-    period = forms.DateField(label='Mensualidad', input_formats=['%Y-%m'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month', 'class': 'form-control'}))
+    period = forms.DateField(label='Mensualidad', input_formats=['%Y-%m'], widget=forms.DateInput(format='%Y-%m', attrs={'type': 'month', 'class': 'module-input'}))
 
     class Meta(RecordPaymentForm.Meta):
         fields = ['period', 'amount', 'paid_on', 'method', 'reference']
         labels = {'amount': 'Importe del pago'}
-        widgets = {**RecordPaymentForm.Meta.widgets, 'amount': forms.NumberInput(attrs={'step': '0.01', 'min': '0.01', 'class': 'form-control'})}
+        widgets = {**RecordPaymentForm.Meta.widgets, 'amount': forms.NumberInput(attrs={'step': '0.01', 'min': '0.01', 'class': 'module-input'})}
 
     def __init__(self, *args, member, **kwargs):
         self.member = member

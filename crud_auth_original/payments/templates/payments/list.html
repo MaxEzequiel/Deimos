@@ -6,23 +6,25 @@
         <h2>{% if can_view_all %}Seguimiento de mensualidades{% else %}Mis mensualidades{% endif %}</h2>
         <p>Consultá las cuotas y su estado de pago. Los importes corresponden a cada cuota generada.</p>
     </div>
-    {% if user.is_superuser %}<p><a href="{% url 'member_list' %}" class="btn btn-primary">Gestionar planes, membresías y pagos por socio</a></p>{% endif %}
-    {% for message in messages %}<div class="alert alert-info" role="status">{{ message }}</div>{% endfor %}
+    {% if user.is_superuser %}<p><a href="{% url 'member_list' %}" class="btn-audit btn-audit-filter">Gestionar planes, membresías y pagos por socio</a></p>{% endif %}
+    {% for message in messages %}<div class="info-card" role="status">{{ message }}</div>{% endfor %}
     {% if perms.pagos.add_monthlypayment and can_view_all %}
-    <p><a href="{% url 'generate_payments' %}" class="btn btn-primary">Generar cuotas del mes</a></p>
+    <p><a href="{% url 'generate_payments' %}" class="btn-audit btn-audit-filter">Generar cuotas del mes</a></p>
     {% endif %}
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-3">{{ period_form.period.label_tag }}{{ period_form.period }}{{ period_form.period.errors }}</div>
-        <div class="col-md-3"><label for="status" class="form-label">Estado</label>
-            <select name="status" id="status" class="form-select">
+    <form method="get" class="audit-filters payment-filters">
+        <div class="module-filter-row">
+        <div class="audit-filter-field">{{ period_form.period.label_tag }}{{ period_form.period }}{% if period_form.period.errors %}<div class="error-text" role="alert">{{ period_form.period.errors }}</div>{% endif %}</div>
+        <div class="audit-filter-field"><label for="status" class="module-field-label">Estado</label>
+            <select name="status" id="status" class="module-status-select">
                 <option value="">Todos</option>
                 <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pendiente</option>
                 <option value="overdue" {% if status_filter == 'overdue' %}selected{% endif %}>Vencida</option>
                 <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Pagada</option>
             </select>
         </div>
-        <div class="col-md-3"><label for="search" class="form-label">Buscar socio</label><input name="q" id="search" class="form-control" value="{{ search }}" placeholder="Nombre o usuario"></div>
-        <div class="col-md-3 d-flex align-items-end gap-2"><button class="btn btn-primary" type="submit">Filtrar</button><a href="{% url 'payment_list' %}" class="btn btn-outline-secondary">Limpiar</a></div>
+        <div class="audit-filter-field"><label for="search" class="module-field-label">Buscar socio</label><input type="search" name="q" id="search" class="module-search-input" value="{{ search }}" placeholder="Nombre o usuario"></div>
+        <div class="audit-filter-actions"><button class="btn-audit btn-audit-filter" type="submit">Filtrar</button><a href="{% url 'payment_list' %}" class="btn-audit btn-audit-reset">Limpiar</a></div>
+        </div>
     </form>
     <div class="d-flex flex-wrap gap-4 mb-3" aria-live="polite">
         <span>Total cobrado: <strong>${{ collected|floatformat:2 }}</strong></span>
@@ -39,9 +41,9 @@
                     <td data-label="Mes">{{ payment.period|date:"m/Y" }}</td>
                     <td data-label="Importe">${{ payment.amount|floatformat:2 }}</td>
                     <td data-label="Vencimiento">{{ payment.due_date|date:"d/m/Y" }}</td>
-                    <td data-label="Estado"><span class="badge {% if payment.status == 'paid' %}bg-success{% elif payment.status == 'overdue' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ payment.status_label }}</span></td>
+                    <td data-label="Estado"><span class="stat-badge {% if payment.status == 'paid' %}audit-badge-login{% elif payment.status == 'overdue' %}audit-badge-delete{% else %}audit-badge-update{% endif %}">{{ payment.status_label }}</span></td>
                     <td data-label="Pago">{% if payment.paid_on %}{{ payment.paid_on|date:"d/m/Y" }}<br>{{ payment.get_method_display }}{% if payment.reference %}<br><small>{{ payment.reference }}</small>{% endif %}{% else %}Sin registrar{% endif %}</td>
-                    <td data-label="Acciones">{% if not payment.paid_on and perms.pagos.change_monthlypayment and can_view_all %}<a class="btn btn-sm btn-primary" href="{% url 'record_payment' payment.pk %}">Registrar pago</a>{% else %}—{% endif %}</td>
+                    <td data-label="Acciones">{% if not payment.paid_on and perms.pagos.change_monthlypayment and can_view_all %}<a class="action-btn edit-btn" href="{% url 'record_payment' payment.pk %}">Registrar pago</a>{% else %}—{% endif %}</td>
                 </tr>
             {% empty %}
                 <tr><td colspan="7" class="empty-row">No hay mensualidades para mostrar.</td></tr>

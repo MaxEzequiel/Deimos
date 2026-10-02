@@ -1599,6 +1599,12 @@ i:hover {
 /* ---- Inputs, selects, date ---- */
 .audit-filter-field input[type="text"],
 .audit-filter-field input[type="date"],
+.audit-filter-field input[type="month"],
+.audit-filter-field input[type="number"],
+.audit-filter-field input[type="search"],
+.audit-filter-field input[type="email"],
+.audit-filter-field input[type="password"],
+.audit-filter-field textarea,
 .audit-filter-field select {
     background: var(--bg-input);
     border: 1px solid var(--border-input);
@@ -1616,12 +1622,16 @@ i:hover {
 
 .audit-filter-field input[type="text"]:hover,
 .audit-filter-field input[type="date"]:hover,
+.audit-filter-field input:hover,
+.audit-filter-field textarea:hover,
 .audit-filter-field select:hover {
     border-color: var(--accent);
 }
 
 .audit-filter-field input[type="text"]:focus,
 .audit-filter-field input[type="date"]:focus,
+.audit-filter-field input:focus,
+.audit-filter-field textarea:focus,
 .audit-filter-field select:focus {
     border-color: var(--accent);
     background: var(--bg-input-focus);
@@ -1664,6 +1674,78 @@ body.light-mode .audit-filter-field select {
     filter: invert(0.7); /* modo oscuro por defecto */
 }
 
+.audit-filter-field textarea {
+    height: auto;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.module-filter-row,
+.module-search-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    gap: 0.85rem;
+    align-items: end;
+}
+
+.module-search-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.payment-filters {
+    width: 100%;
+    max-width: 820px;
+}
+
+.payment-filters .module-filter-row {
+    grid-template-columns: minmax(0, 170px) minmax(0, 140px) minmax(0, 230px) auto;
+}
+
+.member-filters {
+    width: 100%;
+    max-width: 540px;
+}
+
+.content-container .member-form-panel {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    height: 100%;
+    text-align: left;
+}
+
+.btn-audit {
+    max-width: 100%;
+}
+
+@media (max-width: 991px) {
+    .module-filter-row,
+    .payment-filters .module-filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .content-container .member-form-panel {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .module-filter-row,
+    .payment-filters .module-filter-row,
+    .module-search-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .content-container .btn-audit {
+        height: auto;
+        min-height: 38px;
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem;
+        white-space: normal;
+    }
+}
+
 body.light-mode .audit-filter-field input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.3); /* modo claro */
 }
@@ -1691,7 +1773,7 @@ body.light-mode .audit-filter-field input[type="date"]::-webkit-calendar-picker-
     align-items: flex-end;
 }
 
-.audit-filter-actions .btn-audit {
+.btn-audit {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1711,7 +1793,7 @@ body.light-mode .audit-filter-field input[type="date"]::-webkit-calendar-picker-
     box-sizing: border-box;
 }
 
-.audit-filter-actions .btn-audit i {
+.btn-audit i {
     font-size: 0.8rem;
 }
 
@@ -1719,25 +1801,25 @@ body.light-mode .audit-filter-field input[type="date"]::-webkit-calendar-picker-
 boton filtrar (primario)
    ============================================ */
 
-.audit-filter-actions .btn-audit-filter {
+.btn-audit-filter {
     background: linear-gradient(135deg, #002c13, #003516);
     color: #ffffff;
     border-color: transparent;
 }
 
-.audit-filter-actions .btn-audit-filter:hover {
+.btn-audit-filter:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(3, 133, 59, 0.4);
     border-color: #2ecc71;
 }
 
-.audit-filter-actions .btn-audit-filter:active {
+.btn-audit-filter:active {
     transform: translateY(0);
     box-shadow: 0 4px 10px rgba(3, 133, 59, 0.25);
 }
 
 /* Modo claro: violeta */
-body.light-mode .audit-filter-actions .btn-audit-filter {
+body.light-mode .btn-audit-filter {
     background: linear-gradient(135deg, #8b5cf6, #6d28d9);
     color: #ffffff;
     border-color: transparent;
@@ -1745,14 +1827,14 @@ body.light-mode .audit-filter-actions .btn-audit-filter {
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-body.light-mode .audit-filter-actions .btn-audit-filter:hover {
+body.light-mode .btn-audit-filter:hover {
     background: linear-gradient(135deg, #7c3aed, #5b21b6);
     box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
     transform: translateY(-3px);
     border-color: transparent;
 }
 
-body.light-mode .audit-filter-actions .btn-audit-filter:active {
+body.light-mode .btn-audit-filter:active {
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
 }
@@ -1761,31 +1843,31 @@ body.light-mode .audit-filter-actions .btn-audit-filter:active {
    BOTÓN RESET (secundario)
    ============================================ */
 
-.audit-filter-actions .btn-audit-reset {
+.btn-audit-reset {
     background: transparent;
     color: var(--text-secondary);
     border-color: var(--border-input);
 }
 
-.audit-filter-actions .btn-audit-reset:hover {
+.btn-audit-reset:hover {
     background: rgba(46, 204, 113, 0.08);
     color: #2ecc71;
     border-color: #2ecc71;
     transform: translateY(-1px);
 }
 
-.audit-filter-actions .btn-audit-reset:active {
+.btn-audit-reset:active {
     transform: translateY(0);
 }
 
 /* Modo claro: violeta fantasma */
-body.light-mode .audit-filter-actions .btn-audit-reset {
+body.light-mode .btn-audit-reset {
     background: transparent;
     color: #6d28d9;
     border-color: rgba(139, 92, 246, 0.35);
 }
 
-body.light-mode .audit-filter-actions .btn-audit-reset:hover {
+body.light-mode .btn-audit-reset:hover {
     background: rgba(139, 92, 246, 0.08);
     color: #5b21b6;
     border-color: #8b5cf6;
@@ -1793,7 +1875,7 @@ body.light-mode .audit-filter-actions .btn-audit-reset:hover {
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
 }
 
-body.light-mode .audit-filter-actions .btn-audit-reset:active {
+body.light-mode .btn-audit-reset:active {
     transform: translateY(0);
     box-shadow: none;
 }
@@ -1844,7 +1926,7 @@ body.light-mode .audit-badge-other  { color: #6c3483; }
     .audit-filter-actions {
         grid-column: 1 / -1;
     }
-    .audit-filter-actions .btn-audit {
+    .btn-audit {
         flex: 1;
     }
 }
@@ -1884,7 +1966,7 @@ body.light-mode .audit-badge-other  { color: #6c3483; }
         grid-column: 1 / -1;
         justify-content: stretch;
     }
-    .stats-filter-row .audit-filter-actions .btn-audit {
+    .stats-filter-row .btn-audit {
         flex: 1;
     }
 }

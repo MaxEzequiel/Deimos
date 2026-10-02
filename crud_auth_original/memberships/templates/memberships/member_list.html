@@ -3,9 +3,11 @@
 {% block content %}
 <div class="plans-module">
     <div class="module-header"><h2>Gestión de socios</h2><p>Asigná planes, administrá membresías y registrá pagos de los usuarios existentes.</p></div>
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-8"><label for="member-search" class="form-label">Buscar por usuario, nombre o DNI</label><input type="search" name="q" id="member-search" value="{{ search }}" class="form-control"></div>
-        <div class="col-md-4 d-flex align-items-end gap-2"><button type="submit" class="btn btn-primary">Buscar</button><a href="{% url 'member_list' %}" class="btn btn-outline-secondary">Ver todos</a></div>
+    <form method="get" class="audit-filters member-filters">
+        <div class="module-search-row">
+        <div class="audit-filter-field"><label for="member-search" class="module-field-label">Buscar por usuario, nombre o DNI</label><input type="search" name="q" id="member-search" value="{{ search }}" class="module-search-input"></div>
+        <div class="audit-filter-actions"><button type="submit" class="btn-audit btn-audit-filter">Buscar</button><a href="{% url 'member_list' %}" class="btn-audit btn-audit-reset">Ver todos</a></div>
+        </div>
     </form>
     <p>{{ total_users }} usuarios registrados</p>
     <div class="plans-table-container table-responsive">
@@ -14,10 +16,10 @@
             <tbody>
             {% for member in page %}
                 <tr>
-                    <td data-label="Socio">{% if member.person %}{{ member.person.name }} {{ member.person.surname }}<br>{% endif %}<small>{{ member.username }}</small>{% if not member.is_active %}<br><span class="badge bg-secondary">Cuenta desactivada</span>{% endif %}</td>
+                    <td data-label="Socio">{% if member.person %}{{ member.person.name }} {{ member.person.surname }}<br>{% endif %}<small>{{ member.username }}</small>{% if not member.is_active %}<br><span class="stat-badge audit-badge-logout">Cuenta desactivada</span>{% endif %}</td>
                     <td data-label="DNI">{{ member.person.id_number|default:"Sin perfil" }}</td>
                     <td data-label="Plan">{% if member.membership.plan %}{{ member.membership.plan }}{% else %}{{ member.person.plan|default:"Sin plan" }}{% endif %}</td>
-                    <td data-label="Membresía">{% if member.membership %}{% if member.membership_status == 'active' %}<span class="badge bg-success">Activa</span>{% else %}<span class="badge bg-secondary">Inactiva</span>{% endif %}{% else %}Sin membresía{% endif %}</td>
+                    <td data-label="Membresía">{% if member.membership %}{% if member.membership_status == 'active' %}<span class="stat-badge audit-badge-login">Activa</span>{% else %}<span class="stat-badge audit-badge-logout">Inactiva</span>{% endif %}{% else %}Sin membresía{% endif %}</td>
                     <td data-label="Último pago">{{ member.last_paid_on|date:"d/m/Y"|default:"Sin pagos" }}</td>
                     <td data-label="Acciones"><a href="{% url 'manage_member' member.pk %}" class="action-btn edit-btn">Gestionar socio</a></td>
                 </tr>
@@ -26,7 +28,7 @@
         </table>
     </div>
     {% if page.has_other_pages %}
-    <nav class="d-flex gap-3 mt-3" aria-label="Páginas de socios">
+    <nav class="audit-pagination" aria-label="Páginas de socios">
         {% if page.has_previous %}<a href="?q={{ search|urlencode }}&amp;page={{ page.previous_page_number }}">Anterior</a>{% endif %}
         <span>Página {{ page.number }} de {{ page.paginator.num_pages }}</span>
         {% if page.has_next %}<a href="?q={{ search|urlencode }}&amp;page={{ page.next_page_number }}">Siguiente</a>{% endif %}

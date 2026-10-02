@@ -13,7 +13,7 @@ class MemberManagementForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['class'] = 'module-input'
 
 class MembershipForm(forms.ModelForm):
     STATUS_CHOICES = [
@@ -23,7 +23,7 @@ class MembershipForm(forms.ModelForm):
 
     status = forms.ChoiceField(
         choices=STATUS_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'module-input'}),
         label='Membership status'
     )
 
