@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 
 <style>
@@ -124,6 +123,8 @@
   }
 </style>
 
+
+
 <div class="admin-edit-box">
   <h1 class="text-center">
     <i class="fas fa-user-edit"></i> Editar Usuario
@@ -152,9 +153,10 @@
         <i class="fas fa-users-cog"></i> Grupo / Rol:
       </label>
       <select name="group_id" id="group_id">
+        <option value="">Sin grupo</option>
         {% for group in groups %}
         <option value="{{ group.id }}"
-          {% if group in user.groups.all %}selected{% endif %}>
+          {% if group.id in selected_group_ids %}selected{% endif %}>
           {{ group.name }}
         </option>
         {% endfor %}

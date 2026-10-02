@@ -23,7 +23,7 @@ def unique_group_validator(value):
 
 class GroupForm(forms.ModelForm):
     name = forms.CharField(
-        validators= [MaxLengthValidator(50, "el nombre del grupo no debe superar los 40 caracteres"),
+        validators= [MaxLengthValidator(50, "el nombre del grupo no debe superar los 50 caracteres"),
                     MinLengthValidator(3, "el nombre del grupo debe tener al menos 3 caracteres")],
         label= "nombre del grupo")
     

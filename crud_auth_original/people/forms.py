@@ -15,5 +15,5 @@ class PersonForm(forms.ModelForm):
             'email': 'Correo electrónico',
         }
         widgets = {
-            'birth_date': forms.DateInput(attrs={'type': 'date'}),
+            'birth_date': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
         }

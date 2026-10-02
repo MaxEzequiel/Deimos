@@ -1,4 +1,9 @@
+from core.decorators import superuser_required
+from django.views.decorators.http import require_http_methods
 from datetime import datetime
+from core.forms import DateRangeForm, StatisticsPeriodForm
+from django.http import HttpResponseBadRequest
+from django.utils import timezone
 
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
@@ -9,8 +14,13 @@ from accounts.services.reportes_service import ReportesService
 
 
 @login_required
+@superuser_required
+@require_http_methods(['GET'])
 def dashboard_usuarios(request):
-    anio = request.GET.get("anio") or datetime.utcnow().year
+    form = StatisticsPeriodForm(request.GET)
+    if not form.is_valid():
+        return HttpResponseBadRequest("Año o mes no válido")
+    anio = form.cleaned_data["anio"]
     contexto = {
         "resumen": EstadisticasService.resumen_general(),
         "resumen_membresias": EstadisticasService.resumen_membresias(),
@@ -18,15 +28,20 @@ def dashboard_usuarios(request):
         "grupos_disponibles": EstadisticasService.grupos_disponibles(),
         "anios_disponibles": EstadisticasService.anios_disponibles(),
         "anio_seleccionado": int(anio),
-        "anio_actual": datetime.utcnow().year,
+        "anio_actual": timezone.localdate().year,
     }
     return render(request, "estadisticas/dashboard.html", contexto)
 
 
 @login_required
+@superuser_required
+@require_http_methods(['GET'])
 def datos_graficos(request):
-    anio = request.GET.get("anio") or datetime.utcnow().year
-    mes = request.GET.get("mes") or None
+    form = StatisticsPeriodForm(request.GET)
+    if not form.is_valid():
+        return JsonResponse({"errors": form.errors}, status=400)
+    anio = form.cleaned_data["anio"]
+    mes = form.cleaned_data["mes"]
 
     return JsonResponse({
         "resumen": EstadisticasService.resumen_general(),
@@ -46,7 +61,12 @@ def datos_graficos(request):
 
 
 @login_required
+@superuser_required
+@require_http_methods(['GET'])
 def informe_usuarios(request):
+    date_form = DateRangeForm(request.GET)
+    if not date_form.is_valid():
+        return HttpResponseBadRequest("Fechas no válidas")
     filtros = {
         "desde": request.GET.get("desde") or "",
         "hasta": request.GET.get("hasta") or "",
@@ -64,7 +84,12 @@ def informe_usuarios(request):
 
 
 @login_required
+@superuser_required
+@require_http_methods(['GET'])
 def exportar_excel(request):
+    date_form = DateRangeForm(request.GET)
+    if not date_form.is_valid():
+        return HttpResponseBadRequest("Fechas no válidas")
     filtros = {
         "desde": request.GET.get("desde") or None,
         "hasta": request.GET.get("hasta") or None,
@@ -85,7 +110,12 @@ def exportar_excel(request):
 
 
 @login_required
+@superuser_required
+@require_http_methods(['GET'])
 def exportar_pdf(request):
+    date_form = DateRangeForm(request.GET)
+    if not date_form.is_valid():
+        return HttpResponseBadRequest("Fechas no válidas")
     filtros = {
         "desde": request.GET.get("desde") or None,
         "hasta": request.GET.get("hasta") or None,

@@ -1,4 +1,5 @@
 from io import BytesIO
+from xml.sax.saxutils import escape
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from reportlab.lib.pagesizes import A4, landscape
@@ -39,6 +40,10 @@ class ReportesService:
                 "Sí" if u["is_staff"] else "No",
                 u["fecha_registro"],
             ])
+            # Write user input as text, including values beginning with '='.
+            for cell in ws[ws.max_row]:
+                if isinstance(cell.value, str):
+                    cell.data_type = "s"
 
         # Ancho automático
         for col in ws.columns:
@@ -62,13 +67,13 @@ class ReportesService:
         styles = getSampleStyleSheet()
         elementos = []
 
-        elementos.append(Paragraph(f"<b>{titulo}</b>", styles["Title"]))
+        elementos.append(Paragraph(f"<b>{escape(titulo)}</b>", styles["Title"]))
         elementos.append(Spacer(1, 0.4 * cm))
 
         if filtros:
             texto_filtros = " | ".join(f"{k}: {v}" for k, v in filtros.items() if v)
             if texto_filtros:
-                elementos.append(Paragraph(f"<i>Filtros: {texto_filtros}</i>",
+                elementos.append(Paragraph(f"<i>Filtros: {escape(texto_filtros)}</i>",
                                             styles["Normal"]))
                 elementos.append(Spacer(1, 0.4 * cm))
 

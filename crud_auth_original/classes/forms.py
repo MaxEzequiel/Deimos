@@ -14,6 +14,6 @@ class CourseForm(forms.ModelForm):
             "max_capacity": "capacidad maxima de alumnos"
         }
         widgets = {
-            'starts_at': forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            'ends_at': forms.DateTimeInput(attrs={"type": "datetime-local"})
+            'starts_at': forms.DateTimeInput(format='%Y-%m-%dT%H:%M', attrs={"type": "datetime-local"}),
+            'ends_at': forms.DateTimeInput(format='%Y-%m-%dT%H:%M', attrs={"type": "datetime-local"})
         }

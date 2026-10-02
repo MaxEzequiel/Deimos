@@ -31,9 +31,10 @@
                             <i class="fas fa-user-circle"></i> {{ account.username }}
                         </td>
                         <td data-label="Email">
-                            <i class="fas fa-envelope"></i> {{ account.person.email }}
+                            <i class="fas fa-envelope"></i> {{ account.email }}
                         </td>
                         <td data-label="Acciones" class="plan-actions-cell">
+                            <a href="{% url 'manage_member' account.id %}" class="action-btn edit-btn">Plan, membresía y pagos</a>
                             <a href="{% url 'edit_account' account.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar Usuario
                             </a>

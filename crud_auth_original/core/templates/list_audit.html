@@ -82,7 +82,7 @@
                             {{ log.user.username|default:"anónimo" }}
                         </td>
                         <td data-label="Acción">
-                            <span class="audit-badge audit-badge-{{ log.action }}">
+                            <span class="audit-badge {{ log.badge_class }}">
                                 {{ log.action }}
                             </span>
                         </td>

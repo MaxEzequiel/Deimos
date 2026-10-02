@@ -23,11 +23,13 @@
     </div>
 
     <div class="stats-actions" style="justify-content:flex-start;">
-        {% if puede_editar %}
+        {% if perms.tutorials.change_publication %}
         <a href="{% url 'edit_publication' publication.id %}" class="btn-audit btn-audit-filter">
             <i class="fas fa-edit"></i> Editar
         </a>
-        <a href="{% url 'delete_publication' publication.id %}" class="btn-audit btn-audit-reset">
+        {% endif %}
+                {% if perms.tutorials.delete_publication %}
+                <a href="{% url 'delete_publication' publication.id %}" class="btn-audit btn-audit-reset">
             <i class="fas fa-trash-alt"></i> Eliminar
         </a>
         {% endif %}

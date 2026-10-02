@@ -32,7 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fetch(url)
-        .then(r => r.json())
+        .then(r => {
+            if (!r.ok) throw new Error("No se pudieron cargar las estad?sticas");
+            return r.json();
+        })
         .then(data => {
 
             const labelsMes = data.mes ? [meses[data.mes - 1]] : meses;
@@ -52,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
             crear("graficoMesMembresias", {
                 type: "line",
                 data: { labels: labelsMes, datasets: [{
-                    label: "Membresías", data: data.membresias_mes.map(m => m.cantidad),
+                    label: "Membresías", data: data.membresias_mes.filter(m => !data.mes || m.mes === data.mes).map(m => m.cantidad),
                     borderColor: "#3498db", backgroundColor: "rgba(52,152,219,.2)",
                     fill: true, tension: .3
                 }]},
@@ -63,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
             crear("graficoMesRutinas", {
                 type: "line",
                 data: { labels: labelsMes, datasets: [{
-                    label: "Rutinas", data: data.rutinas_mes.map(m => m.cantidad),
+                    label: "Rutinas", data: data.rutinas_mes.filter(m => !data.mes || m.mes === data.mes).map(m => m.cantidad),
                     borderColor: "#2ecc71", backgroundColor: "rgba(46,204,113,.2)",
                     fill: true, tension: .3
                 }]},

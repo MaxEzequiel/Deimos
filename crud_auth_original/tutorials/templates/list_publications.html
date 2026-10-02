@@ -10,7 +10,7 @@
         <h1><i class="fas fa-newspaper"></i> Publicaciones</h1>
         <p>Total: {{ publications|length }} publicaciones</p>
     </div>
-{% if puede_editar %}
+{% if perms.tutorials.add_publication %}
     <div class="stats-actions" style="justify-content:flex-start; margin-bottom:1.5rem;">
         <a href="{% url 'create_publication' %}" class="btn-audit btn-audit-filter">
             <i class="fas fa-plus-circle"></i> Crear Publicación
@@ -71,10 +71,12 @@
                 <a href="{% url 'detail_publication' publication.id %}" class="action-btn edit-btn">
                     <i class="fas fa-eye"></i> Ver
                 </a>
-                {% if puede_editar %}
+                {% if perms.tutorials.change_publication %}
                 <a href="{% url 'edit_publication' publication.id %}" class="action-btn edit-btn">
                     <i class="fas fa-edit"></i> Editar
                 </a>
+                {% endif %}
+                {% if perms.tutorials.delete_publication %}
                 <a href="{% url 'delete_publication' publication.id %}" class="action-btn delete-btn">
                     <i class="fas fa-trash-alt"></i> Eliminar
                 </a>

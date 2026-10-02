@@ -6,7 +6,7 @@
         <div class="module-header">
             <h2>Lista de Clases</h2>
             <p>Gestión de clases disponibles</p>
-            {% if user.is_staff or user.is_superuser %}
+            {% if perms.classes.add_course %}
             <div class="create-plan-section">
                 <div style="text-align: left;">
                     <a href="{% url 'create_class' %}" class="btn-create-plan">
@@ -25,9 +25,7 @@
                         <th>Inicio</th>
                         <th>Fin</th>
                         <th>Cupos</th>
-                        {% if user.is_staff or user.is_superuser %}
                         <th>Acciones</th>
-                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -59,10 +57,12 @@
                             {% endif %}
 
                             {# Botones de admin/staff: Crear, Editar, Eliminar #}
-                            {% if user.is_staff or user.is_superuser %}
+                            {% if perms.classes.change_course %}
                             <a href="{% url 'edit_class' course.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
+                            {% endif %}
+                            {% if perms.classes.delete_course %}
                             <a href="{% url 'delete_class' course.id %}" class="action-btn delete-btn">
                                 <i class="fas fa-trash"></i> Eliminar
                             </a>

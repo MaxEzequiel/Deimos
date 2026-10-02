@@ -3,13 +3,13 @@ from django.conf import settings
 from django.core.validators import MinLengthValidator,MaxLengthValidator,MinValueValidator
 from django.core.exceptions import ValidationError
 from datetime import timedelta
-# Create your models here. 
+# Create your models here.
 
 class Course(models.Model):
-    name = models.CharField(max_length= 50, 
+    name = models.CharField(max_length= 50,
         validators=[MinLengthValidator(5,"El nombre de la clase debe tener almenos 5 caracteres"),
         MaxLengthValidator(30,"el nombre de la clase no debe superar los 30 caracteres")])
-    description = models.CharField(default="sin descripcion", 
+    description = models.CharField(default="sin descripcion",
         validators=[MinLengthValidator(5, "la descripcion debe tener al menos 5 caracteres"),
         MaxLengthValidator(150, "la descripcion debe tener como maximo 150 caracteres")])
     teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -19,16 +19,19 @@ class Course(models.Model):
     ends_at = models.DateTimeField()
     max_capacity = models.IntegerField(default=1,
         validators=[MinValueValidator(1, "la capacidad maxima de alumnos debe ser al menos 1")])
-    
-    
+
+
     def clean(self):
+        super().clean()
+        if self.pk and self.max_capacity is not None and self.max_capacity < self.inscription_set.count():
+            raise ValidationError({'max_capacity': 'La capacidad no puede ser menor al número de inscriptos'})
         if self.starts_at and self.ends_at:
             # Validación 1: ends_at > starts_at
             if self.ends_at <= self.starts_at:
                 raise ValidationError({
                     'ends_at': 'La fecha de finalización debe ser mayor a la fecha de inicio.'
                 })
-            
+
             # Validación 2: Duración máxima de 5 horas
             duracion = self.ends_at - self.starts_at
             if duracion > timedelta(hours=5):
@@ -43,4 +46,6 @@ class Course(models.Model):
 class Inscription(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     participant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["course", "participant"], name="unique_course_participant")]
+

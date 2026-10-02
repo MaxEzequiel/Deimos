@@ -15,7 +15,7 @@
     </div>
 
     <!-- Botón para CREAR NUEVO PLAN -->
-    {% if user.is_staff or user.is_superuser %}
+    {% if perms.plans.add_plan %}
     <div class="create-plan-section">
         <div style="text-align: left;">
         <a href="{% url 'create_plan' %}" class="btn-create-plan">
@@ -27,7 +27,7 @@
     <!-- Listado de planes existentes -->
     <div class="list-plans-section">
         <h3><i class="fas fa-list"></i> Planes disponibles</h3>
-        
+
         <div class="plans-table-container">
             <table class="plans-table">
                 <thead>
@@ -35,9 +35,7 @@
                         <th>Plan</th>
                         <th>Descripción</th>
                         <th>Precio</th>
-                        {% if user.is_staff or user.is_superuser %}
                         <th>Acciones</th>
-                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -50,15 +48,19 @@
                         <td class="plan-price-cell">
                             <i class="fas fa-dollar-sign"></i> {{ plan.base_price }}
                         </td>
-                        {% if user.is_staff or user.is_superuser %}
                         <td class="plan-actions-cell">
-                            
+                        {% if perms.plans.change_plan or perms.plans.delete_plan %}
+
+                            {% if perms.plans.change_plan %}
                             <a href="{% url 'edit_plan' plan.id %}" class="action-btn edit-btn">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
+                            {% endif %}
+                            {% if perms.plans.delete_plan %}
                             <a href="{% url 'delete_plan' plan.id %}" class="action-btn delete-btn">
                                 <i class="fas fa-trash-alt"></i> Eliminar
                             </a>
+                            {% endif %}
                         {% else %}
                             <span class="empty-row" style="border:none;">
                                 <i class="fas fa-lock"></i> Solo lectura

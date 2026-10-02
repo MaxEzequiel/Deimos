@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.models import User, Group
@@ -7,6 +7,8 @@ from memberships.models import Membership
 from routines.models import Routine
 from people.models import Person
 from plans.models import Plan
+from memberships.services import with_last_payment
+from collections import Counter
 
 
 class EstadisticasService:
@@ -43,7 +45,7 @@ class EstadisticasService:
 
     @staticmethod
     def registros_por_mes(anio=None, mes=None):
-        anio = int(anio) if anio else datetime.utcnow().year
+        anio = int(anio) if anio else timezone.localdate().year
         qs = User.objects.filter(date_joined__year=anio)
         if mes:
             qs = qs.filter(date_joined__month=int(mes))
@@ -68,7 +70,7 @@ class EstadisticasService:
     @staticmethod
     def anios_disponibles():
         rows = User.objects.dates("date_joined", "year", order="DESC")
-        return [d.year for d in rows] or [datetime.utcnow().year]
+        return [d.year for d in rows] or [timezone.localdate().year]
 
     @staticmethod
     def usuarios_activos_vs_inactivos():
@@ -86,7 +88,7 @@ class EstadisticasService:
                 "username": u.username,
                 "nombre": getattr(getattr(u, "person", None), "name", ""),
                 "apellido": getattr(getattr(u, "person", None), "surname", ""),
-                "email": getattr(getattr(u, "person", None), "email", ""),
+                "email": u.email,
                 "is_active": u.is_active,
                 "is_staff": u.is_staff,
                 "fecha_registro": u.date_joined.isoformat(),
@@ -101,9 +103,10 @@ class EstadisticasService:
 
     @staticmethod
     def resumen_membresias():
-        total = Membership.objects.count()
-        activas = Membership.objects.filter(status__iexact="active").count()
-        inactivas = Membership.objects.filter(status__iexact="inactive").count()
+        memberships = list(with_last_payment(Membership.objects.all()))
+        total = len(memberships)
+        activas = sum(membership.effective_status == 'active' for membership in memberships)
+        inactivas = total - activas
         sin_membresia = User.objects.filter(membership__isnull=True).count()
 
         return {
@@ -116,20 +119,13 @@ class EstadisticasService:
 
     @staticmethod
     def membresias_por_estado():
-        rows = (
-            Membership.objects.values("status")
-            .annotate(cantidad=Count("id"))
-            .order_by("-cantidad")
-        )
-        return [
-            {"estado": r["status"] or "sin estado", "cantidad": r["cantidad"]}
-            for r in rows
-        ]
+        counts = Counter(membership.effective_status for membership in with_last_payment(Membership.objects.all()))
+        return [{'estado': status, 'cantidad': count} for status, count in counts.most_common()]
 
     @staticmethod
     def membresias_por_mes(anio=None):
         """Proxy: usa User.date_joined. La membresía se crea al registrar el user."""
-        anio = int(anio) if anio else datetime.utcnow().year
+        anio = int(anio) if anio else timezone.localdate().year
         rows = (
             User.objects.filter(
                 date_joined__year=anio,
@@ -180,7 +176,7 @@ class EstadisticasService:
 
     @staticmethod
     def rutinas_por_mes(anio=None):
-        anio = int(anio) if anio else datetime.utcnow().year
+        anio = int(anio) if anio else timezone.localdate().year
         rows = (
             Routine.objects.filter(created_at__year=anio)
             .annotate(mes=TruncMonth("created_at"))
@@ -228,6 +224,8 @@ class EstadisticasService:
             qs = qs.filter(is_active=False)
         if staff in ("1", "true", "True", True):
             qs = qs.filter(is_staff=True)
+        elif staff in ("0", "false", "False", False):
+            qs = qs.filter(is_staff=False)
 
         return [
             {
@@ -235,12 +233,12 @@ class EstadisticasService:
                 "username": u.username,
                 "nombre": getattr(getattr(u, "person", None), "name", ""),
                 "apellido": getattr(getattr(u, "person", None), "surname", ""),
-                "email": getattr(getattr(u, "person", None), "email", ""),
+                "email": u.email,
                 "dni": getattr(getattr(u, "person", None), "id_number", ""),
                 "grupo": ", ".join(g.name for g in u.groups.all()) or "Sin grupo",
                 "is_active": u.is_active,
                 "is_staff": u.is_staff,
-                "fecha_registro": u.date_joined.strftime("%d/%m/%Y %H:%M"),
+                "fecha_registro": timezone.localtime(u.date_joined).strftime("%d/%m/%Y %H:%M"),
             }
             for u in qs.order_by("-date_joined")
         ]

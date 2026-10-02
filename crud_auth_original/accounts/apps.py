@@ -7,4 +7,4 @@ class AccountsConfig(AppConfig):
     label = "login"
 
     def ready(self):
-        from . import signals
+        from . import signals  # noqa: F401

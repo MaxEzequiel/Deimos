@@ -1,3 +1,4 @@
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from tutorials.models import Publication
@@ -7,6 +8,7 @@ from tutorials.forms import PublicationForm
 # --- VER: cualquier usuario con permiso view_publication ---
 @login_required
 @permission_required("tutorials.view_publication", login_url="/error_403")
+@require_http_methods(['GET'])
 def list_publications(request):
     publications = Publication.objects.all()
     puede_editar = (
@@ -22,6 +24,7 @@ def list_publications(request):
 
 @login_required
 @permission_required("tutorials.view_publication", login_url="/error_403")
+@require_http_methods(['GET'])
 def detail_publication(request, publication_id):
     publication = get_object_or_404(Publication, id=publication_id)
     puede_editar = (
@@ -38,6 +41,7 @@ def detail_publication(request, publication_id):
 # --- CREAR: solo quien tenga add_publication ---
 @login_required
 @permission_required("tutorials.add_publication", login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def create_publication(request):
     if request.method == "GET":
         return render(request, "create_publication.html", {"publication_form": PublicationForm()})
@@ -52,6 +56,7 @@ def create_publication(request):
 # --- EDITAR: solo quien tenga change_publication ---
 @login_required
 @permission_required("tutorials.change_publication", login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def edit_publication(request, publication_id):
     publication = get_object_or_404(Publication, id=publication_id)
     if request.method == "GET":
@@ -67,6 +72,7 @@ def edit_publication(request, publication_id):
 # --- ELIMINAR: solo quien tenga delete_publication ---
 @login_required
 @permission_required("tutorials.delete_publication", login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def delete_publication(request, publication_id):
     publication = get_object_or_404(Publication, id=publication_id)
     if request.method == "GET":

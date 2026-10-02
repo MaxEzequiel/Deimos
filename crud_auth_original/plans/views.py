@@ -1,3 +1,4 @@
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect, get_object_or_404
 from plans.models import Plan
 
@@ -12,6 +13,7 @@ from plans.forms import PlanForm
 
 @login_required
 @permission_required(["plans.add_plan","plans.view_plan"], login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def create_plan(request):
     if request.method == "POST":
         plan = PlanForm(request.POST)
@@ -25,14 +27,16 @@ def create_plan(request):
 
 @login_required
 @permission_required("plans.view_plan", login_url="/error_403")
+@require_http_methods(['GET'])
 def list_plans(request):
     if request.method == "GET":
         plans = Plan.objects.all()
         return render(request, "list_plans.html", {"plans": plans})
 
 @login_required
-@pdf_decorator
 @permission_required(["plans.view_plan"], login_url="/error_403")
+@require_http_methods(['GET'])
+@pdf_decorator
 def plans_pdf(request):
     if request.method == "GET":
         plans = Plan.objects.all()
@@ -40,8 +44,9 @@ def plans_pdf(request):
 
 @login_required
 @permission_required(["plans.change_plan","plans.view_plan"], login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def edit_plan(request, plan_id):
-    plan = Plan.objects.get(id=plan_id)
+    plan = get_object_or_404(Plan, pk=plan_id)
     if request.method == "GET":
         form = PlanForm(instance=plan)
         return render(request, "edit_plan.html", {"form": form})
@@ -56,6 +61,7 @@ def edit_plan(request, plan_id):
 
 @login_required
 @permission_required(["plans.delete_plan","plans.view_plan"], login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def delete_plan(request, plan_id):
     plan = get_object_or_404(Plan, id=plan_id)
     if request.method == "GET":

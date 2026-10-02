@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-{% if user.is_staff or user.is_superuser %}
+{% if perms.plans.delete_plan %}
 
 <div class="login-box" style="max-width: 500px;">
     <h1 class="text-center">
         Eliminar Plan
     </h1>
-    
+
     <div class="info-card text-center mb-4 warning-card">
         <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
         <p class="mt-2">
@@ -14,7 +14,7 @@
         </p>
         <p>Esta acción no se puede deshacer.</p>
     </div>
-    
+
     <form action="" method="POST">
         {% csrf_token %}
         <div class="button-group">

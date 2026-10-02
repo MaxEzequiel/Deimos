@@ -5,9 +5,9 @@
 
 <form action="" method="POST">
     {% csrf_token %}
-    
+
     <h2>Datos de Usuario</h2>
-    
+
     {% for field in user_form %}
     <div>
         {{ field.label_tag }}
@@ -28,16 +28,16 @@
         {% endif %}
     </div>
     {% endfor %}
-    
+
     <select name="group_id" id="">
         {% for group in groups %}
-        <option value="{{ group.id }}" 
-            {% if group in user.groups.all %}selected{% endif %}>
-            {{ group.name }} 
+        <option value="{{ group.id }}"
+            {% if group.id in selected_group_ids %}selected{% endif %}>
+            {{ group.name }}
         </option>
         {% endfor %}
         </select>
-        
+
         <button type="submit">Guardar</button>
 </form>
 {% endblock content %}

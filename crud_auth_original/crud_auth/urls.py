@@ -26,6 +26,7 @@ from plans.views import create_plan, list_plans, edit_plan, delete_plan, plans_p
 from classes.views import create_class, edit_class, list_class, delete_class, inscription_question
 from core.views import list_audit
 from .core_view import error_403
+handler403 = error_403
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home, name="root"),

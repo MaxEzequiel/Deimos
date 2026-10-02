@@ -1,202 +1,69 @@
-from django.shortcuts import render, redirect
-from django.contrib.contenttypes.models import ContentType
-from django.contrib import messages
-
-# modelo del usuario por defecto de django
-from django.contrib.auth.models import Permission
-
-# form de grupos
-from accounts.forms import GroupForm
-# funciones para el inicio de sesion
-from django.contrib.auth.models import Group
+﻿from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group, Permission
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_GET, require_http_methods
+
+from accounts.forms import GroupForm
+from accounts.signals import clear_permission_cache
 from core.audit import audit
+from core.decorators import superuser_required
 
+MODULES = {
+    'planes': ('plans', 'plan', 'Planes'),
+    'pagos': ('pagos', 'monthlypayment', 'Mensualidades'),
+    'courses': ('classes', 'course', 'Clases'),
+    'tutorials': ('tutorials', 'publication', 'Publicaciones'),
+}
+
+
+@login_required
+@superuser_required
+@require_GET
 def accounts_admin_group_list(request):
-    if request.method == "GET":
-        groups = Group.objects.all()
-        return render(request, "group_templates/list_groups.html", {"groups" : groups})
+    return render(request, 'group_templates/list_groups.html', {'groups': Group.objects.all()})
 
 
-def accounts_admin_group_create(request):
-    MODELS =  {
-        "planes" : {"app_label" : "plans", "model_name" : "plan", "label" : "Planes"},
-        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"},
-        "tutorials" : {"app_label" : "tutorials", "model_name" : "publication", "label" : "Publicaciones"}
-    }
-    form = GroupForm()
+def _group_form(request, group=None):
     modules_data = []
-
-    # recorre los modulos y su contenido 
-    for module_key, config in MODELS.items():
-        perms = [] 
-        # recorremos las 4 acciones que realizan como permiso dentro de un modelo
-        for action in ["add","change","delete","view"]:
-            # creamos el nombre de texto que tiene cada permiso action + _ + model name
-            codename = f"{action}_{config['model_name']}"
-            try:
-                # content type contiene los modelos dentro de cada app y se usa de puntero en auth_permission
-                content_type = ContentType.objects.get(
-                    app_label = config["app_label"],
-                    model = config["model_name"]
-                )
-                # traemos el objeto del permiso a que corresponde el content type y la accion del loop actual
-                perm = Permission.objects.get(
-                    content_type = content_type,
-                    codename = codename
-                )
-                perms.append({
-                "action":    action,
-                "codename":  codename,
-                "checkbox":  f"perm_{module_key}_{action}"
-            })
-            except (ContentType.DoesNotExist, Permission.DoesNotExist):
-                pass
-            # añadimos los permisos, el nombre del modulo y el label al diccionario final
-        modules_data.append(
-            {
-                "key" : module_key,
-                "label": config["label"],
-                "perms": perms
-            }
-        )
-
-    if request.method == "GET":
-        # retornamos todo en una vista
-        return render(request, "group_templates/create_group.html", {"data": modules_data, "form" : form})
-    
-    if request.method == "POST":
-        # Recopilar todos los permisos que deberia tener el grupo
-        perms_to_assign = []
-        form = GroupForm(request.POST)
-        if form.is_valid():
-            group_created = form.save()
-            audit(request, "CREATE", "grupo: " + str(group_created.id) + " - " + group_created.name)
-            for module_key, config in MODELS.items():
-                for action in ["add","change","delete","view"]:
-                    codename = f"{action}_{config['model_name']}"
-                    checkbox_name = f"perm_{module_key}_{action}"
-                    
-                    try:
-                        content_type = ContentType.objects.get(
-                            app_label=config["app_label"],
-                            model=config["model_name"],
-                        )
-                        perm = Permission.objects.get(
-                            content_type=content_type,
-                            codename=codename,
-                        )
-                    except (ContentType.DoesNotExist, Permission.DoesNotExist) as e:
-                        continue
-                    
-                    # Si el checkbox está marcado, añadir el permiso a la lista
-                    if checkbox_name in request.POST:
-                        perms_to_assign.append(perm)
-        else:
-            return render(request, "group_templates/create_group.html", {"form" : form, "data" : modules_data})
-        group_created.permissions.add(*perms_to_assign)
-        messages.success(request, "Grupo Creado correctamente")
-        return redirect("accounts_admin_home")
-
-
-def accounts_admin_group_edit(request, group_id):
-    # Definición de modelos disponibles para asignar permisos
-    MODELS =  {
-        "planes" : {"app_label" : "plans", "model_name" : "plan", "label" : "Planes"},
-        "courses" : {"app_label" : "classes", "model_name" : "course", "label" : "Clases"},
-        "tutorials" : {"app_label" : "tutorials", "model_name" : "publication", "label" : "Publicaciones"}
-    }
-    
-    # Obtener el grupo a editar
-    try:
-        group = Group.objects.get(id=group_id)
-    except Group.DoesNotExist:
-        messages.error(request, "El grupo no existe")
-        return redirect("accounts_admin_home")
-    
-    # Construir la estructura de módulos y permisos
-    modules_data = []
-    for module_key, config in MODELS.items():
+    selected = set(group.permissions.values_list('pk', flat=True)) if group else set()
+    available = {}
+    for key, (app, model, label) in MODULES.items():
         perms = []
-        # Recorrer las 4 acciones (add, change, delete, view) para cada modelo
-        for action in ["add","change","delete","view"]:
-            codename = f"{action}_{config['model_name']}"
-            try:
-                content_type = ContentType.objects.get(
-                    app_label = config["app_label"],
-                    model = config["model_name"]
-                )
-                perm = Permission.objects.get(
-                    content_type = content_type,
-                    codename = codename
-                )
-                # Verificar si el grupo actual tiene este permiso
-                has_perm = group.permissions.filter(id=perm.id).exists()
-                perms.append({
-                    "action": action,
-                    "codename": codename,
-                    "checkbox": f"perm_{module_key}_{action}",
-                    "has_perm": has_perm  # Indicar si el grupo ya tiene este permiso
-                })
-            except (ContentType.DoesNotExist, Permission.DoesNotExist):
-                pass
-        
-        modules_data.append(
-            {
-                "key" : module_key,
-                "label": config["label"],
-                "perms": perms
-            }
-        )
-    
-    if request.method == "GET":
-        form = GroupForm(instance=group)
-        return render(request, "group_templates/edit_group.html", {
-            "form": form,
-            "data": modules_data,
-            "group": group
-        })
-    
-    if request.method == "POST":
-        # Actualizar nombre del grupo
-        form = GroupForm(request.POST, instance=group)
-        if form.is_valid():
-            form.save()
-            audit(request, "UPDATE", "grupo: " + str(group.id) + " - " + group.name)
-            
-            # Limpiar permisos anteriores
-            group.permissions.clear()
-            
-            # Recopilar nuevos permisos a asignar
-            perms_to_assign = []
-            for module_key, config in MODELS.items():
-                for action in ["add","change","delete","view"]:
-                    codename = f"{action}_{config['model_name']}"
-                    checkbox_name = f"perm_{module_key}_{action}"
-                    
-                    try:
-                        content_type = ContentType.objects.get(
-                            app_label=config["app_label"],
-                            model=config["model_name"],
-                        )
-                        perm = Permission.objects.get(
-                            content_type=content_type,
-                            codename=codename,
-                        )
-                    except (ContentType.DoesNotExist, Permission.DoesNotExist):
-                        continue
-                    
-                    # Si el checkbox está marcado, añadir el permiso a la lista
-                    if checkbox_name in request.POST:
-                        perms_to_assign.append(perm)
-            
-            # Asignar los nuevos permisos
-            group.permissions.add(*perms_to_assign)
-            messages.success(request, "Grupo actualizado correctamente")
-            return redirect("accounts_admin_home")
-        else:
-            return render(request, "group_templates/edit_group.html", {
-                "form": form,
-                "data": modules_data,
-                "group": group
-            })
+        for action in ('add', 'change', 'delete', 'view'):
+            codename = f'{action}_{model}'
+            perm = Permission.objects.filter(content_type__app_label=app, content_type__model=model, codename=codename).first()
+            if perm:
+                checkbox = f'perm_{key}_{action}'
+                available[checkbox] = perm
+                perms.append({'action': action, 'codename': codename, 'checkbox': checkbox, 'has_perm': checkbox in request.POST if request.method == 'POST' else perm.pk in selected})
+        modules_data.append({'key': key, 'label': label, 'perms': perms})
+    form = GroupForm(request.POST if request.method == 'POST' else None, instance=group)
+    if request.method == 'POST' and form.is_valid():
+        with transaction.atomic():
+            editing = group is not None
+            group = form.save()
+            # Keep permissions belonging to modules not edited by this screen.
+            retained = group.permissions.exclude(pk__in=[p.pk for p in available.values()])
+            group.permissions.set(list(retained) + [p for checkbox, p in available.items() if checkbox in request.POST])
+            clear_permission_cache(request.user)
+            audit(request, 'UPDATE' if editing else 'CREATE', f'grupo: {group.id} - {group.name}')
+        messages.success(request, 'Grupo guardado correctamente')
+        return redirect('accounts_admin_home')
+    template = 'edit_group.html' if group else 'create_group.html'
+    return render(request, f'group_templates/{template}', {'form': form, 'data': modules_data, 'group': group})
+
+
+@login_required
+@superuser_required
+@require_http_methods(['GET', 'POST'])
+def accounts_admin_group_create(request):
+    return _group_form(request)
+
+
+@login_required
+@superuser_required
+@require_http_methods(['GET', 'POST'])
+def accounts_admin_group_edit(request, group_id):
+    return _group_form(request, get_object_or_404(Group, pk=group_id))

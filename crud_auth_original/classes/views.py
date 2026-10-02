@@ -1,4 +1,10 @@
-from django.shortcuts import render, redirect
+import logging
+from smtplib import SMTPException
+from django.contrib import messages
+from django.utils import timezone
+logger = logging.getLogger(__name__)
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Course, Inscription
 from .forms import CourseForm
 from django.contrib.auth.decorators import login_required, permission_required
@@ -11,6 +17,7 @@ from django.db import transaction
 #  class es lo que vera el user, en codigo se manejara como course
 @login_required
 @permission_required(["classes.view_course","classes.add_course"],login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def create_class(request):
     if request.method == "GET":
         return render(request, "create_class.html",{"course_form" : CourseForm()})
@@ -24,10 +31,11 @@ def create_class(request):
                 audit(request, "CREATE", "clase: " + str(course_instance.id) + " - " + course_instance.name)
             return redirect("list_class")
         else:
-            return render(request, "create_class.html", {"course_form" : CourseForm})
+            return render(request, "create_class.html", {"course_form" : current_class})
 
 @login_required
 @permission_required(["classes.view_course"],login_url="/error_403")
+@require_http_methods(['GET'])
 def list_class(request):
     if request.method == "GET": 
         courses = Course.objects.all()
@@ -43,8 +51,9 @@ def list_class(request):
 
 @login_required
 @permission_required(["classes.view_course", "classes.change_course"],login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def edit_class(request, course_id): 
-    course = Course.objects.get(id = course_id)
+    course = get_object_or_404(Course, pk=course_id)
     if request.method == "GET":
         form = CourseForm(instance=course)
         return render(request, "edit_class.html", {"edit_form" : form})
@@ -59,47 +68,47 @@ def edit_class(request, course_id):
 
 @login_required
 @permission_required(["classes.view_course","classes.delete_course"],login_url="/error_403")
+@require_http_methods(['GET', 'POST'])
 def delete_class(request, course_id):
+    course = get_object_or_404(Course, pk=course_id)
     if request.method == "GET":
         return render(request,"delete_class.html")
     else:
-        course = Course.objects.get(id = course_id)
         with transaction.atomic():
             audit(request, "DELETE", "clase: " + str(course.id) + " - " + course.name)
             course.delete()
         return redirect("list_class")
 
 @login_required
+@require_http_methods(['GET', 'POST'])
 def inscription_question(request, course_id):
-    course = Course.objects.get(id = course_id)
+    course = get_object_or_404(Course, pk=course_id)
     if request.method == "GET":
         return render(request, "inscription_question.html", {"course" : course})
-    else:
-        if course.teacher == request.user:
-            return render(request, "inscription_question.html", {"course" : course, "error" : "El profesor de la clase no puede inscribirse a su propia clase"})
-        already_inscribed = Inscription.objects.filter(course = course, participant = request.user)
-        if already_inscribed.count() > 0:
-            return render(request, "inscription_question.html", {"course" : course, "error" : "Ya estas inscripto en esta clase"})
-        inscriptions = Inscription.objects.filter(course = course)
-        if inscriptions.count() >= course.max_capacity:
-            return render(request, "inscription_question.html", {"course" : course, "error" : "Todos los cupos ya estan ocupados"})
-        inscription = Inscription()
-        inscription.course = course
-        inscription.participant = request.user
-        with transaction.atomic():
-            inscription.save()
-            audit(request, "INSCRIBE", "clase: " + str(course.id) + " - " + course.name)
+    with transaction.atomic():
+        course = get_object_or_404(Course.objects.select_for_update(), pk=course_id)
+        error = None
+        if course.teacher_id == request.user.pk:
+            error = "El profesor de la clase no puede inscribirse a su propia clase"
+        elif Inscription.objects.filter(course=course, participant=request.user).exists():
+            error = "Ya est?s inscripto en esta clase"
+        elif Inscription.objects.filter(course=course).count() >= course.max_capacity:
+            error = "Todos los cupos ya est?n ocupados"
+        if error:
+            return render(request, "inscription_question.html", {"course": course, "error": error})
+        Inscription.objects.create(course=course, participant=request.user)
+        audit(request, "INSCRIBE", f"clase: {course.id} - {course.name}")
+    if request.user.email:
+        message = (
+            f"Te inscribiste a la clase: {course.name}\n"
+            f"Descripci?n: {course.description}\n"
+            f"Inicio: {timezone.localtime(course.starts_at):%d/%m/%Y %H:%M}\n"
+            f"Fin: {timezone.localtime(course.ends_at):%d/%m/%Y %H:%M}\n"
+            f"Profesor: {course.teacher.username}"
+        )
         try:
-            student = request.user.person
-            if student.email:
-                subject = "Inscripcion a la clase " + course.name
-                message = ("Te inscribiste a la clase: " + course.name + "\n" +
-                           "Descripcion: " + course.description + "\n" +
-                           "Inicio: " + course.starts_at.strftime("%d/%m/%Y %H:%M") + "\n" +
-                           "Fin: " + course.ends_at.strftime("%d/%m/%Y %H:%M") + "\n" +
-                           "Profesor: " + course.teacher.username)
-                send_mail(subject, message, None, [student.email])
-        except Exception:
-            pass
-        return redirect("list_class")
-
+            send_mail(f"Inscripci?n a la clase {course.name}", message, None, [request.user.email])
+        except (OSError, SMTPException):
+            logger.exception("No se pudo enviar la confirmaci?n de inscripci?n")
+            messages.warning(request, "La inscripci?n se guard?, pero no se pudo enviar el correo de confirmaci?n")
+    return redirect("list_class")

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-{% if user.is_staff or user.is_superuser %}
+{% if perms.classes.change_course %}
 <div class="signup-box">
     <h1 class="text-center">
         <i class="fas fa-edit"></i> Editar Clase
@@ -8,12 +8,12 @@
 
     <form action="" method="POST">
         {% csrf_token %}
-        
+
         <div class="form-section">
             <h3>
                 <i class="fas fa-user-circle"></i> Datos de Clase
             </h3>
-            
+
             {% for field in edit_form %}
             <div class="form-group">
                 {{ field.label_tag }}
@@ -27,7 +27,7 @@
             </div>
             {% endfor %}
         </div>
-        
+
         <div class="button-group mt-4">
             <button type="submit" class="btn-outline-light">
                 <i class="fas fa-save"></i> Guardar Cambios

@@ -1,190 +1,161 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.contenttypes.models import ContentType
-from django.contrib import messages
-
-# atomizacion de transacciones
-
-from django.db import transaction
-# formularios de login y register
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
-# modelo del usuario por defecto de django
-from django.contrib.auth.models import User, Permission, Group 
-from accounts.forms import UserEditForm
-
-# datos del perfil persona
-from people.models import Person
-from people.forms import PersonForm
-from memberships.models import Membership
-from routines.models import Routine
-# funciones para el inicio de sesion
-from django.contrib.auth import login, logout, authenticate
-
+﻿from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.models import Group, User
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
+
+from accounts.forms import UserEditForm
+from accounts.signals import clear_permission_cache
 from core.audit import audit
+from core.decorators import superuser_required
+from memberships.models import Membership
+from people.forms import PersonForm
+from people.models import Person
+from routines.models import Routine
 
-# vista de inicio con estado de membresia si es que existe 
+
 @login_required
+@require_GET
 def home(request):
-    if request.user.is_authenticated:
-        try:
-            membership = Membership.objects.get(user=request.user)
-            status = membership.status
-        except Membership.DoesNotExist:
-            # si no existe la membresia, se puede crear o mostrar estado claro
-            status = "No se encontro la membresia, porfavor adquiera una"
-        return render(request, "home.html", {"estado": status})
-    else:
-        return render(request, "home.html", {"estado": "Inicia sesion para ver el estado de tu membresia"})
+    from classes.models import Course
+    from django.db.models import Count
+    from django.utils import timezone
+    membership = Membership.objects.select_related('plan').filter(user=request.user).first()
+    status = membership.effective_status if membership else 'No se encontró la membresía, por favor adquiera una'
+    courses = []
+    if request.user.has_perm('classes.view_course'):
+        courses = list(Course.objects.filter(starts_at__gte=timezone.now()).annotate(inscriptions_count=Count('inscription')).order_by('starts_at')[:4])
+        for course in courses:
+            course.free_spots = max(0, course.max_capacity - course.inscriptions_count)
+            course.has_spots = course.free_spots > 0
+    return render(request, 'home.html', {
+        'estado': status, 'membership': membership, 'membership_status': status,
+        'total_rutinas': Routine.objects.filter(client__user=request.user).count(),
+        'proximas_clases': courses,
+    })
+
 
 @login_required
+@superuser_required
+@require_http_methods(['GET', 'POST'])
 def create_account(request):
-    if request.method == "GET":
-        return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm()})
-    else:
-        user_form = UserCreationForm(request.POST)
-        person_form = PersonForm(request.POST)
-        
-        if user_form.is_valid() and person_form.is_valid():
-            try:
-                with transaction.atomic():
-                    # creamos el objeto del formulario recibido sin guardar para añadir campos adicionales
-                    user = user_form.save(commit=False)
-                
-                    # Verificar si se marcó la opción "es administrador"
-                    is_admin = request.POST.get('is_admin') == 'on'
-                    if is_admin:
-                        user.is_superuser = True
-                        user.is_staff = True  # También necesita is_staff para acceder al admin
-                    
-                    user.save()
-                    
-                    person = person_form.save(commit=False)
-                    person.user = user
-                    person.save()
-                    
-                    Routine.objects.create(client=person, name=f"Rutina de {person.name}", description="Rutina personalizada")
-                    Membership.objects.create(user=user)
-                    audit(request, "CREATE", "usuario: " + str(user.id) + " - " + user.username)
-                    #//
-                
-                login(request, user)
+    data = request.POST if request.method == 'POST' else None
+    user_form = UserCreationForm(data)
+    person_form = PersonForm(data)
+    if request.method == 'POST':
+        user_valid = user_form.is_valid()
+        person_valid = person_form.is_valid()
+        if user_valid and person_valid:
+            with transaction.atomic():
+                user = user_form.save(commit=False)
+                user.email = person_form.cleaned_data.get('email') or ''
+                user.is_superuser = request.POST.get('is_admin') == 'on'
+                user.is_staff = user.is_superuser
+                user.save()
+                person = person_form.save(commit=False)
+                person.user = user
+                person.save()
+                Routine.objects.create(client=person, name=f'Rutina de {person.name}', description='Rutina personalizada')
+                Membership.objects.create(user=user)
+                audit(request, 'CREATE', f'usuario: {user.id} - {user.username}')
+            messages.success(request, 'Usuario creado correctamente')
+            return redirect('list_accounts')
+    return render(request, 'signup.html', {'user_form': user_form, 'person_form': person_form})
 
-                return redirect("home")
-            except Exception as e:
-                logout(request)
-                print(e)
-                return render(request, "signup.html", {"user_form": UserCreationForm(), "person_form": PersonForm(), "e": "usuario ya existe"})
-        return render(request, "signup.html", {
-        "user_form": user_form,
-        "person_form": person_form,
-    })
-                            
+
+@require_POST
 def singout(request):
     logout(request)
-    return redirect("home")
+    return redirect('login')
 
 
-# login
+@require_http_methods(['GET', 'POST'])
 def login_view(request):
-    if request.method == "GET":
-        return render(request, "login.html", {"login_form": AuthenticationForm})
-    else:
-        user = authenticate(
-            request,
-            username=request.POST["username"],
-            password=request.POST["password"],
-        )
-        if user is None or user.is_active == 0:
-            logout(request)
-            return render(
-                request,
-                "login.html",
-                {
-                    "login_form": AuthenticationForm,
-                    "error": "el usuario o contraseña no son correctos",
-                },
-            )
-        else:
-            login(request, user)
-            return redirect("home")
+    form = AuthenticationForm(request, data=request.POST if request.method == 'POST' else None)
+    if request.method == 'POST' and form.is_valid():
+        login(request, form.get_user())
+        destination = request.POST.get('next') or request.GET.get('next')
+        if destination and url_has_allowed_host_and_scheme(destination, {request.get_host()}, require_https=request.is_secure()):
+            return redirect(destination)
+        return redirect('home')
+    return render(request, 'login.html', {'login_form': form, 'error': form.non_field_errors(), 'next': request.GET.get('next', '')})
 
 
 @login_required
+@superuser_required
+@require_http_methods(['GET', 'POST'])
 def deactivate_account(request, account_id):
-    user = User.objects.get(id = account_id)
-    if request.method == "GET":
-        return render(request, "deactivate_account.html", {"user" : user})
-    else:
-        with transaction.atomic():
-            user.is_active = 0
-            user.save()
-            audit(request, "DEACTIVATE", "usuario: " + str(user.id) + " - " + user.username)
-        return redirect("list_accounts")
+    user = get_object_or_404(User, pk=account_id)
+    if request.method == 'POST':
+        if user.pk == request.user.pk:
+            messages.error(request, 'No podés desactivar tu propia cuenta desde esta pantalla')
+        else:
+            with transaction.atomic():
+                user.is_active = False
+                user.save(update_fields=['is_active'])
+                audit(request, 'DEACTIVATE', f'usuario: {user.id} - {user.username}')
+        return redirect('list_accounts')
+    return render(request, 'deactivate_account.html', {'user': user})
 
 
-# vistas de gestion de usuarios 
 @login_required
+@superuser_required
+@require_GET
 def list_accounts(request):
-    if request.method == "GET":
-        users = User.objects.all().exclude(id = request.user.id)
-        return render(request, "list_accounts.html",{"accounts" : users})
+    users = User.objects.select_related('person').exclude(pk=request.user.pk)
+    return render(request, 'list_accounts.html', {'accounts': users})
+
 
 @login_required
+@superuser_required
+@require_http_methods(['GET', 'POST'])
 def edit_account(request, account_id):
-    user = get_object_or_404(User, id=account_id)
-    person = get_object_or_404(Person, user=user)
-    
-    if request.method == "GET":
-        user_form = UserEditForm(instance=user)
-        person_form = PersonForm(instance=person)
-        return render(request, "edit_account.html", {
-            "user_form": user_form,
-            "person_form": person_form,
-            "account_id": account_id,
-        })
-    else:
-        user_form = UserEditForm(request.POST, instance=user)
-        person_form = PersonForm(request.POST, instance=person)
-        
-        if user_form.is_valid() and person_form.is_valid():
+    user = get_object_or_404(User, pk=account_id)
+    person = Person.objects.filter(user=user).first()
+    data = request.POST if request.method == 'POST' else None
+    user_form = UserEditForm(data, instance=user)
+    person_form = PersonForm(data, instance=person)
+    if request.method == 'POST':
+        user_valid = user_form.is_valid()
+        person_valid = person_form.is_valid()
+        if user_valid and person_valid:
             with transaction.atomic():
                 user_form.save()
-                person_form.save()
-                audit(request, "UPDATE", "usuario: " + str(user.id) + " - " + user.username)
-            return redirect("list_accounts")
-        
-        return render(request, "edit_account.html", {
-            "user_form": user_form,
-            "person_form": person_form,
-            "account_id": account_id,
-        })
+                person = person_form.save(commit=False)
+                person.user = user
+                person.save()
+                audit(request, 'UPDATE', f'usuario: {user.id} - {user.username}')
+            return redirect('list_accounts')
+    return render(request, 'edit_account.html', {'user_form': user_form, 'person_form': person_form, 'account_id': account_id})
 
-
-
-# Admin de accounts 
 
 @login_required
+@superuser_required
+@require_GET
 def accounts_admin_home(request):
-        if request.method == "GET":
-            users = User.objects.all().exclude(id = request.user.id)
-            return render(request, "accounts_admin_home.html",{"accounts" : users})
+    users = User.objects.select_related('person').exclude(pk=request.user.pk)
+    return render(request, 'accounts_admin_home.html', {'accounts': users})
 
 
 @login_required
+@superuser_required
+@require_http_methods(['GET', 'POST'])
 def accounts_admin_edit(request, account_id):
-    if request.method == "GET":
-        groups = Group.objects.all()
-        user = User.objects.get(id = account_id)
-        return render(request, "accounts_admin_edit.html", {"user" : user, "groups" : groups})
-    
-    if request.method == "POST":
-        group_id = request.POST.get("group_id")
-        user = User.objects.get(id = account_id)
+    user = get_object_or_404(User, pk=account_id)
+    if request.method == 'POST':
+        group_id = request.POST.get('group_id')
+        if group_id and not group_id.isdecimal():
+            messages.error(request, 'El grupo seleccionado no es válido')
+            return redirect('accounts_admin_edit', account_id=account_id)
+        group = get_object_or_404(Group, pk=group_id) if group_id else None
         with transaction.atomic():
-            user.groups.clear()
-            # Obtener el objeto Group usando el ID y asignarlo al usuario
-            if group_id:
-                group = Group.objects.get(id=group_id)
-                user.groups.add(group)
-        return redirect("accounts_admin_home")
+            user.groups.set([group] if group else [])
+            if user.pk == request.user.pk:
+                clear_permission_cache(request.user)
+            audit(request, 'UPDATE', f'grupos de usuario: {user.id} - {user.username}')
+        return redirect('accounts_admin_home')
+    return render(request, 'accounts_admin_edit.html', {'user': user, 'groups': Group.objects.all(), 'selected_group_ids': set(user.groups.values_list('pk', flat=True))})

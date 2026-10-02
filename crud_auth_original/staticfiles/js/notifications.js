@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
             //notificación flotante
             const toast = document.createElement('div');
             toast.className = `toast-notification toast-${type}`;
-            toast.innerHTML = message.innerText || message.textContent;
+            toast.textContent = message.innerText || message.textContent;
             
             toastContainer.appendChild(toast);
             
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const toast = document.createElement('div');
         toast.className = `toast-notification toast-${type}`;
-        toast.innerHTML = message;
+        toast.textContent = message;
         toastContainer.appendChild(toast);
         
         setTimeout(function() {

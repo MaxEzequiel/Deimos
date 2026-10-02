@@ -11,7 +11,7 @@
             <div class="hero-greeting">Bienvenido de nuevo</div>
             <h1 class="hero-username">{{ user.username }}</h1>
             <p class="hero-subtitle">
-                {% if membership and membership.status == "active" %}
+                {% if membership and membership_status == "active" %}
                     Tu membresía está activa. ¡A entrenar!
                 {% elif membership %}
                     Recordá renovar tu membresía para seguir entrenando.
@@ -40,14 +40,14 @@
 
         {# --- Membresía --- #}
         <div class="home-info-card">
-            <div class="home-info-icon {% if membership and membership.status == 'active' %}icon-success{% else %}icon-danger{% endif %}">
+            <div class="home-info-icon {% if membership and membership_status == 'active' %}icon-success{% else %}icon-danger{% endif %}">
                 <i class="fas fa-id-card"></i>
             </div>
             <div class="home-info-content">
                 <span class="home-info-label">Membresía</span>
                 <span class="home-info-value">
                     {% if membership %}
-                        {{ membership.status|upper }}
+                        {% if membership_status == 'active' %}Activa{% else %}Inactiva{% endif %}
                     {% else %}
                         Sin membresía
                     {% endif %}

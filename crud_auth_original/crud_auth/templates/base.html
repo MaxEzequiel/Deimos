@@ -27,9 +27,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
     <link rel="stylesheet" href="{% static 'style/responsive-fix.css' %}">
+    <link rel="stylesheet" href="{% static 'style/forms.css' %}">
     {% block head %}{% endblock %}
 </head>
-<body>
+<body class="deimos-ui">
     <!-- móvil-->
 <button class="hamburger-btn-fix" id="hamburgerBtnFix" type="button" aria-label="Abrir menú" aria-controls="sidebarNav" aria-expanded="false">
     <i class="fas fa-bars"></i>
@@ -48,23 +49,24 @@
                     <div class="sidebar-section-title">MENÚ</div>
                     <ul class="sidebar-menu">
                         <li><a href="/home"><i class="fas fa-home"></i> Inicio</a></li>
-                        
+
                         <li><a href="{% url 'list_plans' %}"><i class="fas fa-dumbbell"></i> Planes</a></li>
+                        <li><a href="{% url 'payment_list' %}"><i class="fas fa-wallet"></i> Mensualidades</a></li>
                         <li><a href="{% url 'list_class' %}"><i class="fas fa-calendar-alt"></i> Clases</a></li>
                         <li><a href="{% url 'list_publications' %}"><i class="fas fa-file-alt"></i> Publicaciones</a></li>
                         <li><a href="{% url 'payment_list' %}"><i class="fas fa-money-bill-wave"></i> Mensualidades</a></li>
                         {% if request.user.is_superuser %}
-                        <li><a href="{% url 'member_list' %}"><i class="fas fa-user-check"></i> Gestión de socios</a></li>
+                        <li><a href="{% url 'member_list' %}"><i class="fas fa-id-card"></i> Gestión de socios</a></li>
                                                 <li><a href="{% url 'list_accounts' %}"><i class="fas fa-users"></i> Usuarios</a></li>
                         <li><a href="{% url 'checkin_home' %}"><i class="fas fa-fingerprint"></i> Check-in</a></li>
                         <li><a href="{% url 'estadisticas_dashboard' %}"><i class="fas fa-chart-line"></i> Estadísticas</a></li>
                         <li><a href="{% url 'accounts_admin_home' %}"><i class="fas fa-cog"></i> Administrar Grupos</a></li>
-                        
+
                         <div class = "audit_block">
                         <li><a href="{% url 'list_audit' %}"><i class="fa-solid fa-folder-open"></i> Auditoria</a></li>
                         </div>
                         {% endif %}
-                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a></li>
+                        <li><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="btn btn-link"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button></form></li>
                     </ul>
                 </div>
             </nav>
@@ -74,21 +76,23 @@
                 <div class="breadcrumbs"><a href="/home"></a></div>
                 <div class="user-tools">
                     <span><i class="fas fa-user"></i> HOLA, {{ user.username|upper }}</span>
-                    <a href="{% url 'password_reset' %}"> Cambiar contraseña </a>
-                    <a href="{% url 'logout' %}">Salir</a>
+                    <a href="{% url 'password_change' %}"> Cambiar contraseña </a>
+                    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button type="submit" class="btn btn-link">Salir</button></form>
                     <button id="theme-toggle" class="theme-toggle" title="Cambiar tema"><i class="fas fa-moon" id="theme-icon"></i></button>
                 </div>
             </nav>
             <div class="content-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
                 {% block content %}{% endblock %}
             </div>
         </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
     <!-- Mis notificaciones personalizadas -->
-     <script src="/static/js/notifications.js"></script>
-    
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/notifications.js"></script>
+
     {% block scripts %}{% endblock %}
     <script>
 // Menú hamburguesa
@@ -96,23 +100,23 @@
     const btn = document.getElementById('hamburgerBtnFix');
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.getElementById('sidebarOverlayFix');
-    
+
     if (!btn || !sidebar) return;
-    
+
     function openMenu() {
         sidebar.classList.add('mobile-open-fix');
         if (overlay) overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         btn.setAttribute('aria-expanded', 'true');
     }
-    
+
     function closeMenu() {
         sidebar.classList.remove('mobile-open-fix');
         if (overlay) overlay.classList.remove('active');
         document.body.style.overflow = '';
         btn.setAttribute('aria-expanded', 'false');
     }
-    
+
     btn.addEventListener('click', function(e) {
         e.stopPropagation();
         if (sidebar.classList.contains('mobile-open-fix')) {
@@ -121,21 +125,21 @@
             openMenu();
         }
     });
-    
+
     if (overlay) {
         overlay.addEventListener('click', closeMenu);
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeMenu();
     });
     }
-    
+
     // Cerrar al hacer clic en un enlace
     document.querySelectorAll('.sidebar a').forEach(link => {
         link.addEventListener('click', function() {
             if (window.innerWidth <= 991) closeMenu();
         });
     });
-    
+
     // Al cambiar tamaño de pantalla
     window.addEventListener('resize', function() {
         if (window.innerWidth > 991) {
@@ -151,7 +155,7 @@
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
     const body = document.body;
-    
+
     // Aplicar tema guardado
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
@@ -161,7 +165,7 @@
             themeIcon.classList.add('fa-sun');
         }
     }
-    
+
     // Detectar preferencia del sistema si no hay nada guardado
     if (!savedTheme && window.matchMedia('(prefers-color-scheme: light)').matches) {
         body.classList.add('light-mode');
@@ -170,12 +174,12 @@
             themeIcon.classList.add('fa-sun');
         }
     }
-    
+
     // Click del botón
     if (themeToggle) {
         themeToggle.addEventListener('click', function() {
             body.classList.toggle('light-mode');
-            
+
             if (body.classList.contains('light-mode')) {
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
