@@ -49,18 +49,34 @@ def _create_account_with_rollback(request, user_form, person_form):
 @require_GET
 def home(request):
     from classes.models import Course
+    from checkin.services import member_checkin_status
     from django.db.models import Count
     from django.utils import timezone
+    from payments.models import MonthlyPayment
+    today = timezone.localdate()
     membership = Membership.objects.select_related('plan').filter(user=request.user).first()
     status = membership.effective_status if membership else 'No se encontró la membresía, por favor adquiera una'
+    person = Person.objects.select_related('user').filter(user=request.user).first()
+    monthly_status = member_checkin_status(person)
     courses = []
-    if request.user.has_perm('classes.view_course'):
+    if request.user.is_superuser or request.user.has_perm('classes.view_course'):
         courses = list(Course.objects.filter(starts_at__gte=timezone.now()).annotate(inscriptions_count=Count('inscription')).order_by('starts_at')[:4])
         for course in courses:
             course.free_spots = max(0, course.max_capacity - course.inscriptions_count)
             course.has_spots = course.free_spots > 0
+    admin_stats = None
+    if request.user.is_superuser:
+        admin_stats = {
+            'active_accounts': User.objects.filter(is_active=True).count(),
+            'members': Person.objects.count(),
+            'pending_payments': MonthlyPayment.objects.filter(paid_on__isnull=True, due_date__gte=today).count(),
+            'overdue_payments': MonthlyPayment.objects.filter(paid_on__isnull=True, due_date__lt=today).count(),
+        }
     return render(request, 'home.html', {
         'estado': status, 'membership': membership, 'membership_status': status,
+        'is_admin_home': request.user.is_superuser,
+        'admin_stats': admin_stats,
+        'monthly_status': monthly_status,
         'total_rutinas': Routine.objects.filter(client__user=request.user).count(),
         'proximas_clases': courses,
     })

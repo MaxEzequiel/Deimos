@@ -4,8 +4,14 @@ from datetime import date
 from django.db import transaction
 from django.core.exceptions import ValidationError
 
+from memberships.services import next_month_expiry
 from people.models import Person
 from .models import MonthlyPayment, PaymentMovement
+
+
+def apply_payment_coverage(payment):
+    payment.coverage_start = payment.paid_on
+    payment.coverage_end = next_month_expiry(payment.paid_on) if payment.paid_on else None
 
 
 @transaction.atomic
@@ -24,6 +30,7 @@ def register_member_payment(member, data, operator):
     payment.paid_on = data['paid_on']
     payment.reference = data.get('reference', '')
     payment.recorded_by = operator
+    apply_payment_coverage(payment)
     payment.full_clean()
     payment.save()
     create_payment_movement(payment)
@@ -84,6 +91,8 @@ def reverse_payment(movement_id, operator):
     reversal.save()
     charge.paid_on = None
     charge.reference = ""
+    charge.coverage_start = None
+    charge.coverage_end = None
     charge.recorded_by = None
-    charge.save(update_fields=["paid_on", "reference", "recorded_by"])
+    charge.save(update_fields=["paid_on", "reference", "recorded_by", "coverage_start", "coverage_end"])
     return reversal

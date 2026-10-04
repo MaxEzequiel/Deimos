@@ -64,7 +64,7 @@ class MembershipIndicatorTests(TestCase):
         cls.person = Person.objects.create(user=cls.member, id_number=12345678, name="Ana María", surname="Pérez")
 
     def paid_month(self, period=date(2026, 10, 1), paid_on=date(2026, 10, 2)):
-        return MonthlyPayment.objects.create(member=self.member, period=period, due_date=period.replace(day=10), amount=200, paid_on=paid_on, method="cash")
+        return MonthlyPayment.objects.create(member=self.member, period=period, due_date=period.replace(day=10), amount=200, paid_on=paid_on)
 
     def test_paid_month_is_green_before_last_five_days(self):
         payment = self.paid_month()

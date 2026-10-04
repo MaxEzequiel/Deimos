@@ -100,6 +100,7 @@ class RegressionTests(TestCase):
         response = self.client.post(reverse("create_account"), {
             "username": "newmember", "password1": "ComplexPass1!", "password2": "ComplexPass1!",
             "id_number": 23456789, "name": "Luis", "surname": "Pérez", "email": "luis@example.com",
+            "birth_date": "2000-01-01",
         })
         self.assertRedirects(response, reverse("list_accounts"))
         user = User.objects.get(username="newmember")

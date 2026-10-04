@@ -40,3 +40,7 @@ Las pruebas verifican cobro sin medio de pago, anulacion, duplicados, nuevo cobr
 ## Unificacion
 
 El menu tiene una sola entrada Suscripciones. La lista utiliza `memberships/member_list.html`; la ficha utiliza `memberships/manage_member.html` y su URL es `/payments/subscriptions/<id>/`. Las antiguas direcciones `/members/` muestran la misma lista y `/members/<id>/` redirige a la ficha unificada. Se conserva compatibilidad sin duplicar la interfaz. Esta unificacion no requiere migraciones.
+
+## Integracion con NoeGao/Deimos
+
+Se mantienen las fechas `coverage_start` y `coverage_end` del nuevo repositorio. Cada cobro calcula su vigencia; al anular se limpian ambas fechas del registro interno. La migracion `0005_merge_payment_coverage` integra las dos ramas de migraciones sin borrar cobros ni historial.

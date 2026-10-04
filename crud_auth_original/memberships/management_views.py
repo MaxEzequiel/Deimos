@@ -43,6 +43,7 @@ def member_list(request):
         user.can_pay_subscription = user.is_active and user.subscription_plan and (not membership or membership.status == 'active') and (not charge or not charge.paid_on)
         if membership:
             membership.last_paid_on = user.last_paid_on
+            membership.last_coverage_end = user.last_coverage_end
             user.membership_status = membership.effective_status
     return render(request, 'memberships/member_list.html', {'page': page, 'search': search, 'total_users': page.paginator.count, 'can_view_all': can_view_all})
 
@@ -85,10 +86,13 @@ def manage_member(request, user_id):
         return render(request, '403.html', status=400)
     from checkin.services import member_checkin_status
     status = member_checkin_status(person)
+    plan_prices = {str(plan.pk): str(plan.base_price or 0) for plan in Plan.objects.all()}
     return render(request, 'memberships/manage_member.html', {
         'member': user, 'person': person, 'membership': membership,
         'membership_form': membership_form, 'payment_form': payment_form,
         'membership_status': membership.effective_status, 'has_plans': Plan.objects.exists(),
+        'payment_amount_locked': bool(pending),
+        'plan_prices': plan_prices,
         'payments': MonthlyPayment.objects.filter(member=user).select_related('recorded_by')[:24],
         'monthly_status': status,
     })

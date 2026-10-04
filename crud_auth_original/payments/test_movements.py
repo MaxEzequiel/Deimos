@@ -87,3 +87,13 @@ class PaymentFlowTests(TestCase):
         self.assertNotContains(response, "Medio de pago")
         self.assertNotContains(response, "> Mensualidades</a>")
         self.assertEqual(self.client.get("/payments/").status_code, 200)
+
+    def test_coverage_is_preserved_and_cleared_on_reversal(self):
+        from memberships.services import next_month_expiry
+        charge, movement = self.pay()
+        self.assertEqual(charge.coverage_start, self.data["paid_on"])
+        self.assertEqual(charge.coverage_end, next_month_expiry(self.data["paid_on"]))
+        reverse_payment(movement.pk, self.admin)
+        charge.refresh_from_db()
+        self.assertIsNone(charge.coverage_start)
+        self.assertIsNone(charge.coverage_end)
