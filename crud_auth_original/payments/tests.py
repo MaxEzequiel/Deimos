@@ -2,14 +2,11 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
-from django.urls import reverse
 from django.utils import timezone
 
-from core.models import AuditLog
 from memberships.models import Membership
 from people.models import Person
 from plans.models import Plan
@@ -52,75 +49,6 @@ class MonthlyPaymentTests(TestCase):
         self.member.is_active = True
         self.member.save()
         self.assertEqual(generate_monthly_payments(earlier_period, 10), (0, 0, 0))
-
-    def test_member_only_sees_own_payments_and_cannot_write(self):
-        self.client.force_login(self.other)
-        response = self.client.get(reverse("payment_list"))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(list(response.context["payments"]), [])
-        self.assertEqual(response.context["outstanding"], 0)
-        self.assertEqual(self.client.post(reverse("record_payment", args=[self.payment.pk]), {}).status_code, 403)
-        self.assertEqual(self.client.post(reverse("delete_payment", args=[self.payment.pk]), {}).status_code, 403)
-        self.assertEqual(self.client.post(reverse("generate_payments"), {}).status_code, 403)
-        self.client.force_login(self.member)
-        self.assertContains(self.client.get(reverse("payment_list")), "18000")
-
-    def test_guest_must_login(self):
-        for url in [reverse("payment_list"), reverse("generate_payments"), reverse("record_payment", args=[self.payment.pk]), reverse("delete_payment", args=[self.payment.pk])]:
-            self.assertEqual(self.client.get(url).status_code, 302)
-
-    def test_cashier_permissions_allow_recording(self):
-        self.other.user_permissions.add(*Permission.objects.filter(content_type__app_label="pagos", codename__in=["view_monthlypayment", "change_monthlypayment"]))
-        self.client.force_login(self.other)
-        response = self.client.post(reverse("record_payment", args=[self.payment.pk]), {"paid_on": self.today.isoformat(), "method": "transfer", "reference": "REF-123"})
-        self.assertRedirects(response, reverse("payment_list"))
-        self.payment.refresh_from_db()
-        self.assertEqual(self.payment.status, "paid")
-        self.assertEqual(self.payment.recorded_by, self.other)
-        self.assertEqual(self.payment.reference, "REF-123")
-        self.assertEqual(AuditLog.objects.count(), 1)
-        self.client.post(reverse("record_payment", args=[self.payment.pk]), {"paid_on": self.today.isoformat(), "method": "cash"})
-        self.payment.refresh_from_db()
-        self.assertEqual(self.payment.method, "transfer")
-        self.assertEqual(AuditLog.objects.count(), 1)
-
-    def test_delete_payment_requires_permission_and_audits(self):
-        self.other.user_permissions.add(*Permission.objects.filter(content_type__app_label="pagos", codename__in=["view_monthlypayment", "delete_monthlypayment"]))
-        self.client.force_login(self.other)
-        self.assertEqual(self.client.get(reverse("delete_payment", args=[self.payment.pk])).status_code, 200)
-        response = self.client.post(reverse("delete_payment", args=[self.payment.pk]))
-        self.assertRedirects(response, reverse("payment_list"))
-        self.assertFalse(MonthlyPayment.objects.filter(pk=self.payment.pk).exists())
-        self.assertEqual(AuditLog.objects.count(), 1)
-
-    def test_future_payment_and_missing_method_are_rejected(self):
-        self.client.force_login(self.admin)
-        for data in [{"paid_on": (self.today + timedelta(days=1)).isoformat(), "method": "cash"}, {"paid_on": self.today.isoformat(), "method": ""}]:
-            response = self.client.post(reverse("record_payment", args=[self.payment.pk]), data)
-            self.assertEqual(response.status_code, 200)
-            self.assertTrue(response.context["form"].errors)
-        self.payment.refresh_from_db()
-        self.assertIsNone(self.payment.paid_on)
-
-    def test_invalid_month_and_due_day_are_rejected(self):
-        self.client.force_login(self.admin)
-        response = self.client.post(reverse("generate_payments"), {"period": f"{self.today.year}-02", "due_day": 31})
-        self.assertIn("due_day", response.context["form"].errors)
-        response = self.client.get(reverse("payment_list"), {"period": "invalid"})
-        self.assertIn("period", response.context["period_form"].errors)
-
-    def test_generation_view_and_filters(self):
-        self.client.force_login(self.admin)
-        self.assertEqual(self.client.get(reverse("generate_payments")).status_code, 200)
-        self.assertEqual(self.client.get(reverse("record_payment", args=[self.payment.pk])).status_code, 200)
-        response = self.client.post(reverse("generate_payments"), {"period": self.period.strftime("%Y-%m"), "due_day": 10})
-        self.assertRedirects(response, reverse("payment_list"))
-        response = self.client.get(reverse("payment_list"), {"period": self.period.strftime("%Y-%m"), "q": "Ana", "status": self.payment.status})
-        self.assertEqual(list(response.context["payments"]), [self.payment])
-        self.assertEqual(response.context["outstanding"], Decimal("18000"))
-        self.assertEqual(response.context["collected"], 0)
-        response = self.client.get(reverse("payment_list"), {"status": "paid"})
-        self.assertEqual(list(response.context["payments"]), [])
 
     def test_status_tracks_due_date(self):
         self.payment.due_date = self.today - timedelta(days=1)

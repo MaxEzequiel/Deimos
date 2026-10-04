@@ -1,95 +1,83 @@
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.db.models import Q, Sum
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from core.audit import audit
-from .forms import GeneratePaymentsForm, PeriodForm, RecordPaymentForm
-from .models import MonthlyPayment
-from .services import generate_monthly_payments
-
-
-@login_required
-@require_http_methods(["GET"])
-def payment_list(request):
-    payments = MonthlyPayment.objects.select_related("member", "member__person")
-    can_view_all = request.user.has_perm("pagos.view_monthlypayment")
-    if not can_view_all:
-        payments = payments.filter(member=request.user)
-    period_form = PeriodForm(request.GET if "period" in request.GET else None)
-    if period_form.is_bound and period_form.is_valid():
-        payments = payments.filter(period=period_form.cleaned_data["period"])
-    search = request.GET.get("q", "").strip()
-    if search:
-        payments = payments.filter(Q(member__username__icontains=search) | Q(member__person__name__icontains=search) | Q(member__person__surname__icontains=search))
-    status = request.GET.get("status", "")
-    today = timezone.localdate()
-    if status == "paid":
-        payments = payments.filter(paid_on__isnull=False)
-    elif status == "pending":
-        payments = payments.filter(paid_on__isnull=True, due_date__gte=today)
-    elif status == "overdue":
-        payments = payments.filter(paid_on__isnull=True, due_date__lt=today)
-    totals = payments.aggregate(collected=Sum("amount", filter=Q(paid_on__isnull=False)), outstanding=Sum("amount", filter=Q(paid_on__isnull=True)))
-    return render(request, "payments/list.html", {"payments": payments, "period_form": period_form, "search": search, "status_filter": status, "can_view_all": can_view_all, "collected": totals["collected"] or Decimal("0"), "outstanding": totals["outstanding"] or Decimal("0")})
-
-
-@login_required
-@permission_required(["pagos.add_monthlypayment", "pagos.view_monthlypayment"], raise_exception=True)
-@require_http_methods(["GET", "POST"])
-def generate_payments(request):
-    form = GeneratePaymentsForm(request.POST if request.method == "POST" else None, initial={"period": timezone.localdate().replace(day=1)})
-    if request.method == "POST" and form.is_valid():
-        with transaction.atomic():
-            created, existing, skipped = generate_monthly_payments(form.cleaned_data["period"], form.cleaned_data["due_day"])
-            audit(request, "CREATE", f"Mensualidades {form.cleaned_data['period']:%m/%Y}: {created} creadas")
-        messages.success(request, f"{created} cuotas creadas; {existing} ya existían; {skipped} socios omitidos por no tener un plan con precio válido.")
-        return redirect("payment_list")
-    return render(request, "payments/generate.html", {"form": form})
+from .models import MonthlyPayment, PaymentMovement
+from .services import reverse_payment
+from memberships.management_views import member_list as subscription_list
 
 
 @login_required
 @permission_required(["pagos.change_monthlypayment", "pagos.view_monthlypayment"], raise_exception=True)
 @require_http_methods(["GET", "POST"])
-def record_payment(request, payment_id):
-    with transaction.atomic():
-        payment = get_object_or_404(MonthlyPayment.objects.select_for_update().select_related("member"), pk=payment_id)
-        if payment.paid_on:
-            messages.info(request, "Esta cuota ya está pagada.")
-            return redirect("payment_list")
-        form = RecordPaymentForm(request.POST if request.method == "POST" else None, instance=payment)
-        if request.method == "POST" and form.is_valid():
-            payment = form.save(commit=False)
-            payment.recorded_by = request.user
-            payment.save()
-            audit(request, "UPDATE", f"Pago de mensualidad {payment.pk}: {payment.member.username}, {payment.period:%m/%Y}, importe {payment.amount}")
-            messages.success(request, "Pago registrado correctamente.")
-            return redirect("payment_list")
-    return render(request, "payments/record.html", {"form": form, "payment": payment})
+def pay_subscription(request, user_id):
+    user = get_object_or_404(get_user_model(), pk=user_id, is_active=True)
+    membership = getattr(user, "membership", None)
+    person = getattr(user, "person", None)
+    plan = (membership.plan if membership else None) or (person.plan if person else None)
+    if not plan or (membership and membership.status != "active") or not plan.base_price or plan.base_price <= 0:
+        messages.error(request, "La suscripción debe tener un plan activo con monto positivo.")
+        return redirect("subscription_list")
+    from .forms import MemberPaymentForm
+    from .services import register_member_payment
+    period = timezone.localdate().replace(day=1)
+    charge = MonthlyPayment.objects.filter(member=user, period=period).first()
+    form = MemberPaymentForm(request.POST if request.method == "POST" else None, member=user,
+        initial={"period": period, "amount": charge.amount if charge else plan.base_price})
+    if request.method == "POST" and form.is_valid():
+        expected = MonthlyPayment.objects.filter(member=user, period=form.cleaned_data["period"]).first()
+        expected_amount = expected.amount if expected else plan.base_price
+        if form.cleaned_data["amount"] != expected_amount:
+            form.add_error("amount", "El monto debe coincidir con el precio de la cuota o del plan.")
+            return render(request, "payments/pay_subscription.html", {"form": form, "member": user, "plan": plan})
+        try:
+            with transaction.atomic():
+                payment = register_member_payment(user, form.cleaned_data, request.user)
+                audit(request, "CREATE", f"Cobro de suscripción {payment.pk}: {payment.amount}")
+        except ValidationError as error:
+            form.add_error(None, error)
+        else:
+            return redirect("payment_history")
+    return render(request, "payments/pay_subscription.html", {"form": form, "member": user, "plan": plan})
 
 
 @login_required
-@permission_required(["pagos.delete_monthlypayment", "pagos.view_monthlypayment"], raise_exception=True)
+@require_http_methods(["GET"])
+def payment_history(request):
+    movements = PaymentMovement.objects.select_related("charge__member", "reversal_of", "reversal")
+    if not request.user.has_perm("pagos.view_monthlypayment"):
+        movements = movements.filter(charge__member=request.user)
+    payment_id = request.GET.get("payment_id", "").strip()
+    member_id = request.GET.get("member_id", "").strip()
+    for value, field in [(payment_id, "pk"), (member_id, "charge__member_id")]:
+        if value:
+            movements = movements.filter(**{field: int(value)}) if value.isascii() and value.isdigit() and len(value) <= 18 else movements.none()
+    total = movements.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+    return render(request, "payments/history.html", {"movements": movements, "payment_id": payment_id, "member_id": member_id, "total": total})
+
+
+@login_required
+@permission_required(["pagos.change_monthlypayment", "pagos.view_monthlypayment"], raise_exception=True)
 @require_http_methods(["GET", "POST"])
-def delete_payment(request, payment_id):
-    payment = get_object_or_404(MonthlyPayment.objects.select_related("member"), pk=payment_id)
+def cancel_payment(request, movement_id):
+    movement = get_object_or_404(PaymentMovement.objects.select_related("charge__member"), pk=movement_id)
     if request.method == "POST":
-        with transaction.atomic():
-            savepoint_id = transaction.savepoint()
-            try:
-                payment = get_object_or_404(MonthlyPayment.objects.select_for_update().select_related("member"), pk=payment_id)
-                detail = f"Mensualidad {payment.pk}: {payment.member.username}, {payment.period:%m/%Y}, importe {payment.amount}"
-                payment.delete()
-                audit(request, "DELETE", detail)
-            except Exception:
-                transaction.savepoint_rollback(savepoint_id)
-                raise
-            transaction.savepoint_commit(savepoint_id)
-        messages.success(request, "Mensualidad eliminada correctamente.")
-        return redirect("payment_list")
-    return render(request, "payments/delete.html", {"payment": payment})
+        try:
+            with transaction.atomic():
+                reversal = reverse_payment(movement.pk, request.user)
+                audit(request, "CREATE", f"Anulación {reversal.pk} del pago {movement.pk}: {reversal.amount}")
+        except ValidationError as error:
+            messages.error(request, "; ".join(error.messages))
+        else:
+            messages.success(request, "Pago anulado mediante un movimiento negativo.")
+        return redirect("payment_history")
+    return render(request, "payments/cancel.html", {"movement": movement})

@@ -38,7 +38,7 @@ class MemberManagementTests(TestCase):
         return {
             'action': 'payment', 'period': self.period.strftime('%Y-%m'),
             'amount': '18000.00', 'paid_on': self.today.isoformat(),
-            'method': 'cash', 'reference': 'REC-123', **overrides,
+            'reference': 'REC-123', **overrides,
         }
 
     def test_management_pages_render_without_writing(self):
@@ -55,7 +55,7 @@ class MemberManagementTests(TestCase):
 
     def test_regular_member_cannot_manage_other_or_own_finances(self):
         self.client.force_login(self.member)
-        for url in [reverse('member_list'), self.url]:
+        for url in [self.url]:
             self.assertEqual(self.client.get(url).status_code, 403)
             self.assertEqual(self.client.post(url, self.payment_data()).status_code, 403)
         self.assertFalse(MonthlyPayment.objects.exists())
@@ -106,7 +106,7 @@ class MemberManagementTests(TestCase):
         home = self.client.get(reverse('home'))
         self.assertEqual(home.context['membership'].plan_id, self.plan.pk)
         self.assertContains(home, 'Tu membresía está activa')
-        self.assertEqual(list(self.client.get(reverse('payment_list')).context['payments']), [payment])
+        self.assertEqual([m.charge_id for m in self.client.get(reverse('payment_history')).context['movements']], [payment.pk])
 
     def test_existing_pending_charge_is_paid_without_duplicate(self):
         payment = MonthlyPayment.objects.create(member=self.member, period=self.period, amount=18000, due_date=self.period)
@@ -119,7 +119,7 @@ class MemberManagementTests(TestCase):
 
     def test_repeat_payment_preserves_original_receipt(self):
         self.client.post(self.url, self.payment_data())
-        response = self.client.post(self.url, self.payment_data(method='transfer', reference='DIFFERENT'))
+        response = self.client.post(self.url, self.payment_data(reference='DIFFERENT'))
         self.assertEqual(response.status_code, 200)
         self.assertIn('period', response.context['payment_form'].errors)
         self.assertEqual(MonthlyPayment.objects.count(), 1)
@@ -138,7 +138,7 @@ class MemberManagementTests(TestCase):
         self.assertEqual(pending.amount, Decimal('10000'))
 
     def test_invalid_payment_does_not_create_records(self):
-        for data in [self.payment_data(amount='-1'), self.payment_data(method=''), self.payment_data(period='bad'), self.payment_data(paid_on=(self.today + timedelta(days=1)).isoformat())]:
+        for data in [self.payment_data(amount='-1'), self.payment_data(period='bad'), self.payment_data(paid_on=(self.today + timedelta(days=1)).isoformat())]:
             response = self.client.post(self.url, data)
             self.assertEqual(response.status_code, 200)
             self.assertTrue(response.context['payment_form'].errors)
@@ -152,9 +152,10 @@ class MemberManagementTests(TestCase):
         self.assertFalse(MonthlyPayment.objects.exists())
         self.assertFalse(Membership.objects.exists())
 
-    def test_payment_from_existing_payments_module_also_activates_membership(self):
-        payment = MonthlyPayment.objects.create(member=self.member, period=self.period, amount=18000, due_date=self.period)
-        self.client.post(reverse('record_payment', args=[payment.pk]), {'paid_on': self.today.isoformat(), 'method': 'cash'})
+    def test_payment_from_subscriptions_preserves_active_membership(self):
+        Membership.objects.create(user=self.member, plan=self.plan, status='active')
+        MonthlyPayment.objects.create(member=self.member, period=self.period, amount=18000, due_date=self.period)
+        self.client.post(reverse('pay_subscription', args=[self.member.pk]), self.payment_data())
         self.assertEqual(Membership.objects.get(user=self.member).effective_status, 'active')
 
     def test_profile_plan_is_preserved_when_payment_creates_membership(self):

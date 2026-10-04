@@ -8,17 +8,11 @@ from django.utils import timezone
 
 
 class MonthlyPayment(models.Model):
-    class Method(models.TextChoices):
-        CASH = "cash", "Efectivo"
-        TRANSFER = "transfer", "Transferencia"
-        CARD = "card", "Tarjeta"
-
     member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="monthly_payments", verbose_name="Socio")
     period = models.DateField("Mes de la cuota", help_text="Se guarda como el primer día del mes.")
     amount = models.DecimalField("Importe", max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
     due_date = models.DateField("Vencimiento")
     paid_on = models.DateField("Fecha de pago", null=True, blank=True)
-    method = models.CharField("Medio de pago", max_length=12, choices=Method.choices, blank=True)
     reference = models.CharField("Referencia del comprobante", max_length=100, blank=True)
     recorded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="recorded_monthly_payments", editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -30,7 +24,6 @@ class MonthlyPayment(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["member", "period"], name="unique_member_month"),
             models.CheckConstraint(condition=models.Q(amount__gt=0), name="monthly_payment_positive_amount"),
-            models.CheckConstraint(condition=(models.Q(paid_on__isnull=True, method="") | (models.Q(paid_on__isnull=False) & ~models.Q(method=""))), name="monthly_payment_payment_details"),
         ]
 
     @property
@@ -52,10 +45,33 @@ class MonthlyPayment(models.Model):
             errors["due_date"] = "El vencimiento debe pertenecer al mes de la cuota."
         if self.paid_on and self.paid_on > timezone.localdate():
             errors["paid_on"] = "La fecha de pago no puede ser futura."
-        if bool(self.paid_on) != bool(self.method):
-            errors["method"] = "Indicá la fecha y el medio de pago juntos."
         if errors:
             raise ValidationError(errors)
 
     def __str__(self):
         return f"{self.member} · {self.period:%m/%Y}"
+
+
+class PaymentMovement(models.Model):
+    """Historial: un cobro positivo y, si se anula, su contrapartida negativa."""
+    charge = models.ForeignKey(MonthlyPayment, on_delete=models.PROTECT, related_name="movements")
+    amount = models.DecimalField("Monto", max_digits=10, decimal_places=2)
+    paid_on = models.DateField("Fecha")
+    reference = models.CharField(max_length=100, blank=True)
+    reversal_of = models.OneToOneField("self", on_delete=models.PROTECT, null=True, blank=True, related_name="reversal")
+    recorded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-pk"]
+        constraints = [models.CheckConstraint(
+            condition=(models.Q(amount__gt=0, reversal_of__isnull=True) | models.Q(amount__lt=0, reversal_of__isnull=False)),
+            name="payment_movement_sign",
+        )]
+
+    def clean(self):
+        super().clean()
+        if self.reversal_of_id:
+            original = self.reversal_of
+            if original.amount <= 0 or self.amount != -original.amount or self.charge_id != original.charge_id:
+                raise ValidationError("La anulación debe corresponder al cobro original y tener su monto opuesto.")

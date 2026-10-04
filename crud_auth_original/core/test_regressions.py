@@ -54,8 +54,8 @@ class RegressionTests(TestCase):
             ("checkin_home", []), ("checkin_history", []), ("checkin_success", [self.checkin.pk]),
             ("list_publications", []), ("detail_publication", [self.publication.pk]),
             ("create_publication", []), ("edit_publication", [self.publication.pk]),
-            ("delete_publication", [self.publication.pk]), ("payment_list", []),
-            ("generate_payments", []), ("edit_membership", []), ("password_change", []),
+            ("delete_publication", [self.publication.pk]), ("payment_history", []),
+            ("subscription_list", []), ("edit_membership", []), ("password_change", []),
             ("estadisticas_dashboard", []), ("estadisticas_data", []), ("estadisticas_informe", []),
         ]
         for name, args in pages:
@@ -142,8 +142,8 @@ class RegressionTests(TestCase):
         response = self.client.post(reverse("login"), {"username": "member", "password": "MemberTest1!", "next": "https://example.com"})
         self.assertRedirects(response, reverse("home"))
         self.client.logout()
-        response = self.client.post(reverse("login"), {"username": "member", "password": "MemberTest1!", "next": reverse("payment_list")})
-        self.assertRedirects(response, reverse("payment_list"))
+        response = self.client.post(reverse("login"), {"username": "member", "password": "MemberTest1!", "next": reverse("payment_history")})
+        self.assertRedirects(response, reverse("payment_history"))
 
     def test_logout_requires_post_and_csrf(self):
         self.assertEqual(self.client.get(reverse("logout")).status_code, 405)

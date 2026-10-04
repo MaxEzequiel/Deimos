@@ -22,21 +22,29 @@ from .services import with_last_payment
 
 
 @login_required
-@superuser_required
 @require_GET
 def member_list(request):
     search = request.GET.get('q', '').strip()
     users = User.objects.select_related('person', 'person__plan', 'membership', 'membership__plan').order_by('username')
+    can_view_all = request.user.has_perm('pagos.view_monthlypayment')
+    if not can_view_all:
+        users = users.filter(pk=request.user.pk)
     if search:
         users = users.filter(Q(username__icontains=search) | Q(person__name__icontains=search) | Q(person__surname__icontains=search) | Q(person__id_number__icontains=search))
     users = with_last_payment(users, 'pk')
     page = Paginator(users, 25).get_page(request.GET.get('page'))
+    charges = {charge.member_id: charge for charge in MonthlyPayment.objects.filter(member_id__in=[user.pk for user in page], period=timezone.localdate().replace(day=1))}
     for user in page:
         membership = getattr(user, 'membership', None)
+        person = getattr(user, 'person', None)
+        user.subscription_plan = (membership.plan if membership else None) or (person.plan if person else None)
+        charge = charges.get(user.pk)
+        user.subscription_amount = charge.amount if charge else (user.subscription_plan.base_price if user.subscription_plan else None)
+        user.can_pay_subscription = user.is_active and user.subscription_plan and (not membership or membership.status == 'active') and (not charge or not charge.paid_on)
         if membership:
             membership.last_paid_on = user.last_paid_on
             user.membership_status = membership.effective_status
-    return render(request, 'memberships/member_list.html', {'page': page, 'search': search, 'total_users': page.paginator.count})
+    return render(request, 'memberships/member_list.html', {'page': page, 'search': search, 'total_users': page.paginator.count, 'can_view_all': can_view_all})
 
 
 @login_required

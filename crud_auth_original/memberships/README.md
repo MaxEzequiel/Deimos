@@ -1,27 +1,15 @@
-# Gestión de socios
+# Suscripciones
 
-Ingresar como administrador y abrir **Gestión de socios** en el menú, o acceder a `/members/`. También hay accesos desde Usuarios y Mensualidades.
+La Gestion de socios esta integrada en **Suscripciones**, accesible desde el menu o `/payments/subscriptions/`.
 
-1. Buscar al usuario por nombre, nombre de usuario o DNI.
-2. Abrir **Gestionar socio**.
-3. Seleccionar un plan y el estado de la membresía; guardar los cambios.
-4. Completar mensualidad, importe, fecha de pago, medio y referencia opcional; confirmar el pago.
+La lista muestra socio, DNI, plan y descripcion, monto, estado y ultimo pago. Incluye usuarios sin plan para poder asignarles uno. La busqueda admite usuario, nombre y DNI y la lista esta paginada.
 
-Guardar un plan propone su precio para los nuevos pagos. Si ya existe una cuota pendiente del mes, debe pagarse por el importe original. Los registros pagados no se sobrescriben y se permite una mensualidad por usuario y mes.
+- Agregar plan / Editar plan abre la ficha del socio para asignar un plan y guardar el estado de la suscripcion.
+- Pagar registra el cobro sin medio de pago.
+- Ver pagos consulta el historial del socio y permite buscar por ID o anular un cobro desde Pagos.
 
-La cuota pagada se refleja en Mensualidades y Check-in. Si su cobertura sigue vigente, activa la membresía. El vencimiento es el mismo día del mes siguiente al pago, utilizando el último día del mes si la fecha original no existe.
+La ficha contiene los formularios de plan y pago. El precio del plan se propone para nuevos cobros; una cuota existente conserva su monto. Los planes del perfil y de la membresia se sincronizan.
 
-Los planes asignados se sincronizan entre el perfil y la membresía para que la generación de cuotas use el mismo plan. Los cambios de plan no modifican los importes de cuotas existentes. Inicio, Gestión de socios y Estadísticas consultan el estado vigente de la membresía y reflejan el vencimiento de los pagos sin requerir una actualización manual diaria.
+Los administradores gestionan planes. Los operadores con permisos de pagos registran cobros. Los socios consultan su propia suscripcion e historial.
 
-El estado administrativo de una membresía puede establecerse manualmente. La vigencia del pago que muestra Check-in se calcula por separado: mantener una membresía activa sin pago no genera un pago ni cambia el indicador de mensualidad.
-
-Los usuarios que todavía no tienen perfil personal pueden recibir un plan, una membresía y un pago. La pantalla permite completar sus datos y DNI para habilitar su identificación en Check-in. Los planes previamente asignados se conservan al completar ese perfil.
-
-El módulo de gestión requiere una cuenta de administrador. Los socios pueden consultar sus mensualidades desde la pantalla habitual, sin modificar pagos ni asignaciones. Cada modificación realizada desde este módulo queda registrada en auditoría y se guarda dentro de una transacción.
-
-## Validación
-
-```powershell
-python manage.py test --noinput
-python manage.py makemigrations --check --dry-run
-```
+Las direcciones anteriores de `/members/` conservan acceso a la interfaz unificada. La explicacion completa de cobros y anulaciones esta en `payments/README.md`.
