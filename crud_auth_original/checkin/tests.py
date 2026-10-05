@@ -77,13 +77,26 @@ class MembershipIndicatorTests(TestCase):
         self.assertEqual(status["last_paid_on"], payment.paid_on)
         self.assertEqual(status["membership_expires_at"], date(2026, 11, 2))
 
-    def test_orange_includes_five_days_and_expiry_day(self):
+    def test_orange_includes_last_five_days_before_expiry(self):
         self.paid_month()
-        for today in [date(2026, 10, 28), date(2026, 10, 29), date(2026, 10, 30), date(2026, 10, 31), date(2026, 11, 1), date(2026, 11, 2)]:
+        for today in [date(2026, 10, 28), date(2026, 10, 29), date(2026, 10, 30), date(2026, 10, 31), date(2026, 11, 1)]:
             with self.subTest(today=today):
                 status = member_checkin_status(self.person, today)
                 self.assertEqual(status["membership_status"], "expiring")
         self.assertEqual(member_checkin_status(self.person, date(2026, 11, 2))["membership_detail"], "Vence hoy")
+
+    def test_payment_cycle_meter_and_red_on_expiry_day(self):
+        self.paid_month(paid_on=date(2026, 10, 10))
+        start = member_checkin_status(self.person, date(2026, 10, 10))
+        near = member_checkin_status(self.person, date(2026, 11, 8))
+        self.assertEqual(start["coverage_remaining_percent"], 100)
+        self.assertEqual(start["membership_status"], "active")
+        self.assertEqual(near["membership_status"], "expiring")
+        for today in (date(2026, 11, 10), date(2026, 11, 11)):
+            with self.subTest(today=today):
+                status = member_checkin_status(self.person, today)
+                self.assertEqual(status["membership_status"], "expired")
+                self.assertEqual(status["coverage_remaining_percent"], 0)
 
     def test_expired_payment_is_red_and_future_payment_date_is_ignored(self):
         self.paid_month(date(2026, 9, 1), date(2026, 9, 5))
@@ -95,6 +108,17 @@ class MembershipIndicatorTests(TestCase):
     def test_unpaid_fee_is_red_and_does_not_block_checkin(self):
         MonthlyPayment.objects.create(member=self.member, period=date(2026, 10, 1), due_date=date(2026, 10, 10), amount=200)
         self.assertEqual(member_checkin_status(self.person, date(2026, 10, 5))["membership_status"], "expired")
+
+    def test_confirmation_without_payment_still_shows_color_scale(self):
+        self.client.force_login(self.operator)
+        checkin = CheckIn.objects.create(dni="12345678", person=self.person, registrado_por=self.operator)
+        response = self.client.get(reverse("checkin_success", args=[checkin.pk]))
+        self.assertContains(response, 'role="meter"')
+        self.assertContains(response, 'fill="#ef4444"')
+        self.assertNotContains(response, 'linearGradient')
+        self.assertNotContains(response, 'coverage-scale-labels')
+        self.assertContains(response, "Sin pago registrado")
+        self.assertEqual(response.context["coverage_elapsed_percent"], 100)
 
     def test_coverage_continues_in_next_month_until_payment_anniversary(self):
         self.paid_month()
@@ -118,9 +142,12 @@ class MembershipIndicatorTests(TestCase):
             response = self.client.post(reverse("checkin_home"), {"dni": "12345678"}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Ana María Pérez")
-        self.assertContains(response, "AP")
+        self.assertContains(response, 'role="meter"')
+        self.assertContains(response, "<kbd>Esc</kbd>")
         self.assertContains(response, "02/10/2026")
-        self.assertContains(response, "Próxima a vencer")
+        self.assertContains(response, "Vence en 5 días")
+        self.assertContains(response, 'fill="#f59e0b"')
+        self.assertNotContains(response, "Próxima a vencer")
         self.assertEqual(response.context["membership_status"], "expiring")
 
     def test_payment_on_fifteenth_expires_on_fifteenth_next_month(self):

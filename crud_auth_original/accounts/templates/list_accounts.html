@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load l10n %}
 
 {% block content %}
 <div class="container-main"></div>
@@ -7,12 +8,10 @@
             <h2> Lista de Usuarios</h2>
             <p>Total: {{ accounts|length }} usuarios</p>
         </div>
-<div class="create-plan-section">
-    <div style="text-align: left;">
-        <a href="{% url 'create_account' %}" class="btn-create-plan">
+<div class="stats-actions" style="justify-content:flex-start; margin-bottom:1.5rem;">
+        <a href="{% url 'create_account' %}" class="btn-audit btn-audit-filter">
             <i class="fas fa-plus-circle"></i> Crear Usuario
         </a>
-    </div>
 </div>
 
         <div class="plans-table-container">
@@ -20,6 +19,7 @@
                 <thead>
                     <tr>
                         <th>Usuario</th>
+                        <th>DNI</th>
                         <th>Email</th>
                         <th>Acciones</th>
                     </tr>
@@ -29,6 +29,9 @@
                     <tr>
                         <td class="plan-name-cell" data-label="Usuario">
                             <i class="fas fa-user-circle"></i> {{ account.username }}
+                        </td>
+                        <td data-label="DNI">
+                            {{ account.person.id_number|default_if_none:"Sin DNI"|default:"Sin DNI"|unlocalize }}
                         </td>
                         <td data-label="Email">
                             <i class="fas fa-envelope"></i> {{ account.email }}
@@ -49,7 +52,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="empty-row">
+                        <td colspan="4" class="empty-row">
                             <i class="fas fa-info-circle"></i> Sin usuarios para mostrar
                         </td>
                     </tr>

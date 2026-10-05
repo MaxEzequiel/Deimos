@@ -1,0 +1,20 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Ingreso | Deimos Gym{% endblock %}</title>
+<script src="{% static 'js/appearance.js' %}"></script>
+<link rel="stylesheet" href="{% static 'style/checkin-kiosk.css' %}?v=20261004-2">
+<script src="{% static 'js/checkin-kiosk.js' %}" defer></script>
+</head>
+<body class="kiosk">
+<header class="kiosk-header">
+<a class="kiosk-brand" href="{% url 'checkin_home' %}" aria-label="Deimos Gym, registrar ingreso"><span class="brand-mark" aria-hidden="true">D.</span><span>DEIMOS<span class="brand-sub">GYM / MEMBER ACCESS</span></span></a>
+<div class="kiosk-clock"><time data-clock>{% now 'H:i' %}</time><span data-date>{% now 'l, d F' %}</span></div>
+<button type="button" class="kiosk-theme-button" data-theme-toggle aria-label="Cambiar a tema claro"><span data-theme-symbol aria-hidden="true">&#9728;</span><span data-theme-label>Claro</span></button>
+<button class="icon-button" type="button" data-fullscreen aria-label="Activar pantalla completa" title="Pantalla completa">⛶</button>
+</header>
+<main class="kiosk-main">{% block content %}{% endblock %}</main>
+<footer class="kiosk-footer"><span><i class="live-dot" aria-hidden="true"></i> Recepción · Registro de ingreso</span><span>DEIMOS GYM / Tu próximo nivel empieza acá.</span></footer>
+</body></html>

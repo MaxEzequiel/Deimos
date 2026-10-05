@@ -24,11 +24,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    const charts = [];
+    function applyChartTheme(chart) {
+        const style = getComputedStyle(document.body);
+        const text = style.getPropertyValue('--text-secondary').trim() || '#b0b0b0';
+        const border = style.getPropertyValue('--border-color').trim() || '#ffffff20';
+        chart.options.plugins.legend.labels.color = text;
+        Object.values(chart.options.scales || {}).forEach(scale => {
+            scale.ticks.color = text;
+            scale.grid.color = border;
+        });
+    }
+    document.addEventListener('deimos:appearance', () => {
+        charts.forEach(chart => { applyChartTheme(chart); chart.update('none'); });
+    });
+
     // Helper: solo crea el gráfico si el canvas existe
     function crear(id, config) {
         const el = document.getElementById(id);
         if (!el) return;  // canvas no existe → no hace nada
-        new Chart(el, config);
+        const chart = new Chart(el, config);
+        charts.push(chart);
+        applyChartTheme(chart);
+        chart.update('none');
     }
 
     fetch(url)

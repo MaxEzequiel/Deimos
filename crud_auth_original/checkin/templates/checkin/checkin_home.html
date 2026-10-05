@@ -1,81 +1,25 @@
-{% extends "base.html" %}
-
-{% block title %}Check-in - Deimos Gym{% endblock %}
-
+{% extends "checkin/kiosk_base.html" %}
 {% block content %}
-<div class="container-main">
-    <div class="welcome-section">
-        <h1><i class="fas fa-fingerprint"></i> Check-in del Gimnasio</h1>
-        <p>Ingresá el DNI de un socio registrado para registrar su entrada</p>
-    </div>
-
-    <div class="cards-row" style="justify-content: center;">
-        <div class="login-box" style="max-width: 500px; width: 100%;">
-            <h1>
-                <i class="fas fa-id-card"></i> Registrar ingreso
-            </h1>
-
-            <form method="POST" autocomplete="off">
-                {% csrf_token %}
-
-                <div class="form-group">
-                    <label for="id_dni">
-                        <i class="fas fa-user"></i> DNI
-                    </label>
-                    {{ form.dni }}
-                    {% if form.dni.errors %}
-                    <div class="error-text">{{ form.dni.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="id_observaciones">
-                        <i class="fas fa-comment"></i> Observaciones
-                    </label>
-                    {{ form.observaciones }}
-                </div>
-
-                <button type="submit" class="btn-outline-light">
-                    <i class="fas fa-sign-in-alt"></i> Registrar
-                </button>
-            </form>
-
-            {% if perms.checkin.view_checkin %}
-            <div class="auth-footer-links">
-                <a href="{% url 'checkin_history' %}">
-                    <i class="fas fa-history"></i> Ver historial
-                </a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    {% if ultimos %}
-    <div class="cards-row" style="margin-top: 2rem;">
-        <div class="card-info" style="width: 100%;">
-            <h4><i class="fas fa-clock"></i> Últimos ingresos de hoy</h4>
-            <div class="plans-table-container" style="margin-top: 1rem;">
-                <table class="plans-table">
-                    <thead>
-                        <tr>
-                            <th>DNI</th>
-                            <th>Entrada</th>
-                            <th>Socio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for c in ultimos %}
-                        <tr>
-                            <td data-label="DNI">{{ c.dni }}</td>
-                            <td data-label="Entrada">{{ c.hora_entrada|date:"H:i" }}</td>
-                            <td data-label="Socio">{% if c.person %}{{ c.person.name }} {{ c.person.surname }}{% else %}Sin socio asociado{% endif %}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+<section class="entry-layout">
+<div class="entry-intro">
+<span class="eyebrow"><span class="live-dot" aria-hidden="true"></span> ES HORA DE ENTRENAR</span>
+<h1>Tu momento.<br>Tu energía.<br><span>Tu mejor versión.</span></h1>
+<p class="intro-copy">Nos alegra verte de nuevo.<br>Registrá tu ingreso y empezá a moverte.</p>
+<div class="entry-steps"><span class="step-number">01</span><div><strong>Ingresá tu DNI</strong><p>Sin puntos ni espacios.</p></div><span class="step-line" aria-hidden="true"></span><span class="step-number">02</span><div><strong>¡A entrenar!</strong><p>Confirmá tu entrada.</p></div></div>
+<div class="intro-decoration" aria-hidden="true"><span>MOVE</span><span>WITH PURPOSE.</span></div>
 </div>
+<section class="entry-card" aria-labelledby="entry-title">
+<div class="card-heading"><span class="card-symbol" aria-hidden="true">↗</span><span class="eyebrow">BIENVENIDO A DEIMOS</span></div>
+<h2 id="entry-title">Registrá tu ingreso</h2><p class="card-copy">Ingresá tu DNI para continuar.</p>
+<form method="post" autocomplete="off" data-entry-form>
+{% csrf_token %}<label class="input-label" for="id_dni">TU DNI</label>{{ form.dni }}
+<p id="dni-hint" class="field-hint">Escribí tu DNI con el teclado, sin puntos.</p>
+{% if form.dni.errors %}<div id="dni-errors" class="entry-error" role="alert">{{ form.dni.errors }}<p>Si necesitás ayuda, acercate a recepción.</p></div>{% endif %}
+{% if form.non_field_errors %}<div class="entry-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+<div class="keyboard-guide"><kbd>? Enter</kbd><span>Confirm? tu ingreso con Enter</span></div>
+
+<button class="entry-submit" type="submit"><span data-submit-label>Registrar ingreso</span><span aria-hidden="true">↗</span></button>
+</form>
+<p class="card-footnote">¿Es tu primera vez? Te esperamos en recepción.</p>
+</section></section>
 {% endblock %}

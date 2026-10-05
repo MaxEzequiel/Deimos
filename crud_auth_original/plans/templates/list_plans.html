@@ -16,12 +16,10 @@
 
     <!-- Botón para CREAR NUEVO PLAN -->
     {% if perms.plans.add_plan %}
-    <div class="create-plan-section">
-        <div style="text-align: left;">
-        <a href="{% url 'create_plan' %}" class="btn-create-plan">
+    <div class="stats-actions" style="justify-content:flex-start; margin-bottom:1.5rem;">
+        <a href="{% url 'create_plan' %}" class="btn-audit btn-audit-filter">
             <i class="fas fa-plus-circle"></i> Crear Nuevo Plan
         </a>
-        </div>
     </div>
     {% endif %}
     <!-- Listado de planes existentes -->

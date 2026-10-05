@@ -1,4 +1,5 @@
 /* Shared Deimos controls, including forms rendered by authentication views. */
+
 .deimos-ui form :is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), select, textarea) {
     box-sizing: border-box;
     width: 100%;
@@ -15,16 +16,35 @@
     color-scheme: dark;
 }
 
-.deimos-ui.light-mode form :is(input, select, textarea) { color-scheme: light; }
-.deimos-ui form :is(input, textarea)::placeholder { color: var(--text-muted); opacity: 1; }
+html[data-theme="light"] .deimos-ui form :is(input, select, textarea) {
+    color-scheme: light;
+}
+
+.deimos-ui form :is(input, textarea)::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
 .deimos-ui form :is(input, select, textarea):focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
     background-color: var(--bg-input-focus);
 }
-.deimos-ui form :is(input, select, textarea):disabled { opacity: .6; cursor: not-allowed; }
-.deimos-ui form [aria-invalid="true"] { border-color: #e74c3c; }
-.deimos-ui form textarea { min-height: 120px; resize: vertical; }
+
+.deimos-ui form :is(input, select, textarea):disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.deimos-ui form [aria-invalid="true"] {
+    border-color: #e74c3c;
+}
+
+.deimos-ui form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
 .deimos-ui form select {
     cursor: pointer;
     min-height: 44px;
@@ -32,7 +52,12 @@
     padding-top: 0.65rem;
     padding-bottom: 0.65rem;
 }
-.deimos-ui form option { background: var(--bg-input); color: var(--text-primary); }
+
+.deimos-ui form option {
+    background: var(--bg-input);
+    color: var(--text-primary);
+}
+
 .deimos-ui form input:is([type="checkbox"], [type="radio"]) {
     width: 18px;
     height: 18px;
@@ -42,6 +67,7 @@
     accent-color: var(--accent);
     cursor: pointer;
 }
+
 .deimos-ui form input[type="file"]::file-selector-button {
     margin-right: 12px;
     padding: 8px 12px;
@@ -52,19 +78,45 @@
     font: inherit;
     cursor: pointer;
 }
+
 .deimos-ui .form-group > label,
-.deimos-ui .form-group legend { color: var(--text-secondary); font-weight: 500; margin-bottom: .5rem; }
+.deimos-ui .form-group legend {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: .5rem;
+}
+
 .required-marker,
 .deimos-ui .required-marker {
     color: #ff4d5f;
     font-weight: 700;
     margin-left: .25rem;
 }
-.deimos-ui .form-group fieldset { min-width: 0; border: 0; padding: 0; }
+
+.deimos-ui .form-group fieldset {
+    min-width: 0;
+    border: 0;
+    padding: 0;
+}
+
 .deimos-ui .form-text,
-.deimos-ui .helptext { display: block; margin-top: .5rem; color: var(--text-muted); font-size: .85rem; }
-.deimos-ui .deimos-errors { margin: .4rem 0; color: #e74c3c; font-size: .9rem; }
-.deimos-ui .deimos-errors p { margin: 0 0 .25rem; }
+.deimos-ui .helptext {
+    display: block;
+    margin-top: .5rem;
+    color: var(--text-muted);
+    font-size: .85rem;
+}
+
+.deimos-ui .deimos-errors {
+    margin: .4rem 0;
+    color: #e74c3c;
+    font-size: .9rem;
+}
+
+.deimos-ui .deimos-errors p {
+    margin: 0 0 .25rem;
+}
+
 .deimos-ui form :is(button:not([class]), input[type="submit"], input[type="button"]) {
     padding: 12px 20px;
     border: 1px solid var(--border-input);
@@ -75,6 +127,7 @@
     font-weight: 600;
     cursor: pointer;
 }
+
 .deimos-ui form :is(button:not([class]), input[type="submit"], input[type="button"]):focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;

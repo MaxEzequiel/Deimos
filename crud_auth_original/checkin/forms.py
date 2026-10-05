@@ -24,6 +24,9 @@ class CheckInForm(forms.Form):
             'autofocus': True,
             'autocomplete': 'off',
             'class': 'checkin-input',
+            'inputmode': 'numeric',
+            'maxlength': '10',
+            'aria-describedby': 'dni-hint',
         })
     )
     observaciones = forms.CharField(

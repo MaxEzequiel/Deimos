@@ -1,10 +1,11 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-design="deimos">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Deimos Gym - Iniciar Sesión{% endblock %}</title>
+    <script src="{% static 'js/appearance.js' %}"></script>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,18 +14,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- CSS Personalizado de la app (TODOS los estilos están aquí) -->
-    <link rel="stylesheet" href="/static/style/style.css">
+    {% include "includes/component_styles.html" %}
     
     <!-- Noty CSS y JS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
-    <link rel="stylesheet" href="{% static 'style/responsive-fix.css' %}">
+    <link rel="stylesheet" href="{% static 'style/responsive-fix.css' %}?v=20261004-clean">
     <link rel="stylesheet" href="{% static 'style/forms.css' %}">
     
+    <link rel="stylesheet" href="{% static 'style/deimos-design.css' %}?v=20261004-clean">
     {% block head %}{% endblock %}
     
 </head>
 <body class="login-page-body deimos-ui">
+    <div class="auth-appearance">{% include "includes/appearance_controls.html" %}</div>
     <div class="login-wrapper">
         <!-- Usamos las clases existentes de style.css -->
         <div class="login-box">

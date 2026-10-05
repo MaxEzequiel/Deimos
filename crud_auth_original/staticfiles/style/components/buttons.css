@@ -1,0 +1,53 @@
+/* Buttons. Keep this module in the documented load order. */
+
+.btn-outline-light, .btn-primary-custom {
+    background: var(--bg-secondary);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: rgb(252, 246, 246);
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover, .btn-primary-custom:hover {
+    transform: translateY(-2px);
+    border: 2px solid #2ecc71;
+}
+
+.btn-secondary-custom {
+    background: var(--bg-secondary);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary-custom:hover {
+    transform: translateY(-2px);
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.button-group .btn,
+.button-group button {
+    min-width: 150px;
+}

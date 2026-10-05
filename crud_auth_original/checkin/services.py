@@ -20,6 +20,8 @@ def member_checkin_status(person, today=None):
         "membership_label": "Mensualidad vencida",
         "membership_detail": "Sin pago registrado",
         "days_remaining": None,
+        "coverage_remaining_percent": 0,
+        "coverage_elapsed_percent": 100,
     }
     if person is None:
         context["membership_detail"] = "Este ingreso no tiene un socio asociado"
@@ -34,12 +36,18 @@ def member_checkin_status(person, today=None):
         return context
     expiry = payment.coverage_end or next_month_expiry(payment.paid_on)
     days_remaining = (expiry - today).days
-    if days_remaining < 0:
+    duration = max(1, (expiry - payment.paid_on).days)
+    remaining_percent = max(0, min(100, round(days_remaining / duration * 100)))
+    context.update({
+        "coverage_remaining_percent": remaining_percent,
+        "coverage_elapsed_percent": 100 - remaining_percent,
+    })
+    if days_remaining <= 0:
         context.update({
             "last_paid_on": payment.paid_on,
             "membership_expires_at": expiry,
             "days_remaining": days_remaining,
-            "membership_detail": f"Venció el {expiry:%d/%m/%Y}",
+            "membership_detail": "Vence hoy" if days_remaining == 0 else f"Venció el {expiry:%d/%m/%Y}",
         })
         return context
     expiring = days_remaining <= 5

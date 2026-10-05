@@ -1,0 +1,135 @@
+/* Notifications. Keep this module in the documented load order. */
+
+.alert {
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: none;
+}
+
+.alert-error {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+}
+
+.alert-success {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border-left: 4px solid #2ecc71;
+}
+
+.alert-info {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border-left: 4px solid #3498db;
+}
+
+.alert-error ul {
+    margin-left: 1.5rem;
+}
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 340px;
+}
+
+.toast-notification {
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    animation: slideInRight 0.3s ease-out;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.toast-notification.toast-success {
+    background: var(--bg-card);
+    color: white;
+    border-left-color: #6ee7b7;
+}
+
+.toast-notification.toast-error {
+    background: var(--bg-card);
+    color: white;
+    border-left-color: #fca5a5;
+}
+
+.toast-notification.toast-warning {
+    background: var(--bg-card);
+    color: white;
+    border-left-color: #fcd34d;
+}
+
+.toast-notification.toast-info {
+    background: var(--bg-card);
+    color: white;
+    border-left-color: #93c5fd;
+}
+
+.toast-notification::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+.toast-success::before {
+    content: "";
+}
+
+.toast-error::before {
+    content: "";
+}
+
+.toast-warning::before {
+    content: "";
+}
+
+.toast-info::before {
+    content: "";
+}
+
+.warning-card {
+    background: rgba(231, 76, 60, 0.1);
+    border-left: 4px solid #e74c3c;
+}
+
+.warning-card i,
+.warning-card p,
+.warning-card p strong {
+    color: #e74c3c;
+}

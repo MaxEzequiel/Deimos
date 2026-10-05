@@ -1,121 +1,24 @@
-{% extends "base.html" %}
-{% block title %}Check-in registrado - Deimos Gym{% endblock %}
-
-{% block head %}
-<style>
-.member-checkin {
-    max-width: 560px;
-    width: 100%;
-    text-align: center;
-}
-.membership-indicator {
-    --state-color: #22c55e;
-    --ring-fill: 100%;
-}
-.membership-indicator.expiring {
-    --state-color: #f59e0b;
-    --ring-fill: 50%;
-}
-.membership-indicator.expired {
-    --state-color: #ef4444;
-}
-.member-initials {
-    width: 116px;
-    height: 116px;
-    margin: 0 auto 1rem;
-    padding: 7px;
-    border-radius: 50%;
-    background: conic-gradient(var(--state-color) var(--ring-fill), #64748b33 0);
-}
-.member-initials span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: #17202c;
-    color: #fff;
-    font-size: 2.1rem;
-    font-weight: 700;
-}
-.membership-label {
-    color: var(--state-color);
-    font-weight: 700;
-    margin-bottom: .4rem;
-}
-.membership-track {
-    height: 6px;
-    background: #64748b33;
-    border-radius: 9px;
-    margin: 1rem 0;
-    overflow: hidden;
-}
-.membership-track span {
-    display: block;
-    height: 100%;
-    width: var(--ring-fill);
-    background: var(--state-color);
-}
-.member-details {
-    text-align: left;
-    margin: 1.5rem 0;
-}
-.member-details div {
-    padding: .65rem 0;
-    border-bottom: 1px solid #64748b33;
-}
-.member-details dt {
-    opacity: .75;
-    font-size: .9rem;
-}
-.member-details dd {
-    margin: .2rem 0 0;
-    font-weight: 600;
-    overflow-wrap: anywhere;
-}
-.member-checkin .button-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: .75rem;
-}
-</style>
-{% endblock %}
-
+{% extends "checkin/kiosk_base.html" %}
+{% block title %}Ingreso registrado | Deimos Gym{% endblock %}
 {% block content %}
-<div class="container-main">
-    <div class="cards-row" style="justify-content: center;">
-        <section class="login-box member-checkin membership-indicator {{ membership_status }}" aria-label="Check-in y estado de mensualidad">
-            <div class="member-initials" aria-hidden="true"><span>{{ member_initials }}</span></div>
-            <h1>{{ member_name }}</h1>
-            <p><i class="fas fa-check-circle" aria-hidden="true"></i> Ingreso registrado</p>
-            <div role="status">
-                <p class="membership-label">{{ membership_label }}</p>
-                <p>{{ membership_detail }}</p>
-            </div>
-            <div class="membership-track" aria-hidden="true"><span></span></div>
-
-            <dl class="member-details">
-                <div><dt>DNI</dt><dd>{{ checkin.dni }}</dd></div>
-                <div><dt>Fecha de registro del socio</dt><dd>{{ member_registered_at|date:"d/m/Y"|default:"Sin datos" }}</dd></div>
-                <div><dt>Entrada registrada</dt><dd>{{ checkin.hora_entrada|date:"d/m/Y H:i" }}</dd></div>
-                <div><dt>Fecha del último pago</dt><dd>{{ last_paid_on|date:"d/m/Y"|default:"Sin pago registrado" }}</dd></div>
-                {% if membership_expires_at %}
-                <div><dt>Vencimiento de la mensualidad</dt><dd>{{ membership_expires_at|date:"d/m/Y" }}</dd></div>
-                {% endif %}
-                {% if checkin.observaciones %}
-                <div><dt>Observaciones</dt><dd>{{ checkin.observaciones }}</dd></div>
-                {% endif %}
-            </dl>
-
-            <div class="button-group" style="margin-top: 2rem;">
-                <a href="{% url 'checkin_home' %}" class="btn-outline-light"><i class="fas fa-redo" aria-hidden="true"></i> Nuevo check-in</a>
-                {% if perms.checkin.view_checkin %}
-                <a href="{% url 'checkin_history' %}" class="btn-secondary-custom"><i class="fas fa-history" aria-hidden="true"></i> Ver historial</a>
-                {% endif %}
-            </div>
-        </section>
-    </div>
+<section class="confirmation membership-indicator {{ membership_status }}" data-confirmation data-return-url="{% url 'checkin_home' %}" aria-labelledby="welcome-title">
+<div class="confirmation-banner"><span class="check-symbol" aria-hidden="true">✓</span> INGRESO REGISTRADO <span>{{ checkin.hora_entrada|date:"H:i" }}</span></div>
+<div class="confirmation-body">
+<span class="eyebrow">¡BUEN ENTRENAMIENTO!</span>
+<h1 id="welcome-title">{{ member_name }}</h1>
+<div class="coverage-summary"><p>{{ membership_detail }}</p></div>
+<div class="coverage-scale" role="meter" aria-label="Vigencia restante del plan" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ coverage_remaining_percent }}" aria-valuetext="{{ membership_detail }}">
+<svg viewBox="0 0 640 64" width="100%" height="64" aria-hidden="true" focusable="false">
+<g fill="{% if membership_status == 'expired' %}#ef4444{% elif membership_status == 'expiring' %}#f59e0b{% else %}#22c55e{% endif %}">
+<rect x="16" y="24" width="608" height="20" rx="10" opacity="0.25"/>
+<svg x="16" y="0" width="608" height="64" overflow="visible"><rect x="0" y="24" width="{{ coverage_elapsed_percent }}%" height="20" rx="10"/><svg x="{{ coverage_elapsed_percent }}%" y="0" width="1" height="64" overflow="visible"><path d="M -8 8 L 8 8 L 0 20 Z"/><circle cx="0" cy="34" r="12"/></svg></svg>
+</g>
+</svg>
 </div>
+{% if membership_expires_at %}
+<dl class="payment-dates"><div><dt>ÚLTIMO PAGO</dt><dd>{{ last_paid_on|date:"d/m/Y" }}</dd></div><div><dt>VENCIMIENTO</dt><dd>{{ membership_expires_at|date:"d/m/Y" }}</dd></div></dl>
+{% else %}<p class="payment-missing">Consultá en recepción para actualizar tu plan.</p>{% endif %}
+<a class="entry-submit" href="{% url 'checkin_home' %}"><span>Siguiente ingreso</span><span aria-hidden="true">→</span></a>
+<p class="confirmation-keyboard">Presioná <kbd>Enter</kbd> o <kbd>Esc</kbd> para el siguiente ingreso</p>
+</div></section>
 {% endblock %}

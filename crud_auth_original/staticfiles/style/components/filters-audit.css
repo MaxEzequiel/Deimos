@@ -1,0 +1,336 @@
+/* Filters Audit. Keep this module in the documented load order. */
+
+.audit-filters {
+    margin: 1.5rem 0 2rem 0;
+    padding: 1.25rem 1.25rem 1.4rem 1.25rem;
+    background: var(--box-subtle-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    transition: background .3s ease, border-color .3s ease;
+}
+
+.audit-filter-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr auto;
+    gap: 0.85rem;
+    align-items: end;
+}
+
+.audit-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.audit-filter-field label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+}
+
+.audit-filter-field label i {
+    font-size: 0.68rem;
+    opacity: 0.7;
+    color: var(--accent);
+}
+
+.audit-filter-field input[type="text"],
+.audit-filter-field input[type="date"],
+.audit-filter-field input[type="month"],
+.audit-filter-field input[type="number"],
+.audit-filter-field input[type="search"],
+.audit-filter-field input[type="email"],
+.audit-filter-field input[type="password"],
+.audit-filter-field textarea,
+.audit-filter-field select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: 7px;
+    padding: 0.55rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-family: inherit;
+    line-height: 1.35;
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+    outline: none;
+}
+
+.audit-filter-field input[type="text"]:hover,
+.audit-filter-field input[type="date"]:hover,
+.audit-filter-field input:hover,
+.audit-filter-field textarea:hover,
+.audit-filter-field select:hover {
+    border-color: var(--accent);
+}
+
+.audit-filter-field input[type="text"]:focus,
+.audit-filter-field input[type="date"]:focus,
+.audit-filter-field input:focus,
+.audit-filter-field textarea:focus,
+.audit-filter-field select:focus {
+    border-color: var(--accent);
+    background: var(--bg-input-focus);
+}
+
+.audit-filter-field input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
+    font-style: italic;
+}
+
+.audit-filter-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b0b0b0' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+    padding-right: 2rem;
+    cursor: pointer;
+}
+
+.audit-filter-field select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.audit-filter-field input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity .15s;
+    filter: invert(0.7);
+}
+
+.audit-filter-field textarea {
+    height: auto;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.module-filter-row,
+.module-search-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    gap: 0.85rem;
+    align-items: end;
+}
+
+.module-search-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.payment-filters {
+    width: 100%;
+    max-width: 820px;
+}
+
+.payment-filters .module-filter-row {
+    grid-template-columns: minmax(0, 170px) minmax(0, 140px) minmax(0, 230px) auto;
+}
+
+.member-filters {
+    width: 100%;
+    max-width: 540px;
+}
+
+.content-container .member-form-panel {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    height: 100%;
+    text-align: left;
+}
+
+.btn-audit {
+    max-width: 100%;
+}
+
+@media (max-width: 991px) {
+    .module-filter-row,
+    .payment-filters .module-filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .content-container .member-form-panel {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .module-filter-row,
+    .payment-filters .module-filter-row,
+    .module-search-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .content-container .btn-audit {
+        height: auto;
+        min-height: 38px;
+        padding-top: 0.65rem;
+        padding-bottom: 0.65rem;
+        white-space: normal;
+    }
+}
+
+.audit-filter-field input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.audit-search input {
+    border-color: rgba(2, 134, 13, 0.5) !important;
+    background: rgba(243, 156, 18, 0.06) !important;
+}
+
+.audit-search input:focus {
+    border-color: var(--accent) !important;
+    background: var(--bg-input-focus) !important;
+}
+
+.audit-filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.btn-audit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0 1rem;
+    height: 38px;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+    border: 1px solid transparent;
+    line-height: 1;
+    transition: all .15s ease;
+    box-sizing: border-box;
+}
+
+.btn-audit i {
+    font-size: 0.8rem;
+}
+
+.btn-audit-filter {
+    background: var(--bg-secondary);
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.btn-audit-filter:hover {
+    transform: translateY(-1px);
+    border-color: #2ecc71;
+}
+
+.btn-audit-filter:active {
+    transform: translateY(0);
+}
+
+.btn-audit-reset {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border-input);
+}
+
+.btn-audit-reset:hover {
+    background: rgba(46, 204, 113, 0.08);
+    color: #2ecc71;
+    border-color: #2ecc71;
+    transform: translateY(-1px);
+}
+
+.btn-audit-reset:active {
+    transform: translateY(0);
+}
+
+.audit-badge-login {
+    background: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+.audit-badge-logout {
+    background: rgba(149, 165, 166, 0.15);
+    color: #7f8c8d;
+}
+
+.audit-badge-create {
+    background: rgba(52, 152, 219, 0.15);
+    color: #2980b9;
+}
+
+.audit-badge-update {
+    background: rgba(243, 156, 18, 0.15);
+    color: #248606;
+}
+
+.audit-badge-delete {
+    background: rgba(231, 76, 60, 0.15);
+    color: #c0392b;
+}
+
+.audit-badge-other {
+    background: rgba(155, 89, 182, 0.15);
+    color: #8e44ad;
+}
+
+.audit-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.audit-page-info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1200px) {
+    .audit-filter-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .audit-filter-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .audit-filter-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .audit-filter-actions {
+        grid-column: 1 / -1;
+    }
+
+    .btn-audit {
+        flex: 1;
+    }
+}
+
+@media (max-width: 500px) {
+    .audit-filter-row {
+        grid-template-columns: 1fr;
+    }
+}

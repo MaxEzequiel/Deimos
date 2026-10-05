@@ -5,6 +5,9 @@
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'style/admin-theme.css' %}">
 <link rel="stylesheet" href="{% static 'style/forms.css' %}">
+<link rel="stylesheet" href="{% static 'style/deimos-design.css' %}">
+<script src="{% static 'js/appearance.js' %}"></script>
 {% endblock %}
 {% block bodyclass %}{{ block.super }} deimos-ui{% endblock %}
 {% block branding %}<div id="site-name"><a href="{% url 'accounts_admin_home' %}">Deimos Gym · Administración</a></div>{% endblock %}
+{% block nav-global %}{% include "includes/appearance_controls.html" %}{% endblock %}

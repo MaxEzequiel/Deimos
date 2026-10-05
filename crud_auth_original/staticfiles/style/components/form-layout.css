@@ -1,0 +1,110 @@
+/* Form Layout. Keep this module in the documented load order. */
+
+.login-box, .signup-box {
+    background: var(--bg-card);
+    border-radius: 24px;
+    padding: 2rem;
+    max-width: 500px;
+    margin: 2rem auto;
+    border: 1px solid var(--border-color);
+    animation: fadeInUp 0.5s ease-out forwards;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.signup-box {
+    max-width: 700px;
+}
+
+.login-box h1, .signup-box h1 {
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.signup-box h3 {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(11, 102, 3, 0.3);
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.login-box label, .signup-box label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.login-box input, .signup-box input, .signup-box select, .signup-box textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.login-box input:focus, .signup-box input:focus, .signup-box select:focus, .signup-box textarea:focus {
+    outline: none;
+    border-color: #2ecc71;
+    background-color: var(--bg-input-focus);
+}
+
+.login-box input::placeholder, .signup-box input::placeholder, .signup-box textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.signup-box textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.login-box input:hover, 
+.signup-box input:hover, 
+.signup-box select:hover {
+    border: 1px solid #2ecc71 !important;
+}
+
+.error-text {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+.form-select {
+    cursor: pointer;
+}
+
+.form-select option {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.forgot-password {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    color: var(--text-muted) !important;
+}

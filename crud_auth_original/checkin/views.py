@@ -33,16 +33,10 @@ def checkin_home(request):
                 observaciones=observaciones,
                 registrado_por=request.user
             )
-            messages.success(request, f"¡Bienvenido! Entrada registrada para DNI {dni}")
             return redirect('checkin_success', pk=checkin.pk)
-    
-    # Últimos 10 ingresos del día
-    hoy = timezone.localdate()
-    ultimos = CheckIn.objects.select_related('person').filter(fecha=hoy).order_by('-hora_entrada')[:10]
     
     return render(request, 'checkin/checkin_home.html', {
         'form': form,
-        'ultimos': ultimos,
     })
 
 

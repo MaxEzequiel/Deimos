@@ -14,11 +14,11 @@
             <p class="hero-subtitle">Accesos rapidos para controlar socios, mensualidades, check-in y reportes.</p>
 
             <div class="hero-actions">
-                <a href="{% url 'member_list' %}" class="hero-btn hero-btn-primary">
-                    <i class="fas fa-id-card"></i> Gestionar socios
+                <a href="{% url 'subscription_list' %}" class="hero-btn hero-btn-primary">
+                    <i class="fas fa-id-card"></i> Suscripciones
                 </a>
-                <a href="{% url 'payment_list' %}" class="hero-btn hero-btn-secondary">
-                    <i class="fas fa-receipt"></i> Ver mensualidades
+                <a href="{% url 'payment_history' %}" class="hero-btn hero-btn-secondary">
+                    <i class="fas fa-receipt"></i> Ver pagos
                 </a>
             </div>
         </div>
@@ -82,7 +82,7 @@
             <article class="home-class-card">
                 <div class="home-class-top"><h3>Socios y pagos</h3></div>
                 <p class="home-class-desc">Administrar planes, membresias, pagos y vigencias individuales.</p>
-                <a href="{% url 'member_list' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Abrir gestion</a>
+                <a href="{% url 'subscription_list' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Abrir gestion</a>
             </article>
             <article class="home-class-card">
                 <div class="home-class-top"><h3>Check-in</h3></div>
