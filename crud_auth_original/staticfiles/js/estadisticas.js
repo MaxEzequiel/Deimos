@@ -69,17 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: lineOpts()
             });
 
-            // --- Línea: membresías por mes (solo si el canvas existe) ---
-            crear("graficoMesMembresias", {
-                type: "line",
-                data: { labels: labelsMes, datasets: [{
-                    label: "Membresías", data: data.membresias_mes.filter(m => !data.mes || m.mes === data.mes).map(m => m.cantidad),
-                    borderColor: "#3498db", backgroundColor: "rgba(52,152,219,.2)",
-                    fill: true, tension: .3
-                }]},
-                options: lineOpts()
-            });
-
             // --- Línea: rutinas por mes (solo si el canvas existe) ---
             crear("graficoMesRutinas", {
                 type: "line",
@@ -91,24 +80,58 @@ document.addEventListener("DOMContentLoaded", () => {
                 options: lineOpts()
             });
 
-            // --- Dona: usuarios por grupo ---
-            crear("graficoGrupo", {
-                type: "doughnut",
+            // --- Barras: pagos realizados y anulaciones ---
+            crear("graficoPagos", {
+                type: "bar",
                 data: {
-                    labels: data.por_grupo.map(g => g.grupo),
-                    datasets: [{ data: data.por_grupo.map(g => g.cantidad), backgroundColor: palette }]
+                    labels: data.pagos_mes.map(p => meses[p.mes - 1]),
+                    datasets: [
+                        {
+                            label: "Pagos realizados",
+                            data: data.pagos_mes.map(p => p.pagos),
+                            backgroundColor: "#2ecc71"
+                        },
+                        {
+                            label: "Anulaciones",
+                            data: data.pagos_mes.map(p => p.anulaciones),
+                            backgroundColor: "#e74c3c"
+                        }
+                    ]
                 },
-                options: { plugins: { legend: { position: "bottom", labels: { color: "#e0e0e0" } } } }
+                options: {
+                    plugins: { legend: { position: "bottom", labels: { color: "#e0e0e0" } } },
+                    scales: {
+                        x: { ticks: { color: "#b0b0b0" } },
+                        y: { ticks: { color: "#b0b0b0" }, beginAtZero: true, precision: 0 }
+                    }
+                }
             });
 
-            // --- Torta: membresías por estado ---
-            crear("graficoMembresiasEstado", {
-                type: "pie",
+            // --- Barras apiladas: suscripciones por plan y estado ---
+            crear("graficoSuscripciones", {
+                type: "bar",
                 data: {
-                    labels: data.membresias_estado.map(m => m.estado),
-                    datasets: [{ data: data.membresias_estado.map(m => m.cantidad), backgroundColor: palette }]
+                    labels: data.suscripciones_por_plan.map(s => s.plan),
+                    datasets: [
+                        {
+                            label: "Activas",
+                            data: data.suscripciones_por_plan.map(s => s.activas),
+                            backgroundColor: "#2ecc71"
+                        },
+                        {
+                            label: "Inactivas",
+                            data: data.suscripciones_por_plan.map(s => s.inactivas),
+                            backgroundColor: "#e74c3c"
+                        }
+                    ]
                 },
-                options: { plugins: { legend: { position: "bottom", labels: { color: "#e0e0e0" } } } }
+                options: {
+                    plugins: { legend: { position: "bottom", labels: { color: "#e0e0e0" } } },
+                    scales: {
+                        x: { stacked: true, ticks: { color: "#b0b0b0" } },
+                        y: { stacked: true, ticks: { color: "#b0b0b0" }, beginAtZero: true, precision: 0 }
+                    }
+                }
             });
 
             // --- Barras: activos vs inactivos ---

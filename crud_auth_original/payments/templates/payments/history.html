@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Pagos{% endblock %}
-{% block content %}<div class="plans-module"><h2>Pagos</h2><p>Historial de cobros y anulaciones.</p><a href="{% url 'subscription_list' %}">Suscripciones</a>
+{% block content %}<div class="plans-module"><h2>Pagos</h2><p>Informe de ingresos, egresos y movimientos de pago.</p><a href="{% url 'subscription_list' %}">Suscripciones</a>
 {% for message in messages %}<p role="status">{{ message }}</p>{% endfor %}
 <form method="get" class="audit-filters"><label for="payment-id">ID del pago</label><input id="payment-id" class="module-input" type="number" min="1" name="payment_id" value="{{ payment_id }}">
 {% if member_id %}<input type="hidden" name="member_id" value="{{ member_id }}">{% endif %}<button type="submit" class="btn-audit">Buscar</button><a href="{% url 'payment_history' %}">Limpiar</a></form>
-<p>Total neto de los resultados: <strong>${{ total|floatformat:2 }}</strong></p>
-<div class="table-responsive"><table class="plans-table"><thead><tr><th>ID</th><th>Usuario</th><th>Mes</th><th>Monto</th><th>Fecha</th><th>Referencia</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-{% for movement in movements %}<tr><td>{{ movement.pk }}</td><td>{{ movement.charge.member.username }}</td><td>{{ movement.charge.period|date:"m/Y" }}</td><td><strong class="{% if movement.amount > 0 %}text-success{% else %}text-danger{% endif %}">${{ movement.amount|floatformat:2 }}</strong></td><td>{{ movement.paid_on|date:"d/m/Y" }}</td><td>{{ movement.reference }}</td>
+<section class="stats-grid" aria-label="Resumen de ingresos y egresos">
+<article class="stat-list-card"><h3>Ingresos</h3><p><strong>${{ ingresos|floatformat:2 }}</strong></p><p>{{ ingresos_cantidad }} pagos realizados</p></article>
+<article class="stat-list-card"><h3>Egresos (anulaciones)</h3><p><strong>${{ egresos|floatformat:2 }}</strong></p><p>{{ egresos_cantidad }} pagos anulados</p></article>
+<article class="stat-list-card"><h3>Total neto</h3><p><strong>${{ total|floatformat:2 }}</strong></p><p>Ingresos menos egresos</p></article>
+</section>
+<div class="table-responsive"><table class="plans-table"><thead><tr><th>ID movimiento</th><th>ID cuota</th><th>Socio</th><th>Registrado por</th><th>Mes</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>Referencia</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+{% for movement in movements %}<tr><td>{{ movement.pk }}</td><td>{{ movement.charge_id }}</td><td>{{ movement.charge.member.username }}</td><td>{{ movement.recorded_by.username|default:"—" }}</td><td>{{ movement.charge.period|date:"m/Y" }}</td><td>{% if movement.amount > 0 %}Ingreso{% else %}Egreso (anulación){% endif %}</td><td><strong class="{% if movement.amount > 0 %}text-success{% else %}text-danger{% endif %}">${{ movement.amount|floatformat:2 }}</strong></td><td>{{ movement.paid_on|date:"d/m/Y" }}</td><td>{{ movement.reference|default:"—" }}</td>
 <td>{% if movement.reversal_of_id %}Anulación de <a href="?payment_id={{ movement.reversal_of_id }}">#{{ movement.reversal_of_id }}</a>{% elif movement.reversal %}Anulado &middot; <a href="?payment_id={{ movement.reversal.pk }}">#{{ movement.reversal.pk }}</a>{% else %}Realizado{% endif %}</td>
 <td>{% if not movement.reversal_of_id and not movement.reversal and perms.pagos.change_monthlypayment and perms.pagos.view_monthlypayment %}<a class="action-btn" href="{% url 'cancel_payment' movement.pk %}">Anular</a>{% endif %}</td></tr>
-{% empty %}<tr><td colspan="8">No hay pagos para mostrar.</td></tr>{% endfor %}</tbody></table></div></div>{% endblock %}
+{% empty %}<tr><td colspan="11">No hay pagos para mostrar.</td></tr>{% endfor %}</tbody></table></div></div>{% endblock %}

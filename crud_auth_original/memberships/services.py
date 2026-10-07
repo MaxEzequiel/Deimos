@@ -20,17 +20,30 @@ def with_last_payment(queryset, user_field='user_id'):
     )
 
 
-def effective_membership_status(membership, today=None):
-    if membership.status != 'active':
-        return 'inactive'
+def membership_coverage(user, today=None, membership=None):
+    """Shared coverage rule: manual activation plus payment, inclusive expiry."""
     today = today or timezone.localdate()
-    if hasattr(membership, 'last_paid_on') and getattr(membership, 'last_paid_on'):
+    membership = membership if membership is not None else getattr(user, 'membership', None)
+    if membership is not None and hasattr(membership, 'last_paid_on') and today == timezone.localdate():
         paid_on = membership.last_paid_on
-        coverage_end = getattr(membership, 'last_coverage_end', None) or next_month_expiry(paid_on)
+        coverage_end = getattr(membership, 'last_coverage_end', None)
     else:
-        payment = membership.user.monthly_payments.filter(paid_on__lte=today).order_by('-paid_on', '-period', '-pk').first()
-        if payment is None:
-            return 'active'
-        paid_on = payment.paid_on
-        coverage_end = payment.coverage_end or next_month_expiry(paid_on)
-    return 'inactive' if coverage_end < today else 'active'
+        payment = user.monthly_payments.filter(paid_on__lte=today).order_by('-paid_on', '-period', '-pk').first()
+        paid_on = payment.paid_on if payment else None
+        coverage_end = payment.coverage_end if payment else None
+    expiry = (coverage_end or next_month_expiry(paid_on)) if paid_on else None
+    days_remaining = (expiry - today).days if expiry else None
+    administratively_active = membership is not None and membership.status == 'active'
+    active = administratively_active and expiry is not None and expiry >= today
+    return {
+        'active': active,
+        'administratively_active': administratively_active,
+        'last_paid_on': paid_on,
+        'expires_at': expiry,
+        'days_remaining': days_remaining,
+    }
+
+
+def effective_membership_status(membership, today=None):
+    coverage = membership_coverage(membership.user, today=today, membership=membership)
+    return 'active' if coverage['active'] else 'inactive'

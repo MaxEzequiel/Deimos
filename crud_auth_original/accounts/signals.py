@@ -73,5 +73,4 @@ def activate_paid_membership(sender, instance, raw=False, using=None, **kwargs):
     if next_month_expiry(instance.paid_on) < timezone.localdate():
         return
     plan_id = Person.objects.using(using).filter(user_id=instance.member_id).values_list('plan_id', flat=True).first()
-    membership, _ = Membership.objects.using(using).get_or_create(user_id=instance.member_id, defaults={'plan_id': plan_id})
-    Membership.objects.using(using).filter(pk=membership.pk).update(status='active')
+    membership, _ = Membership.objects.using(using).get_or_create(user_id=instance.member_id, defaults={'plan_id': plan_id, 'status': 'active'})

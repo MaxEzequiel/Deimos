@@ -6,7 +6,7 @@
 
     <div class="welcome-section">
         <h1><i class="fas fa-chart-line"></i> Estadísticas del Sistema</h1>
-        <p>Usuarios · Membresías · Rutinas</p>
+        <p>Usuarios · Pagos · Suscripciones · Rutinas</p>
     </div>
 
     {# ============ FILTRO ============ #}
@@ -84,30 +84,54 @@
             </div>
         </article>
 
-        {# ---------- MEMBRESÍAS ---------- #}
-        <article class="stat-list-card stat-list-memberships">
+        {# ---------- PAGOS ---------- #}
+        <article class="stat-list-card stat-list-payments">
             <header class="stat-list-header">
-                <h3><i class="fas fa-id-card"></i> Membresías</h3>
+                <h3><i class="fas fa-cash-register"></i> Pagos</h3>
                 <span class="stat-badge stat-badge-info">
-                    <i class="fas fa-chart-pie"></i> {{ resumen_membresias.porcentaje_activas }}% activas
+                    Neto: ${{ resumen_pagos.neto|floatformat:2 }}
+                </span>
+            </header>
+            <div class="stat-list-body">
+                <div class="stat-list-item">
+                    <span class="stat-list-label">Pagos realizados</span>
+                    <span class="stat-list-value">{{ resumen_pagos.pagos_cantidad }}</span>
+                </div>
+                <div class="stat-list-item">
+                    <span class="stat-list-label">Importe ingresado</span>
+                    <span class="stat-list-value">${{ resumen_pagos.pagos_monto|floatformat:2 }}</span>
+                </div>
+                <div class="stat-list-item">
+                    <span class="stat-list-label">Anulaciones</span>
+                    <span class="stat-list-value">{{ resumen_pagos.anulaciones_cantidad }}</span>
+                </div>
+                <div class="stat-list-item">
+                    <span class="stat-list-label">Importe anulado</span>
+                    <span class="stat-list-value">${{ resumen_pagos.anulaciones_monto|floatformat:2 }}</span>
+                </div>
+            </div>
+        </article>
+
+        {# ---------- SUSCRIPCIONES ---------- #}
+        <article class="stat-list-card stat-list-subscriptions">
+            <header class="stat-list-header">
+                <h3><i class="fas fa-id-card"></i> Suscripciones</h3>
+                <span class="stat-badge stat-badge-info">
+                    {{ resumen_suscripciones.activas }} activas
                 </span>
             </header>
             <div class="stat-list-body">
                 <div class="stat-list-item">
                     <span class="stat-list-label">Total</span>
-                    <span class="stat-list-value">{{ resumen_membresias.total }}</span>
+                    <span class="stat-list-value">{{ resumen_suscripciones.total }}</span>
                 </div>
                 <div class="stat-list-item">
                     <span class="stat-list-label">Activas</span>
-                    <span class="stat-list-value">{{ resumen_membresias.activas }}</span>
+                    <span class="stat-list-value">{{ resumen_suscripciones.activas }}</span>
                 </div>
                 <div class="stat-list-item">
-                    <span class="stat-list-label">Vencidas</span>
-                    <span class="stat-list-value">{{ resumen_membresias.vencidas }}</span>
-                </div>
-                <div class="stat-list-item">
-                    <span class="stat-list-label">Sin membresía</span>
-                    <span class="stat-list-value">{{ resumen_membresias.sin_membresia }}</span>
+                    <span class="stat-list-label">Inactivas</span>
+                    <span class="stat-list-value">{{ resumen_suscripciones.inactivas }}</span>
                 </div>
             </div>
         </article>
@@ -162,12 +186,12 @@
             <canvas id="graficoMesUsuarios" height="220"></canvas>
         </div>
         <div class="clase-card">
-            <h3><i class="fas fa-chart-pie"></i> Usuarios por grupo</h3>
-            <canvas id="graficoGrupo" height="220"></canvas>
+            <h3><i class="fas fa-chart-bar"></i> Pagos realizados y anulaciones</h3>
+            <canvas id="graficoPagos" height="220"></canvas>
         </div>
         <div class="clase-card">
-            <h3><i class="fas fa-chart-pie"></i> Membresías por estado</h3>
-            <canvas id="graficoMembresiasEstado" height="220"></canvas>
+            <h3><i class="fas fa-chart-doughnut"></i> Suscripciones por plan y estado</h3>
+            <canvas id="graficoSuscripciones" height="220"></canvas>
         </div>
         <div class="clase-card">
             <h3><i class="fas fa-chart-bar"></i> Activos vs Inactivos</h3>
@@ -175,9 +199,61 @@
         </div>
     </div>
 
+    {# ============ INFORME DE PAGOS ============ #}
+    <section class="clase-card stats-report-card" style="margin-top:2rem;">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Informe de pagos y anulaciones</h3>
+        <div class="plans-table-container">
+            <table class="plans-table">
+                <thead>
+                    <tr><th>Fecha</th><th>Usuario</th><th>Período</th><th>Movimiento</th><th>Importe</th><th>Referencia</th><th>Registrado por</th></tr>
+                </thead>
+                <tbody>
+                    {% for pago in informe_pagos %}
+                    <tr>
+                        <td data-label="Fecha">{{ pago.fecha }}</td>
+                        <td data-label="Usuario">{{ pago.usuario }}</td>
+                        <td data-label="Período">{{ pago.periodo }}</td>
+                        <td data-label="Movimiento">{{ pago.tipo }}</td>
+                        <td data-label="Importe">${{ pago.monto|floatformat:2 }}</td>
+                        <td data-label="Referencia">{{ pago.referencia|default:"—" }}</td>
+                        <td data-label="Registrado por">{{ pago.registrado_por }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="empty-row">No hay pagos ni anulaciones para el período seleccionado.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {# ============ INFORME DE SUSCRIPCIONES ============ #}
+    <section class="clase-card stats-report-card" style="margin-top:2rem;">
+        <h3><i class="fas fa-file-alt"></i> Informe de suscripciones</h3>
+        <div class="plans-table-container">
+            <table class="plans-table">
+                <thead>
+                    <tr><th>Usuario</th><th>Nombre</th><th>Plan</th><th>Precio</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                    {% for suscripcion in informe_suscripciones %}
+                    <tr>
+                        <td data-label="Usuario">{{ suscripcion.usuario }}</td>
+                        <td data-label="Nombre">{{ suscripcion.nombre }}</td>
+                        <td data-label="Plan">{{ suscripcion.plan }}</td>
+                        <td data-label="Precio">${{ suscripcion.precio|floatformat:2 }}</td>
+                        <td data-label="Estado">{{ suscripcion.estado_label }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="empty-row">No hay suscripciones con un plan asignado.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/static/js/estadisticas.js?v=3"></script>
+<script src="/static/js/estadisticas.js?v=4"></script>
 
 {% endblock content %}

@@ -80,7 +80,7 @@ def manage_member(request, user_id):
         except ValidationError as error:
             payment_form.add_error(None, error)
         else:
-            messages.success(request, 'Pago registrado. La membresía y el check-in ya reflejan la vigencia de la mensualidad')
+            messages.success(request, 'Pago registrado. La cobertura se aplica si la membresía está activada')
             return redirect('manage_member', user_id=user.pk)
     if request.method == 'POST' and action not in {'membership', 'payment'}:
         return render(request, '403.html', status=400)

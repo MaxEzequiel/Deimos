@@ -87,8 +87,8 @@ class MemberManagementTests(TestCase):
             self.assertTrue(response.context['membership_form'].errors)
         self.assertFalse(Membership.objects.exists())
 
-    def test_payment_creates_charge_and_activates_membership_and_checkin(self):
-        self.client.post(self.url, {'action': 'membership', 'plan': self.plan.pk, 'status': 'inactive'})
+    def test_payment_creates_charge_and_preserves_active_membership(self):
+        self.client.post(self.url, {'action': 'membership', 'plan': self.plan.pk, 'status': 'active'})
         response = self.client.post(self.url, self.payment_data())
         self.assertRedirects(response, self.url)
         payment = MonthlyPayment.objects.get(member=self.member)
@@ -183,7 +183,6 @@ class MemberManagementTests(TestCase):
         with patch('django.utils.timezone.localdate', return_value=after_expiry):
             self.assertEqual(Membership.objects.get(user=self.member).effective_status, 'inactive')
             self.assertEqual(EstadisticasService.resumen_membresias()['activas'], 0)
-            self.assertEqual(EstadisticasService.membresias_por_estado(), [{'estado': 'inactive', 'cantidad': 1}])
             response = self.client.get(reverse('member_list'), {'q': 'ana'})
             self.assertEqual(response.context['page'][0].membership.effective_status, 'inactive')
             self.client.force_login(self.member)
@@ -193,7 +192,7 @@ class MemberManagementTests(TestCase):
         user = User.objects.create_user('noprofile')
         url = reverse('manage_member', args=[user.pk])
         self.assertContains(self.client.get(url), 'Completá su perfil y DNI')
-        self.client.post(url, {'action': 'membership', 'plan': self.plan.pk, 'status': 'inactive'})
+        self.client.post(url, {'action': 'membership', 'plan': self.plan.pk, 'status': 'active'})
         self.client.post(url, self.payment_data())
         self.assertEqual(Membership.objects.get(user=user).effective_status, 'active')
         self.assertTrue(MonthlyPayment.objects.filter(member=user).exists())

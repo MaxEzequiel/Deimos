@@ -9,6 +9,7 @@ from checkin.forms import CheckInForm
 from checkin.models import CheckIn
 from people.models import Person
 from payments.models import MonthlyPayment
+from memberships.models import Membership
 from checkin.services import member_checkin_status, next_month_expiry
 
 
@@ -61,6 +62,7 @@ class MembershipIndicatorTests(TestCase):
     def setUpTestData(cls):
         cls.operator = User.objects.create_superuser("admin", "", "AdminTest1!")
         cls.member = User.objects.create_user("member")
+        Membership.objects.create(user=cls.member, status="active")
         cls.person = Person.objects.create(user=cls.member, id_number=12345678, name="Ana María", surname="Pérez")
 
     def paid_month(self, period=date(2026, 10, 1), paid_on=date(2026, 10, 2)):
@@ -85,14 +87,15 @@ class MembershipIndicatorTests(TestCase):
                 self.assertEqual(status["membership_status"], "expiring")
         self.assertEqual(member_checkin_status(self.person, date(2026, 11, 2))["membership_detail"], "Vence hoy")
 
-    def test_payment_cycle_meter_and_red_on_expiry_day(self):
+    def test_payment_cycle_meter_and_inclusive_expiry(self):
         self.paid_month(paid_on=date(2026, 10, 10))
         start = member_checkin_status(self.person, date(2026, 10, 10))
         near = member_checkin_status(self.person, date(2026, 11, 8))
         self.assertEqual(start["coverage_remaining_percent"], 100)
         self.assertEqual(start["membership_status"], "active")
         self.assertEqual(near["membership_status"], "expiring")
-        for today in (date(2026, 11, 10), date(2026, 11, 11)):
+        self.assertEqual(member_checkin_status(self.person, date(2026, 11, 10))["membership_status"], "expiring")
+        for today in (date(2026, 11, 11),):
             with self.subTest(today=today):
                 status = member_checkin_status(self.person, today)
                 self.assertEqual(status["membership_status"], "expired")

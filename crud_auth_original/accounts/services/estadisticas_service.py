@@ -2,12 +2,14 @@ from django.utils import timezone
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.models import User, Group
+from django.db.models import Sum, Q
 
 from memberships.models import Membership
 from routines.models import Routine
 from people.models import Person
 from plans.models import Plan
 from memberships.services import with_last_payment
+from payments.models import PaymentMovement
 from collections import Counter
 
 
@@ -30,18 +32,6 @@ class EstadisticasService:
             "superusers": superusers,
             "porcentaje_activos": round((activos / total * 100), 2) if total else 0,
         }
-
-    @staticmethod
-    def por_grupo():
-        rows = (
-            User.objects.values("groups__name")
-            .annotate(cantidad=Count("id"))
-            .order_by("-cantidad")
-        )
-        return [
-            {"grupo": r["groups__name"] or "Sin grupo", "cantidad": r["cantidad"]}
-            for r in rows
-        ]
 
     @staticmethod
     def registros_por_mes(anio=None, mes=None):
@@ -69,8 +59,11 @@ class EstadisticasService:
 
     @staticmethod
     def anios_disponibles():
-        rows = User.objects.dates("date_joined", "year", order="DESC")
-        return [d.year for d in rows] or [timezone.localdate().year]
+        user_years = User.objects.dates("date_joined", "year", order="DESC")
+        payment_years = PaymentMovement.objects.dates("paid_on", "year", order="DESC")
+        years = {item.year for item in user_years}
+        years.update(item.year for item in payment_years)
+        return sorted(years or {timezone.localdate().year}, reverse=True)
 
     @staticmethod
     def usuarios_activos_vs_inactivos():
@@ -118,11 +111,6 @@ class EstadisticasService:
         }
 
     @staticmethod
-    def membresias_por_estado():
-        counts = Counter(membership.effective_status for membership in with_last_payment(Membership.objects.all()))
-        return [{'estado': status, 'cantidad': count} for status, count in counts.most_common()]
-
-    @staticmethod
     def membresias_por_mes(anio=None):
         """Proxy: usa User.date_joined. La membresía se crea al registrar el user."""
         anio = int(anio) if anio else timezone.localdate().year
@@ -152,6 +140,155 @@ class EstadisticasService:
         return [
             {"plan": r["plan__name"] or "Sin plan", "cantidad": r["cantidad"]}
             for r in rows
+        ]
+
+    # ================= PAGOS =================
+
+    @staticmethod
+    def _movimientos_en_periodo(anio=None, mes=None):
+        movimientos = PaymentMovement.objects.all()
+        if anio:
+            movimientos = movimientos.filter(paid_on__year=int(anio))
+        if mes:
+            movimientos = movimientos.filter(paid_on__month=int(mes))
+        return movimientos
+
+    @staticmethod
+    def resumen_pagos(anio=None, mes=None):
+        movimientos = EstadisticasService._movimientos_en_periodo(anio, mes)
+        pagos = movimientos.filter(amount__gt=0).aggregate(
+            cantidad=Count("pk"), monto=Sum("amount")
+        )
+        anulaciones = movimientos.filter(amount__lt=0).aggregate(
+            cantidad=Count("pk"), monto=Sum("amount")
+        )
+        monto_pagos = pagos["monto"] or 0
+        monto_anulaciones = -(anulaciones["monto"] or 0)
+        return {
+            "pagos_cantidad": pagos["cantidad"],
+            "pagos_monto": monto_pagos,
+            "anulaciones_cantidad": anulaciones["cantidad"],
+            "anulaciones_monto": monto_anulaciones,
+            "neto": monto_pagos - monto_anulaciones,
+        }
+
+    @staticmethod
+    def pagos_por_mes(anio=None, mes=None):
+        anio = int(anio) if anio else timezone.localdate().year
+        movimientos = EstadisticasService._movimientos_en_periodo(anio, mes)
+        rows = (
+            movimientos.annotate(mes=TruncMonth("paid_on"))
+            .values("mes")
+            .annotate(
+                pagos=Count("pk", filter=Q(amount__gt=0)),
+                anulaciones=Count("pk", filter=Q(amount__lt=0)),
+            )
+            .order_by("mes")
+        )
+
+        data = {month: {"pagos": 0, "anulaciones": 0} for month in range(1, 13)}
+        for row in rows:
+            if row["mes"]:
+                data[row["mes"].month] = {
+                    "pagos": row["pagos"],
+                    "anulaciones": row["anulaciones"],
+                }
+        months = [int(mes)] if mes else range(1, 13)
+        return [
+            {"mes": month, **data[month]}
+            for month in months
+        ]
+
+    @staticmethod
+    def informe_pagos(anio=None, mes=None):
+        movimientos = (
+            EstadisticasService._movimientos_en_periodo(anio, mes)
+            .select_related("charge__member", "recorded_by")
+            .order_by("-paid_on", "-created_at", "-pk")
+        )
+        return [
+            {
+                "fecha": movimiento.paid_on.strftime("%d/%m/%Y"),
+                "usuario": movimiento.charge.member.username,
+                "periodo": movimiento.charge.period.strftime("%m/%Y"),
+                "tipo": "Anulación" if movimiento.amount < 0 else "Pago realizado",
+                "monto": abs(movimiento.amount),
+                "referencia": movimiento.reference,
+                "registrado_por": movimiento.recorded_by.username if movimiento.recorded_by else "—",
+            }
+            for movimiento in movimientos
+        ]
+
+    # ================= SUSCRIPCIONES =================
+
+    @staticmethod
+    def informe_suscripciones():
+        memberships = with_last_payment(
+            Membership.objects.select_related("user", "user__person", "plan")
+        ).order_by("user__username")
+        rows = []
+        membership_user_ids = set()
+        for membership in memberships:
+            membership_user_ids.add(membership.user_id)
+            person = getattr(membership.user, "person", None)
+            plan = membership.plan or (person.plan if person else None)
+            if not plan:
+                continue
+            rows.append({
+                "usuario": membership.user.username,
+                "nombre": (
+                    f"{person.surname}, {person.name}".strip(", ")
+                    if person else membership.user.get_full_name() or membership.user.username
+                ),
+                "plan": plan.name or "Plan sin nombre",
+                "precio": plan.base_price,
+                "estado": membership.effective_status,
+                "estado_label": "Activa" if membership.effective_status == "active" else "Inactiva",
+            })
+
+        users_without_membership = (
+            User.objects.filter(membership__isnull=True, person__plan__isnull=False)
+            .select_related("person", "person__plan")
+            .order_by("username")
+        )
+        for user in users_without_membership:
+            person = user.person
+            plan = person.plan
+            rows.append({
+                "usuario": user.username,
+                "nombre": f"{person.surname}, {person.name}".strip(", "),
+                "plan": plan.name or "Plan sin nombre",
+                "precio": plan.base_price,
+                "estado": "active",
+                "estado_label": "Activa",
+            })
+        return sorted(rows, key=lambda row: row["usuario"].casefold())
+
+    @staticmethod
+    def resumen_suscripciones(suscripciones=None):
+        suscripciones = suscripciones if suscripciones is not None else EstadisticasService.informe_suscripciones()
+        activas = sum(row["estado"] == "active" for row in suscripciones)
+        total = len(suscripciones)
+        return {
+            "total": total,
+            "activas": activas,
+            "inactivas": total - activas,
+        }
+
+    @staticmethod
+    def suscripciones_por_plan(suscripciones=None):
+        suscripciones = suscripciones if suscripciones is not None else EstadisticasService.informe_suscripciones()
+        planes = {}
+        for suscripcion in suscripciones:
+            plan = planes.setdefault(
+                suscripcion["plan"],
+                {"plan": suscripcion["plan"], "activas": 0, "inactivas": 0},
+            )
+            key = "activas" if suscripcion["estado"] == "active" else "inactivas"
+            plan[key] += 1
+        return [
+            {**plan, "cantidad": plan["activas"] + plan["inactivas"]}
+            for plan in sorted(planes.values(), key=lambda row: row["plan"].casefold())
         ]
 
     # ================= RUTINAS =================

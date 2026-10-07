@@ -39,6 +39,27 @@ class PaymentFlowTests(TestCase):
         self.assertEqual(PaymentMovement.objects.count(), 3)
         self.assertEqual(sum(PaymentMovement.objects.values_list("amount", flat=True)), 100)
 
+    def test_payment_history_summarizes_income_expense_and_recorded_user(self):
+        charge, original = self.pay()
+        reversal = reverse_payment(original.pk, self.admin)
+
+        response = self.client.get(reverse("payment_history"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["ingresos"], Decimal("100"))
+        self.assertEqual(response.context["egresos"], Decimal("100"))
+        self.assertEqual(response.context["total"], Decimal("0"))
+        self.assertEqual(response.context["ingresos_cantidad"], 1)
+        self.assertEqual(response.context["egresos_cantidad"], 1)
+        movements = list(response.context["movements"])
+        self.assertEqual([movement.pk for movement in movements], [reversal.pk, original.pk])
+        self.assertTrue(all(movement.recorded_by == self.admin for movement in movements))
+        self.assertTrue(all(movement.charge.member == self.member for movement in movements))
+        self.assertContains(response, "ID movimiento")
+        self.assertContains(response, "ID cuota")
+        self.assertContains(response, self.admin.username)
+        self.assertContains(response, self.member.username)
+
     def test_subscription_payment_history_filter_and_cancellation(self):
         url = reverse("pay_subscription", args=[self.member.pk])
         self.assertEqual(self.client.get(url).status_code, 200)

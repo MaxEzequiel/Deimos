@@ -21,11 +21,15 @@ def dashboard_usuarios(request):
     if not form.is_valid():
         return HttpResponseBadRequest("Año o mes no válido")
     anio = form.cleaned_data["anio"]
+    mes = form.cleaned_data["mes"]
+    suscripciones = EstadisticasService.informe_suscripciones()
     contexto = {
         "resumen": EstadisticasService.resumen_general(),
-        "resumen_membresias": EstadisticasService.resumen_membresias(),
+        "resumen_suscripciones": EstadisticasService.resumen_suscripciones(suscripciones),
         "resumen_rutinas": EstadisticasService.resumen_rutinas(),
-        "grupos_disponibles": EstadisticasService.grupos_disponibles(),
+        "resumen_pagos": EstadisticasService.resumen_pagos(anio=anio, mes=mes),
+        "informe_pagos": EstadisticasService.informe_pagos(anio=anio, mes=mes),
+        "informe_suscripciones": suscripciones,
         "anios_disponibles": EstadisticasService.anios_disponibles(),
         "anio_seleccionado": int(anio),
         "anio_actual": timezone.localdate().year,
@@ -45,13 +49,11 @@ def datos_graficos(request):
 
     return JsonResponse({
         "resumen": EstadisticasService.resumen_general(),
-        "por_grupo": EstadisticasService.por_grupo(),
         "por_mes": EstadisticasService.registros_por_mes(anio=anio, mes=mes),
+        "pagos_mes": EstadisticasService.pagos_por_mes(anio=anio, mes=mes),
+        "suscripciones_por_plan": EstadisticasService.suscripciones_por_plan(),
         "activos_inactivos": EstadisticasService.usuarios_activos_vs_inactivos(),
         "recientes": EstadisticasService.top_recientes(),
-        "resumen_membresias": EstadisticasService.resumen_membresias(),
-        "membresias_estado": EstadisticasService.membresias_por_estado(),
-        "membresias_mes": EstadisticasService.membresias_por_mes(anio=anio),
         "resumen_rutinas": EstadisticasService.resumen_rutinas(),
         "rutinas_mes": EstadisticasService.rutinas_por_mes(anio=anio),
         "top_clientes": EstadisticasService.top_clientes_con_rutinas(),

@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
@@ -53,7 +53,9 @@ def pay_subscription(request, user_id):
 @login_required
 @require_http_methods(["GET"])
 def payment_history(request):
-    movements = PaymentMovement.objects.select_related("charge__member", "reversal_of", "reversal")
+    movements = PaymentMovement.objects.select_related(
+        "charge__member", "recorded_by", "reversal_of", "reversal"
+    )
     if not request.user.has_perm("pagos.view_monthlypayment"):
         movements = movements.filter(charge__member=request.user)
     payment_id = request.GET.get("payment_id", "").strip()
@@ -61,8 +63,24 @@ def payment_history(request):
     for value, field in [(payment_id, "pk"), (member_id, "charge__member_id")]:
         if value:
             movements = movements.filter(**{field: int(value)}) if value.isascii() and value.isdigit() and len(value) <= 18 else movements.none()
-    total = movements.aggregate(total=Sum("amount"))["total"] or Decimal("0")
-    return render(request, "payments/history.html", {"movements": movements, "payment_id": payment_id, "member_id": member_id, "total": total})
+    totals = movements.aggregate(
+        ingresos=Sum("amount", filter=Q(amount__gt=0)),
+        egresos=Sum("amount", filter=Q(amount__lt=0)),
+        ingresos_cantidad=Count("pk", filter=Q(amount__gt=0)),
+        egresos_cantidad=Count("pk", filter=Q(amount__lt=0)),
+        neto=Sum("amount"),
+    )
+    context = {
+        "movements": movements,
+        "payment_id": payment_id,
+        "member_id": member_id,
+        "ingresos": totals["ingresos"] or Decimal("0"),
+        "egresos": -(totals["egresos"] or Decimal("0")),
+        "ingresos_cantidad": totals["ingresos_cantidad"],
+        "egresos_cantidad": totals["egresos_cantidad"],
+        "total": totals["neto"] or Decimal("0"),
+    }
+    return render(request, "payments/history.html", context)
 
 
 @login_required
