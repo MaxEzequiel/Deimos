@@ -9,11 +9,18 @@ from core.models import AuditLog
 
 @login_required
 @superuser_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def list_audit(request):
-    if request.method == "GET":
-        audit_logs = list(AuditLog.objects.select_related('user').order_by("-modify_date"))
-        for log in audit_logs:
-            action = log.action.lower()
-            log.badge_class = 'audit-badge-' + (action if action in {'create', 'update', 'delete', 'deactivate', 'inscribe'} else 'other')
-        return render(request, "list_audit.html", {"audit_logs": audit_logs})
+	if request.method == "GET":
+		audit_logs = list(
+			AuditLog.objects.select_related("user").order_by("-modify_date")
+		)
+		for log in audit_logs:
+			action = log.action.lower()
+			log.badge_class = "audit-badge-" + (
+				action
+				if action
+				in {"create", "update", "delete", "deactivate", "inscribe"}
+				else "other"
+			)
+		return render(request, "list_audit.html", {"audit_logs": audit_logs})
