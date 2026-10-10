@@ -28,45 +28,53 @@ load_dotenv(BASE_DIR / ".env")
 DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() in {"1", "true", "yes"}
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
-    if not DEBUG:
-        raise RuntimeError("Configurá DJANGO_SECRET_KEY para ejecutar en producción")
-    SECRET_KEY = "django-insecure-local-development-only-deimos"
+	if not DEBUG:
+		raise RuntimeError(
+			"Configurá DJANGO_SECRET_KEY para ejecutar en producción"
+		)
+	SECRET_KEY = "django-insecure-local-development-only-deimos"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]").split(",") if host.strip()]
+ALLOWED_HOSTS = [
+	host.strip()
+	for host in os.environ.get(
+		"DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]"
+	).split(",")
+	if host.strip()
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "accounts",
-    "memberships",
-    "plans",
-    "classes",
-    "payments",
-    "people",
-    "routines",
-    "core",
-    "checkin",
-    "tutorials",
+	"django.contrib.admin",
+	"django.contrib.auth",
+	"django.contrib.contenttypes",
+	"django.contrib.sessions",
+	"django.contrib.messages",
+	"django.contrib.staticfiles",
+	"accounts",
+	"memberships",
+	"plans",
+	"classes",
+	"payments",
+	"people",
+	"routines",
+	"core",
+	"checkin",
+	"tutorials",
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-     "django.middleware.locale.LocaleMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+	"django.middleware.security.SecurityMiddleware",
+	"django.contrib.sessions.middleware.SessionMiddleware",
+	"django.middleware.locale.LocaleMiddleware",
+	"django.middleware.common.CommonMiddleware",
+	"django.middleware.csrf.CsrfViewMiddleware",
+	"django.contrib.auth.middleware.AuthenticationMiddleware",
+	"django.contrib.messages.middleware.MessageMiddleware",
+	"django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "crud_auth.urls"
@@ -74,18 +82,18 @@ ROOT_URLCONF = "crud_auth.urls"
 FORM_RENDERER = "core.form_renderers.DeimosFormRenderer"
 
 TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "crud_auth" / "templates"],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
+	{
+		"BACKEND": "django.template.backends.django.DjangoTemplates",
+		"DIRS": [BASE_DIR / "crud_auth" / "templates"],
+		"APP_DIRS": True,
+		"OPTIONS": {
+			"context_processors": [
+				"django.template.context_processors.request",
+				"django.contrib.auth.context_processors.auth",
+				"django.contrib.messages.context_processors.messages",
+			],
+		},
+	},
 ]
 
 WSGI_APPLICATION = "crud_auth.wsgi.application"
@@ -95,10 +103,10 @@ WSGI_APPLICATION = "crud_auth.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+	"default": {
+		"ENGINE": "django.db.backends.sqlite3",
+		"NAME": BASE_DIR / "db.sqlite3",
+	}
 }
 
 
@@ -106,22 +114,22 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-        "OPTIONS": {"min_length": 8},
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-    {
-        "NAME": "accounts.password_validators.UppercaseAndSpecialCharacterValidator",
-    },
+	{
+		"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+	},
+	{
+		"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+		"OPTIONS": {"min_length": 8},
+	},
+	{
+		"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+	},
+	{
+		"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+	},
+	{
+		"NAME": "accounts.password_validators.UppercaseAndSpecialCharacterValidator",
+	},
 ]
 
 
@@ -129,6 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "es-ar"
+DEFAULT_CHARSET = "utf-8"
 
 TIME_ZONE = "America/Argentina/Buenos_Aires"
 
@@ -138,12 +147,12 @@ USE_I18N = True
 USE_TZ = True
 
 LOCALE_PATHS = [
-    BASE_DIR / "locale",
+	BASE_DIR / "locale",
 ]
 
 LANGUAGES = [
-    ("es", "Español"),
-    ("en", "English"),
+	("es", "Español"),
+	("en", "English"),
 ]
 
 # Static files (CSS, JavaScript, Images)
@@ -152,7 +161,7 @@ LANGUAGES = [
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    BASE_DIR / "staticfiles",
+	BASE_DIR / "staticfiles",
 ]
 
 STATIC_ROOT = BASE_DIR / "static"
@@ -172,14 +181,29 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "true").lower() in {"1", "true", "yes"}
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "true").lower() in {
+	"1",
+	"true",
+	"yes",
+}
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
-EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend" if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else "django.core.mail.backends.console.EmailBackend")
+EMAIL_BACKEND = os.environ.get(
+	"EMAIL_BACKEND",
+	(
+		"django.core.mail.backends.smtp.EmailBackend"
+		if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD
+		else "django.core.mail.backends.console.EmailBackend"
+	),
+)
 EMAIL_TIMEOUT = 15
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL") or EMAIL_HOST_USER or "no-reply@localhost"
+DEFAULT_FROM_EMAIL = (
+	os.environ.get("DEFAULT_FROM_EMAIL")
+	or EMAIL_HOST_USER
+	or "no-reply@localhost"
+)
 LOGIN_REDIRECT_URL = "home"
 if not DEBUG:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
+	SESSION_COOKIE_SECURE = True
+	CSRF_COOKIE_SECURE = True
+	SECURE_SSL_REDIRECT = True
