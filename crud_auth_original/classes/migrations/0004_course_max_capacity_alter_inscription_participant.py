@@ -7,22 +7,23 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("classes", "0003_alter_course_name"),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+	dependencies = [
+		("classes", "0003_alter_course_name"),
+		migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+	]
 
-    operations = [
-        migrations.AddField(
-            model_name="course",
-            name="max_capacity",
-            field=models.IntegerField(default=1),
-        ),
-        migrations.AlterField(
-            model_name="inscription",
-            name="participant",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
-            ),
-        ),
-    ]
+	operations = [
+		migrations.AddField(
+			model_name="course",
+			name="max_capacity",
+			field=models.IntegerField(default=1),
+		),
+		migrations.AlterField(
+			model_name="inscription",
+			name="participant",
+			field=models.ForeignKey(
+				on_delete=django.db.models.deletion.CASCADE,
+				to=settings.AUTH_USER_MODEL,
+			),
+		),
+	]

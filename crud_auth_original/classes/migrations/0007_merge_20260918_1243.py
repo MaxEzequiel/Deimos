@@ -5,9 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("classes", "0004_inscription_unique_course_participant"),
-        ("classes", "0006_alter_course_max_capacity"),
-    ]
+	dependencies = [
+		("classes", "0004_inscription_unique_course_participant"),
+		("classes", "0006_alter_course_max_capacity"),
+	]
 
-    operations = []
+	operations = []

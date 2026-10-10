@@ -6,14 +6,26 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('classes', '0002_alter_course_description_alter_course_name'),
-    ]
+	dependencies = [
+		("classes", "0002_alter_course_description_alter_course_name"),
+	]
 
-    operations = [
-        migrations.AlterField(
-            model_name='course',
-            name='name',
-            field=models.CharField(max_length=50, validators=[django.core.validators.MinLengthValidator(5, 'El nombre de la clase debe tener almenos 5 caracteres'), django.core.validators.MaxLengthValidator(30, 'el nombre de la clase no debe superar los 30 caracteres')]),
-        ),
-    ]
+	operations = [
+		migrations.AlterField(
+			model_name="course",
+			name="name",
+			field=models.CharField(
+				max_length=50,
+				validators=[
+					django.core.validators.MinLengthValidator(
+						5,
+						"El nombre de la clase debe tener almenos 5 caracteres",
+					),
+					django.core.validators.MaxLengthValidator(
+						30,
+						"el nombre de la clase no debe superar los 30 caracteres",
+					),
+				],
+			),
+		),
+	]

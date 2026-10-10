@@ -1,39 +1,58 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-{% if perms.classes.add_course %}
-<div class="signup-box">
-    <h1 class="text-center">
-        <i class="fas fa-plus-circle"></i> Crear Clase
-    </h1>
-    <form action="{% url 'create_class' %}" method="POST">
-        {% csrf_token %}
-        <div class="form-section">
-            <h3><i class="fas fa-chalkboard"></i> Datos de la Clase</h3>
-
-            {% include "includes/styled_form_fields.html" with form=course_form %}
-        </div>
-
-        <div class="button-group mt-4">
-            <button type="submit" class="btn-outline-light">
-                <i class="fas fa-save"></i> Guardar
-            </button>
-            <a href="{% url 'list_class' %}" class="btn-secondary-custom">
-                <i class="fas fa-arrow-left"></i> Cancelar
-            </a>
-        </div>
-    </form>
-</div>
-
-{%else%}
-<div class="login-box text-center">
-    <h1><i class="fas fa-ban"></i> Acceso denegado</h1>
-    <p>No tienes permisos para crear clases.</p>
-    <a href="{% url 'list_class' %}" class="btn-secondary-custom">
-        <i class="fas fa-arrow-left"></i> Volver
-    </a>
-</div>
-{%endif%}
-
+	{% if perms.classes.add_course %}
+		<div class="signup-box">
+			<h1 class="text-center">
+				<i class="fas fa-plus-circle">
+				</i>
+				Crear Clase
+			</h1>
+			<form
+				action="{% url 'create_class' %}"
+				method="post"
+			>
+				{% csrf_token %}
+				<div class="form-section">
+					<h3>
+						<i class="fas fa-chalkboard">
+						</i>
+						Datos de la Clase
+					</h3>
+					{% include "includes/styled_form_fields.html" with form=course_form %}
+				</div>
+				<div class="button-group mt-4">
+					<button type="submit" class="btn-outline-light">
+						<i class="fas fa-save">
+						</i>
+						Guardar
+					</button>
+					<a
+						href="{% url 'list_class' %}"
+						class="btn-secondary-custom"
+					>
+						<i class="fas fa-arrow-left">
+						</i>
+						Cancelar
+					</a>
+				</div>
+			</form>
+		</div>
+	{% else %}
+		<div class="login-box text-center">
+			<h1>
+				<i class="fas fa-ban">
+				</i>
+				Acceso denegado
+			</h1>
+			<p>No tienes permisos para crear clases.</p>
+			<a
+				href="{% url 'list_class' %}"
+				class="btn-secondary-custom"
+			>
+				<i class="fas fa-arrow-left">
+				</i>
+				Volver
+			</a>
+		</div>
+	{% endif %}
 {% endblock content %}

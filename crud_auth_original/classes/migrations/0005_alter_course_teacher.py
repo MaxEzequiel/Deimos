@@ -7,17 +7,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("classes", "0004_course_max_capacity_alter_inscription_participant"),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+	dependencies = [
+		("classes", "0004_course_max_capacity_alter_inscription_participant"),
+		migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+	]
 
-    operations = [
-        migrations.AlterField(
-            model_name="course",
-            name="teacher",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
-            ),
-        ),
-    ]
+	operations = [
+		migrations.AlterField(
+			model_name="course",
+			name="teacher",
+			field=models.ForeignKey(
+				on_delete=django.db.models.deletion.CASCADE,
+				to=settings.AUTH_USER_MODEL,
+			),
+		),
+	]
