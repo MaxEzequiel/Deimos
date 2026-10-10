@@ -1,31 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-{% if perms.plans.delete_plan %}
-
-<div class="login-box" style="max-width: 500px;">
-    <h1 class="text-center">
-        Eliminar Plan
-    </h1>
-
-    <div class="info-card text-center mb-4 warning-card">
-        <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
-        <p class="mt-2">
-            <strong>¿Deseas eliminar este plan?</strong>
-        </p>
-        <p>Esta acción no se puede deshacer.</p>
-    </div>
-
-    <form action="" method="POST">
-        {% csrf_token %}
-        <div class="button-group">
-            <button type="submit" class="btn-outline-light">
-                <i class="fas fa-trash-alt"></i> Eliminar
-            </button>
-            <a href="{% url 'list_plans' %}" class="btn-secondary-custom">
-                <i class="fas fa-times"></i> Cancelar
-            </a>
-        </div>
-    </form>
-</div>
-{% endif %}
+	{% if perms.plans.delete_plan %}
+		<div
+			class="login-box"
+			style="max-width: 500px"
+		>
+			<h1 class="text-center">Eliminar Plan</h1>
+			<div
+				class="info-card text-center mb-4 warning-card"
+			>
+				<i
+					class="fas fa-exclamation-triangle"
+					style="font-size: 2rem"
+				>
+				</i>
+				<p class="mt-2">
+					<strong>¿Deseas eliminar este plan?</strong>
+				</p>
+				<p>Esta acción no se puede deshacer.</p>
+			</div>
+			<form action="" method="post">
+				{% csrf_token %}
+				<div class="button-group">
+					<button type="submit" class="btn-outline-light">
+						<i class="fas fa-trash-alt">
+						</i>
+						Eliminar
+					</button>
+					<a
+						href="{% url 'list_plans' %}"
+						class="btn-secondary-custom"
+					>
+						<i class="fas fa-times">
+						</i>
+						Cancelar
+					</a>
+				</div>
+			</form>
+		</div>
+	{% endif %}
 {% endblock content %}

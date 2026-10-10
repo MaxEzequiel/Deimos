@@ -5,16 +5,20 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("plans", "0003_fix_routine_client_to_people_person"),
-    ]
+	dependencies = [
+		("plans", "0003_fix_routine_client_to_people_person"),
+	]
 
-    operations = [
-        migrations.AlterField(
-            model_name="plan",
-            name="base_price",
-            field=models.DecimalField(
-                blank=True, decimal_places=2, default=0, max_digits=10, null=True
-            ),
-        ),
-    ]
+	operations = [
+		migrations.AlterField(
+			model_name="plan",
+			name="base_price",
+			field=models.DecimalField(
+				blank=True,
+				decimal_places=2,
+				default=0,
+				max_digits=10,
+				null=True,
+			),
+		),
+	]

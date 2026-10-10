@@ -1,55 +1,89 @@
 {% extends "base.html" %}
 {% block content %}
-{% if perms.plans.add_plan %}
-
-<div class="signup-box" style="max-width: 600px;">
-    <h1 class="text-center">
-        <i class="fas fa-plus-circle"></i> Crear Nuevo Plan
-    </h1>
-
-    <form action="" method="post">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="{{ plan_form.name.id_for_label }}">
-                <i class="fas fa-tag"></i> {{ plan_form.name.label }}
-            </label>
-            {{ plan_form.name }}
-            {% if plan_form.name.errors %}
-            <div style="color: red; margin-top: 5px;">{{ plan_form.name.errors }}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ plan_form.description.id_for_label }}">
-                <i class="fas fa-align-left"></i> {{ plan_form.description.label }}
-            </label>
-            {{ plan_form.description }}
-            {% if plan_form.description.errors %}
-            <div style="color: red; margin-top: 5px;">{{ plan_form.description.errors }}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="{{ plan_form.base_price.id_for_label }}">
-                <i class="fas fa-dollar-sign"></i> {{ plan_form.base_price.label }}
-            </label>
-            {{ plan_form.base_price }}
-            {% if plan_form.base_price.errors %}
-            <div style="color: red; margin-top: 5px;">{{ plan_form.base_price.errors }}</div>
-            {% endif %}
-        </div>
-
-        <button type="submit" class="btn-outline-light">
-            <i class="fas fa-save"></i> Crear Plan
-        </button>
-
-        <div class="button-group mt-3">
-            <a href="{% url 'list_plans' %}" class="btn-secondary-custom">
-                <i class="fas fa-arrow-left"></i> Cancelar
-            </a>
-        </div>
-    </form>
-</div>
-{% endif %}
+	{% if perms.plans.add_plan %}
+		<div
+			class="signup-box"
+			style="max-width: 600px"
+		>
+			<h1 class="text-center">
+				<i class="fas fa-plus-circle">
+				</i>
+				Crear Nuevo Plan
+			</h1>
+			<form action="" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="{{ plan_form.name.id_for_label }}">
+						<i class="fas fa-tag">
+						</i>
+						{{ plan_form.name.label }}
+					</label>
+					{{ plan_form.name }}
+					{% if plan_form.name.errors %}
+						<div
+							style="color: red;
+							margin-top: 5px"
+						>
+							{{ plan_form.name.errors }}
+						</div>
+					{% endif %}
+				</div>
+				<div class="form-group">
+					<label
+						for="{{ plan_form.description.id_for_label }}"
+					>
+						<i
+							class="fas fa-align-left"
+						>
+						</i>
+						{{ plan_form.description.label }}
+					</label>
+					{{ plan_form.description }}
+					{% if plan_form.description.errors %}
+						<div
+							style="color: red;
+							margin-top: 5px"
+						>
+							{{ plan_form.description.errors }}
+						</div>
+					{% endif %}
+				</div>
+				<div class="form-group">
+					<label
+						for="{{ plan_form.base_price.id_for_label }}"
+					>
+						<i
+							class="fas fa-dollar-sign"
+						>
+						</i>
+						{{ plan_form.base_price.label }}
+					</label>
+					{{ plan_form.base_price }}
+					{% if plan_form.base_price.errors %}
+						<div
+							style="color: red;
+							margin-top: 5px"
+						>
+							{{ plan_form.base_price.errors }}
+						</div>
+					{% endif %}
+				</div>
+				<button type="submit" class="btn-outline-light">
+					<i class="fas fa-save">
+					</i>
+					Crear Plan
+				</button>
+				<div class="button-group mt-3">
+					<a
+						href="{% url 'list_plans' %}"
+						class="btn-secondary-custom"
+					>
+						<i class="fas fa-arrow-left">
+						</i>
+						Cancelar
+					</a>
+				</div>
+			</form>
+		</div>
+	{% endif %}
 {% endblock content %}

@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('plans', '0004_alter_plan_base_price'),
-    ]
+	dependencies = [
+		("plans", "0004_alter_plan_base_price"),
+	]
 
-    operations = [
-        migrations.AlterField(
-            model_name='plan',
-            name='description',
-            field=models.CharField(blank=True, max_length=180, null=True),
-        ),
-    ]
+	operations = [
+		migrations.AlterField(
+			model_name="plan",
+			name="description",
+			field=models.CharField(blank=True, max_length=180, null=True),
+		),
+	]

@@ -5,13 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("plans", "0002_alter_plan_table"),
-    ]
+	dependencies = [
+		("plans", "0002_alter_plan_table"),
+	]
 
-    operations = [
-        migrations.AlterModelTable(
-            name="plan",
-            table="planes_plan",
-        ),
-    ]
+	operations = [
+		migrations.AlterModelTable(
+			name="plan",
+			table="planes_plan",
+		),
+	]
