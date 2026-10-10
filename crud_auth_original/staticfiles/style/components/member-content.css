@@ -1,167 +1,168 @@
 /* Member Content. Keep this module in the documented load order. */
 
 .home-hero {
-    text-align: center;
-    margin-bottom: 3rem;
+	text-align: center;
+	margin-bottom: 3rem;
 }
 
 .home-hero h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    background: var(--bg-card);
-    margin-bottom: 1rem;
+	font-size: 3rem;
+	font-weight: 700;
+	background: var(--bg-card);
+	margin-bottom: 1rem;
 }
 
 .home-hero p {
-    font-size: 1.2rem;
-    color: var(--text-muted);
+	font-size: 1.2rem;
+	color: var(--text-muted);
 }
 
 .classes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 1.5rem;
+	margin-top: 2rem;
 }
 
 .class-card {
-    background: var(--bg-card);
-    border-radius: 20px;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    border-left: 4px solid var(--accent);
-    transition: all 0.3s ease;
+	background: var(--bg-card);
+	border-radius: 20px;
+	padding: 1.5rem;
+	border: 1px solid var(--border-color);
+	border-left: 4px solid var(--accent);
+	transition: all 0.3s ease;
 }
 
 .class-card:hover {
-    transform: translateY(-5px);
+	transform: translateY(-5px);
 }
 
 .class-card h3 {
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+	color: var(--text-primary);
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
 }
 
 .class-card .profesor {
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+	color: var(--text-secondary);
+	font-weight: 600;
+	margin-bottom: 0.5rem;
 }
 
 .class-card .duracion {
-    color: #2ecc71;
-    margin-bottom: 0.5rem;
+	color: #2ecc71;
+	margin-bottom: 0.5rem;
 }
 
-.class-card .fecha, .class-card .hora {
-    color: var(--text-muted);
+.class-card .fecha,
+.class-card .hora {
+	color: var(--text-muted);
 }
 
 .selection-section {
-    background: var(--bg-card);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-top: 2rem;
-    border: 1px solid var(--border-color);
+	background: var(--bg-card);
+	border-radius: 20px;
+	padding: 1.5rem;
+	margin-top: 2rem;
+	border: 1px solid var(--border-color);
 }
 
 .selection-section h3 {
-    color: var(--text-primary);
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
+	color: var(--text-primary);
+	margin-bottom: 1.5rem;
+	font-size: 1.5rem;
 }
 
 .selection-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1.5rem;
 }
 
 .selection-box {
-    background: var(--box-subtle-bg);
-    border-radius: 16px;
-    padding: 1rem;
+	background: var(--box-subtle-bg);
+	border-radius: 16px;
+	padding: 1rem;
 }
 
 .selection-box h4 {
-    color: var(--text-primary);
-    margin-bottom: 1rem;
+	color: var(--text-primary);
+	margin-bottom: 1rem;
 }
 
 .selection-box ul {
-    list-style: none;
-    padding: 0;
+	list-style: none;
+	padding: 0;
 }
 
 .selection-box ul li {
-    padding: 8px 0;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border-color);
-    cursor: pointer;
-    transition: color 0.3s ease;
+	padding: 8px 0;
+	color: var(--text-secondary);
+	border-bottom: 1px solid var(--border-color);
+	cursor: pointer;
+	transition: color 0.3s ease;
 }
 
 .selection-box ul li:hover {
-    color: var(--text-primary);
+	color: var(--text-primary);
 }
 
 i:hover {
-    color: #2ecc71 !important;
+	color: #2ecc71 !important;
 }
 
 .profile-card {
-    background: var(--bg-card);
-    border-radius: 24px;
-    padding: 2rem;
-    text-align: center;
-    border: 1px solid var(--border-color);
+	background: var(--bg-card);
+	border-radius: 24px;
+	padding: 2rem;
+	text-align: center;
+	border: 1px solid var(--border-color);
 }
 
 .profile-avatar {
-    width: 120px;
-    height: 120px;
-    background: var(--bg-card);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    font-size: 3rem;
-    font-weight: bold;
-    color: white;
+	width: 120px;
+	height: 120px;
+	background: var(--bg-card);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 1.5rem;
+	font-size: 3rem;
+	font-weight: bold;
+	color: white;
 }
 
 .profile-info p {
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-    color: var(--text-secondary);
+	margin-bottom: 0.8rem;
+	font-size: 1.1rem;
+	color: var(--text-secondary);
 }
 
 .profile-info strong {
-    color: var(--text-primary);
+	color: var(--text-primary);
 }
 
 .routine-card {
-    background: var(--bg-card);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
+	background: var(--bg-card);
+	border-radius: 20px;
+	padding: 1.5rem;
+	margin-bottom: 1rem;
+	border: 1px solid var(--border-color);
 }
 
 .routine-day {
-    color: var(--text-primary);
-    font-size: 1.3rem;
-    border-left: 3px solid var(--accent);
-    padding-left: 1rem;
-    margin-bottom: 1rem;
+	color: var(--text-primary);
+	font-size: 1.3rem;
+	border-left: 3px solid var(--accent);
+	padding-left: 1rem;
+	margin-bottom: 1rem;
 }
 
 .routine-exercise {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.8rem;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-secondary);
+	display: flex;
+	justify-content: space-between;
+	padding: 0.8rem;
+	border-bottom: 1px solid var(--border-color);
+	color: var(--text-secondary);
 }

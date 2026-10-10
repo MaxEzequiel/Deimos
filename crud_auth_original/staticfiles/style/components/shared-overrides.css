@@ -1,81 +1,91 @@
 /* Shared Overrides. Keep this module in the documented load order. */
 
 .home-hero h1 {
-    font-size: 2rem;
+	font-size: 2rem;
 }
 
-.classes-grid, .tutorials-grid {
-    grid-template-columns: 1fr;
+.classes-grid,
+.tutorials-grid {
+	grid-template-columns: 1fr;
 }
 
 .selection-grid {
-    grid-template-columns: 1fr;
+	grid-template-columns: 1fr;
 }
 
-.login-box, .signup-box {
-    margin: 1rem;
-    padding: 1.5rem;
+.login-box,
+.signup-box {
+	margin: 1rem;
+	padding: 1.5rem;
 }
 
 .signup-box h1 {
-    font-size: 1.5rem;
+	font-size: 1.5rem;
 }
 
 .button-group {
-    flex-direction: column;
-    gap: 0.8rem;
+	flex-direction: column;
+	gap: 0.8rem;
 }
 
 .button-group .btn,
 .button-group button {
-    width: 100%;
-    min-width: unset;
+	width: 100%;
+	min-width: unset;
 }
 
 .plan-title {
-    font-size: 1.2rem;
+	font-size: 1.2rem;
 }
 
 .plan-price {
-    font-size: 1.4rem;
+	font-size: 1.4rem;
 }
 
 .plan-actions {
-    flex-direction: column;
+	flex-direction: column;
 }
 
-.btn-edit, .btn-delete-plan {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
+.btn-edit,
+.btn-delete-plan {
+	width: 100%;
+	text-align: center;
+	justify-content: center;
 }
 
 @media (max-width: 480px) {
-    .container-main {
-        padding: 10px;
-    }
+	.container-main {
+		padding: 10px;
+	}
 
-    .home-hero h1 {
-        font-size: 1.5rem;
-    }
+	.home-hero h1 {
+		font-size: 1.5rem;
+	}
 
-    .card-modern, .info-card, .class-card {
-        padding: 1rem;
-    }
+	.card-modern,
+	.info-card,
+	.class-card {
+		padding: 1rem;
+	}
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
-.card-modern, .info-card, .class-card, .login-box, .signup-box, .plan-card {
-    animation: fadeInUp 0.5s ease-out forwards;
+.card-modern,
+.info-card,
+.class-card,
+.login-box,
+.signup-box,
+.plan-card {
+	animation: fadeInUp 0.5s ease-out forwards;
 }

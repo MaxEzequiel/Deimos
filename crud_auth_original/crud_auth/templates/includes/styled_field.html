@@ -1,7 +1,34 @@
-<div class="audit-filter-field form-group">
-    {% if field.use_fieldset %}<fieldset{% if field.aria_describedby %} aria-describedby="{{ field.aria_describedby }}"{% endif %}><legend>{{ field.label }}</legend>{% else %}{{ field.label_tag }}{% endif %}
-    {{ field }}
-    {{ field.errors }}
-    {% if field.help_text %}<div class="form-text"{% if field.auto_id %} id="{{ field.auto_id }}_helptext"{% endif %}>{{ field.help_text|safe }}</div>{% endif %}
-    {% if field.use_fieldset %}</fieldset>{% endif %}
+<div class="audit-filter-field form-group" {% if field.name == 'courses' %}data-payment-courses{% endif %}>
+	{% if field.name == 'courses' and not field.field.queryset %}
+		<p>No hay clases disponibles con precio y cupo.</p>
+	{% endif %}
+	{% if field.use_fieldset %}
+		<fieldset
+			if
+			field
+			aria_describedby
+			aria-describedby="{{ field.aria_describedby }}"
+			endif
+		>
+			<legend>{{ field.label }}</legend>
+		{% else %}
+			{{ field.label_tag }}
+		{% endif %}
+		{{ field }}
+		{{ field.errors }}
+		{% if field.help_text %}
+			<div
+				class="form-text"
+				if
+				field
+				auto_id
+				id="{{ field.auto_id }}_helptext"
+				endif
+			>
+				{{ field.help_text|safe }}
+			</div>
+		{% endif %}
+		{% if field.use_fieldset %}
+		</fieldset>
+	{% endif %}
 </div>

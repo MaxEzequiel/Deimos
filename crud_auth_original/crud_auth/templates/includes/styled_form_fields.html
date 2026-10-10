@@ -1,11 +1,18 @@
 {% if form.non_field_errors %}
-<div class="error-text" role="alert">{{ form.non_field_errors }}</div>
+	<div class="error-text" role="alert">{{ form.non_field_errors }}</div>
 {% endif %}
 {% for field in form %}
-    {% if field.is_hidden %}
-        {{ field }}
-        {% if field.errors %}<div class="error-text" role="alert">{{ field.errors }}</div>{% endif %}
-    {% else %}
-    {% include "includes/styled_field.html" %}
-    {% endif %}
+	{% if field.is_hidden %}
+		{{ field }}
+		{% if field.errors %}
+			<div
+				class="error-text"
+				role="alert"
+			>
+				{{ field.errors }}
+			</div>
+		{% endif %}
+	{% else %}
+		{% include "includes/styled_field.html" %}
+	{% endif %}
 {% endfor %}

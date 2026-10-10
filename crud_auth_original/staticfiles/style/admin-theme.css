@@ -1,66 +1,67 @@
 /* Deimos identity for the technical administration modules. */
 
 body.deimos-ui {
-    --header-branding-color: var(--d-text);
-    --accent-color: var(--d-link);
-    --breadcrumbs-fg: var(--d-muted);
-    --breadcrumbs-link-fg: var(--d-link);
-    --breadcrumbs-bg: var(--d-raised);
-    --link-selected-fg: var(--d-link);
-    --selected-row: var(--d-hover);
-    --close-button-bg: var(--d-raised);
-    --close-button-hover-bg: var(--d-hover);
+	--header-branding-color: var(--d-text);
+	--accent-color: var(--d-link);
+	--breadcrumbs-fg: var(--d-muted);
+	--breadcrumbs-link-fg: var(--d-link);
+	--breadcrumbs-bg: var(--d-raised);
+	--link-selected-fg: var(--d-link);
+	--selected-row: var(--d-hover);
+	--close-button-bg: var(--d-raised);
+	--close-button-hover-bg: var(--d-hover);
 }
 
 .deimos-ui {
-    font-family: system-ui, sans-serif;
+	font-family: system-ui, sans-serif;
 }
 
 .deimos-ui #header {
-    padding: 20px 32px;
-    border-bottom: 1px solid var(--border-color);
+	padding: 20px 32px;
+	border-bottom: 1px solid var(--border-color);
 }
 
 .deimos-ui #content {
-    padding: 28px;
+	padding: 28px;
 }
 
 .deimos-ui .module {
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--bg-secondary);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	overflow: hidden;
+	background: var(--bg-secondary);
 }
 
 .deimos-ui .module :is(h2, caption) {
-    padding: 14px;
-    font-weight: 600;
+	padding: 14px;
+	font-weight: 600;
 }
 
-.deimos-ui :is(.button, input[type="submit"], input[type="button"], .submit-row a.deletelink) {
-    border-radius: 10px;
-    padding: 12px 18px;
-    font-weight: 600;
+.deimos-ui :is(.button, input[type="submit"], input[type="button"],
+	.submit-row a.deletelink) {
+	border-radius: 10px;
+	padding: 12px 18px;
+	font-weight: 600;
 }
 
 .deimos-ui .submit-row {
-    border-radius: 12px;
+	border-radius: 12px;
 }
 
 .deimos-ui form .form-row :is(input, select, textarea) {
-    max-width: 640px;
+	max-width: 640px;
 }
 
 .deimos-ui form input:is([type="checkbox"], [type="radio"]) {
-    display: inline-block;
+	display: inline-block;
 }
 
 @media (max-width: 767px) {
-    .deimos-ui #content {
-        padding: 16px;
-    }
+	.deimos-ui #content {
+		padding: 16px;
+	}
 
-    .deimos-ui #header {
-        padding: 16px;
-    }
+	.deimos-ui #header {
+		padding: 16px;
+	}
 }
