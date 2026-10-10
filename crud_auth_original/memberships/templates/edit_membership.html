@@ -1,21 +1,28 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<div class="signup-box" style="max-width: 600px; margin: 0 auto;">
-    <h2 class="text-center">Editar membresía de {{ username }}</h2>
-
-    <form method="post">
-        {% csrf_token %}
-        {% include "includes/styled_form_fields.html" with form=form %}
-        <button type="submit" class="btn-audit btn-audit-filter">Guardar Cambios</button>
-    </form>
-
-    {% if messages %}
-        {% for m in messages %}
-        <div class="info-card mt-3">{{ m }}</div>
-        {% endfor %}
-    {% endif %}
-</div>
-
+	<div
+		class="signup-box"
+		style="max-width: 600px;
+		margin: 0 auto"
+	>
+		<h2 class="text-center">
+			Editar membresía de
+			{{ username }}
+		</h2>
+		<form method="post">
+			{% csrf_token %}
+			{% include "includes/styled_form_fields.html" with form=form %}
+			<button
+				type="submit"
+				class="btn-audit btn-audit-filter"
+			>
+				Guardar Cambios
+			</button>
+		</form>
+		{% if messages %}
+			{% for m in messages %}
+				<div class="info-card mt-3">{{ m }}</div>
+			{% endfor %}
+		{% endif %}
+	</div>
 {% endblock %}

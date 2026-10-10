@@ -11,110 +11,270 @@ from .services import register_member_payment, reverse_payment
 
 
 class PaymentFlowTests(TestCase):
-    def setUp(self):
-        self.admin = get_user_model().objects.create_superuser(username="operator", password="test")
-        self.member = get_user_model().objects.create_user(username="subscriber")
-        self.other = get_user_model().objects.create_user(username="other")
-        self.plan = Plan.objects.create(name="Plan", base_price=100)
-        Membership.objects.create(user=self.member, plan=self.plan, status="active")
-        self.data = {"period": timezone.localdate().replace(day=1), "amount": Decimal("100"), "paid_on": timezone.localdate()}
-        self.client.force_login(self.admin)
+	def setUp(self):
+		self.admin = get_user_model().objects.create_superuser(
+			username="operator", password="test"
+		)
+		self.member = get_user_model().objects.create_user(
+			username="subscriber"
+		)
+		self.other = get_user_model().objects.create_user(username="other")
+		self.plan = Plan.objects.create(name="Plan", base_price=100)
+		Membership.objects.create(
+			user=self.member, plan=self.plan, status="active"
+		)
+		self.data = {
+			"period": timezone.localdate().replace(day=1),
+			"amount": Decimal("100"),
+			"paid_on": timezone.localdate(),
+			"method": "cash",
+		}
+		self.client.force_login(self.admin)
 
-    def pay(self):
-        charge = register_member_payment(self.member, self.data, self.admin)
-        return charge, charge.movements.get(amount__gt=0, reversal__isnull=True)
+	def pay(self):
+		charge = register_member_payment(self.member, self.data, self.admin)
+		return charge, charge.movements.get(amount__gt=0, reversal__isnull=True)
 
-    def test_reversal_keeps_original_and_allows_repayment(self):
-        charge, original = self.pay()
-        reversal = reverse_payment(original.pk, self.admin)
-        self.assertEqual(reversal.amount, -original.amount)
-        self.assertEqual(reversal.reversal_of_id, original.pk)
-        original.refresh_from_db()
-        self.assertEqual(original.amount, 100)
-        charge.refresh_from_db()
-        self.assertIsNone(charge.paid_on)
-        with self.assertRaises(ValidationError): reverse_payment(original.pk, self.admin)
-        with self.assertRaises(ValidationError): reverse_payment(reversal.pk, self.admin)
-        register_member_payment(self.member, self.data, self.admin)
-        self.assertEqual(PaymentMovement.objects.count(), 3)
-        self.assertEqual(sum(PaymentMovement.objects.values_list("amount", flat=True)), 100)
+	def test_reversal_keeps_original_and_allows_repayment(self):
+		charge, original = self.pay()
+		reversal = reverse_payment(original.pk, self.admin)
+		self.assertEqual(reversal.amount, -original.amount)
+		self.assertEqual(reversal.reversal_of_id, original.pk)
+		original.refresh_from_db()
+		self.assertEqual(original.amount, 100)
+		charge.refresh_from_db()
+		self.assertIsNone(charge.paid_on)
+		with self.assertRaises(ValidationError):
+			reverse_payment(original.pk, self.admin)
+		with self.assertRaises(ValidationError):
+			reverse_payment(reversal.pk, self.admin)
+		register_member_payment(self.member, self.data, self.admin)
+		self.assertEqual(PaymentMovement.objects.count(), 3)
+		self.assertEqual(
+			sum(PaymentMovement.objects.values_list("amount", flat=True)), 100
+		)
 
-    def test_payment_history_summarizes_income_expense_and_recorded_user(self):
-        charge, original = self.pay()
-        reversal = reverse_payment(original.pk, self.admin)
+	def test_payment_history_summarizes_income_expense_and_recorded_user(self):
+		charge, original = self.pay()
+		reversal = reverse_payment(original.pk, self.admin)
 
-        response = self.client.get(reverse("payment_history"))
+		response = self.client.get(reverse("payment_history"))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["ingresos"], Decimal("100"))
-        self.assertEqual(response.context["egresos"], Decimal("100"))
-        self.assertEqual(response.context["total"], Decimal("0"))
-        self.assertEqual(response.context["ingresos_cantidad"], 1)
-        self.assertEqual(response.context["egresos_cantidad"], 1)
-        movements = list(response.context["movements"])
-        self.assertEqual([movement.pk for movement in movements], [reversal.pk, original.pk])
-        self.assertTrue(all(movement.recorded_by == self.admin for movement in movements))
-        self.assertTrue(all(movement.charge.member == self.member for movement in movements))
-        self.assertContains(response, "ID movimiento")
-        self.assertContains(response, "ID cuota")
-        self.assertContains(response, self.admin.username)
-        self.assertContains(response, self.member.username)
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(response.context["ingresos"], Decimal("100"))
+		self.assertEqual(response.context["egresos"], Decimal("100"))
+		self.assertEqual(response.context["total"], Decimal("0"))
+		self.assertEqual(response.context["ingresos_cantidad"], 1)
+		self.assertEqual(response.context["egresos_cantidad"], 1)
+		movements = list(response.context["movements"])
+		self.assertEqual(
+			[movement.pk for movement in movements], [reversal.pk, original.pk]
+		)
+		self.assertTrue(
+			all(movement.recorded_by == self.admin for movement in movements)
+		)
+		self.assertTrue(
+			all(movement.charge.member == self.member for movement in movements)
+		)
+		self.assertContains(response, "ID MOVI.")
+		self.assertContains(response, "ID cuota")
+		self.assertContains(response, "<th>DNI</th>")
+		self.assertNotContains(response, "<th>Registrado por</th>")
+		self.assertContains(response, self.member.username)
 
-    def test_subscription_payment_history_filter_and_cancellation(self):
-        url = reverse("pay_subscription", args=[self.member.pk])
-        self.assertEqual(self.client.get(url).status_code, 200)
-        self.assertFalse(MonthlyPayment.objects.exists())
-        response = self.client.post(url, {**self.data, "period": self.data["period"].strftime("%Y-%m"), "paid_on": self.data["paid_on"].isoformat()})
-        self.assertRedirects(response, reverse("payment_history"))
-        movement = PaymentMovement.objects.get()
-        response = self.client.get(reverse("payment_history"), {"member_id": self.member.pk, "payment_id": movement.pk})
-        self.assertEqual(list(response.context["movements"]), [movement])
-        cancel = reverse("cancel_payment", args=[movement.pk])
-        self.assertEqual(self.client.get(cancel).status_code, 200)
-        self.assertEqual(PaymentMovement.objects.count(), 1)
-        self.client.post(cancel)
-        self.client.post(cancel)
-        self.assertEqual(PaymentMovement.objects.count(), 2)
-        self.assertEqual(self.client.get(reverse("payment_history")).context["total"], 0)
+	def test_subscription_payment_history_filter_and_cancellation(self):
+		url = reverse("pay_subscription", args=[self.member.pk])
+		self.assertEqual(self.client.get(url).status_code, 200)
+		self.assertFalse(MonthlyPayment.objects.exists())
+		response = self.client.post(
+			url,
+			{
+				**self.data,
+				"period": self.data["period"].strftime("%Y-%m"),
+				"paid_on": self.data["paid_on"].isoformat(),
+				"method": "cash",
+			},
+		)
+		self.assertRedirects(response, reverse("payment_history"))
+		movement = PaymentMovement.objects.get()
+		response = self.client.get(
+			reverse("payment_history"),
+			{"member_id": self.member.pk, "payment_id": movement.pk},
+		)
+		self.assertEqual(list(response.context["movements"]), [movement])
+		cancel = reverse("cancel_payment", args=[movement.pk])
+		self.assertEqual(self.client.get(cancel).status_code, 200)
+		self.assertEqual(PaymentMovement.objects.count(), 1)
+		self.client.post(cancel)
+		self.client.post(cancel)
+		self.assertEqual(PaymentMovement.objects.count(), 2)
+		self.assertEqual(
+			self.client.get(reverse("payment_history")).context["total"], 0
+		)
 
-    def test_permissions_and_invalid_filters(self):
-        charge, movement = self.pay()
-        self.client.force_login(self.other)
-        self.assertEqual(list(self.client.get(reverse("payment_history")).context["movements"]), [])
-        self.assertEqual(self.client.post(reverse("cancel_payment", args=[movement.pk])).status_code, 403)
-        self.assertEqual(self.client.post(reverse("pay_subscription", args=[self.member.pk])).status_code, 403)
-        self.client.force_login(self.admin)
-        for value in ["abc", "-1", "9" * 100]:
-            self.assertEqual(list(self.client.get(reverse("payment_history"), {"payment_id": value}).context["movements"]), [])
+	def test_search_by_dni_and_name_respects_permissions(self):
+		from people.models import Person
 
-    def test_unified_subscriptions_include_members_without_plan(self):
-        response = self.client.get(reverse("subscription_list"))
-        self.assertEqual(response.templates[0].name, "memberships/member_list.html")
-        self.assertContains(response, "Agregar plan")
-        member = next(user for user in response.context["page"] if user.pk == self.member.pk)
-        self.assertEqual(member.subscription_plan, self.plan)
-        self.assertEqual(member.subscription_amount, 100)
-        self.assertTrue(member.can_pay_subscription)
-        self.client.force_login(self.other)
-        response = self.client.get(reverse("subscription_list"))
-        self.assertEqual([user.pk for user in response.context["page"]], [self.other.pk])
-        self.assertNotContains(response, "Agregar plan")
+		Person.objects.create(
+			user=self.member, name="Ana", surname="Perez", id_number=12345678,
+		)
+		charge, movement = self.pay()
+		url = reverse("payment_history")
+		for query in ["12345678", "ana", "PEREZ", "Ana Perez"]:
+			response = self.client.get(url, {"q": query})
+			self.assertEqual(list(response.context["movements"]), [movement])
+			self.assertEqual(response.context["total"], Decimal("100"))
+			self.assertContains(response, "12345678")
+			self.assertNotContains(response, "12.345.678")
+		for query in [str(movement.pk), "99999999", "Desconocido", "9" * 100]:
+			self.assertEqual(
+				list(self.client.get(url, {"q": query}).context["movements"]),
+				[],
+			)
+		self.client.force_login(self.other)
+		self.assertEqual(
+			list(self.client.get(url, {"q": "Ana"}).context["movements"]), [],
+		)
 
-    def test_removed_module_and_payment_method(self):
-        for url in ["/payments/generate/", "/payments/1/record/"]:
-            self.assertEqual(self.client.get(url).status_code, 404)
-        response = self.client.get(reverse("pay_subscription", args=[self.member.pk]))
-        self.assertNotIn("method", response.context["form"].fields)
-        self.assertNotContains(response, "Medio de pago")
-        self.assertNotContains(response, "> Mensualidades</a>")
-        self.assertEqual(self.client.get("/payments/").status_code, 200)
+	def test_permissions_and_invalid_filters(self):
+		charge, movement = self.pay()
+		self.client.force_login(self.other)
+		self.assertEqual(
+			list(
+				self.client.get(reverse("payment_history")).context["movements"]
+			),
+			[],
+		)
+		self.assertEqual(
+			self.client.post(
+				reverse("cancel_payment", args=[movement.pk])
+			).status_code,
+			403,
+		)
+		self.assertEqual(
+			self.client.post(
+				reverse("pay_subscription", args=[self.member.pk])
+			).status_code,
+			403,
+		)
+		self.client.force_login(self.admin)
+		for value in ["abc", "-1", "9" * 100]:
+			self.assertEqual(
+				list(
+					self.client.get(
+						reverse("payment_history"), {"payment_id": value}
+					).context["movements"]
+				),
+				[],
+			)
 
-    def test_coverage_is_preserved_and_cleared_on_reversal(self):
-        from memberships.services import next_month_expiry
-        charge, movement = self.pay()
-        self.assertEqual(charge.coverage_start, self.data["paid_on"])
-        self.assertEqual(charge.coverage_end, next_month_expiry(self.data["paid_on"]))
-        reverse_payment(movement.pk, self.admin)
-        charge.refresh_from_db()
-        self.assertIsNone(charge.coverage_start)
-        self.assertIsNone(charge.coverage_end)
+	def test_invoice_displays_payment_and_membership_and_limits_access(self):
+		charge, movement = self.pay()
+		url = reverse("payment_invoice", args=[movement.pk])
+		response = self.client.get(url)
+		self.assertContains(response, self.member.username)
+		self.assertContains(response, self.plan.name)
+		self.assertContains(response, movement.reference)
+		self.assertContains(response, "100,00")
+		self.assertContains(response, 'id="print-invoice"')
+		self.assertContains(response, "/static/style/payment-invoice.css")
+		self.assertContains(response, "/static/js/payment-invoice.js")
+		self.assertContains(self.client.get(reverse("payment_history")), url)
+		self.client.force_login(self.member)
+		self.assertEqual(self.client.get(url).status_code, 200)
+		self.client.force_login(self.other)
+		self.assertEqual(self.client.get(url).status_code, 404)
+		self.client.logout()
+		self.assertEqual(self.client.get(url).status_code, 302)
+
+	def test_invoice_marks_reversed_payments_and_handles_missing_membership(
+		self,
+	):
+		charge, movement = self.pay()
+		reversal = reverse_payment(movement.pk, self.admin)
+		self.assertContains(
+			self.client.get(reverse("payment_invoice", args=[movement.pk])),
+			"Pago anulado",
+		)
+		response = self.client.get(
+			reverse("payment_invoice", args=[reversal.pk])
+		)
+		self.assertContains(response, "Anulación del pago")
+		self.assertContains(response, "-100,00")
+		Membership.objects.filter(user=self.member).delete()
+		self.assertContains(
+			self.client.get(reverse("payment_invoice", args=[movement.pk])),
+			"Sin plan registrado",
+		)
+
+	def test_unified_subscriptions_include_members_without_plan(self):
+		response = self.client.get(reverse("subscription_list"))
+		self.assertEqual(
+			response.templates[0].name, "memberships/member_list.html"
+		)
+		self.assertContains(response, "Agregar pago")
+		member = next(
+			user
+			for user in response.context["page"]
+			if user.pk == self.member.pk
+		)
+		self.assertEqual(member.subscription_plan, self.plan)
+		self.assertEqual(member.subscription_amount, 100)
+		self.assertTrue(member.can_pay_subscription)
+		self.client.force_login(self.other)
+		response = self.client.get(reverse("subscription_list"))
+		self.assertEqual(
+			[user.pk for user in response.context["page"]], [self.other.pk]
+		)
+		self.assertNotContains(response, "Agregar pago")
+
+	def test_removed_module_and_payment_method(self):
+		for url in ["/payments/generate/", "/payments/1/record/"]:
+			self.assertEqual(self.client.get(url).status_code, 404)
+		response = self.client.get(
+			reverse("pay_subscription", args=[self.member.pk])
+		)
+		self.assertIn("method", response.context["form"].fields)
+		self.assertContains(response, "Medio de pago")
+		self.assertNotContains(response, "> Mensualidades</a>")
+		self.assertEqual(self.client.get("/payments/").status_code, 200)
+
+	def test_payment_methods_are_preserved_in_invoice_and_reversal(self):
+		for method, label in [
+			("cash", "Efectivo"), ("transfer", "Transferencia"),
+			("card", "Tarjeta"),
+		]:
+			self.data["method"] = method
+			charge, movement = self.pay()
+			self.assertEqual(charge.method, method)
+			self.assertEqual(movement.method, method)
+			self.assertContains(
+				self.client.get(reverse("payment_invoice", args=[movement.pk])),
+				label,
+			)
+			self.assertEqual(reverse_payment(movement.pk, self.admin).method,
+				method)
+
+	def test_payment_method_is_required_and_validated(self):
+		url = reverse("pay_subscription", args=[self.member.pk])
+		for method in ["", "invalid"]:
+			response = self.client.post(url, {
+				"period": self.data["period"].strftime("%Y-%m"),
+				"paid_on": self.data["paid_on"].isoformat(),
+				"amount": "100", "method": method,
+			})
+			self.assertIn("method", response.context["form"].errors)
+		self.assertFalse(MonthlyPayment.objects.exists())
+
+	def test_coverage_is_preserved_and_cleared_on_reversal(self):
+		from memberships.services import next_month_expiry
+
+		charge, movement = self.pay()
+		self.assertEqual(charge.coverage_start, self.data["paid_on"])
+		self.assertEqual(
+			charge.coverage_end, next_month_expiry(self.data["paid_on"])
+		)
+		reverse_payment(movement.pk, self.admin)
+		charge.refresh_from_db()
+		self.assertIsNone(charge.coverage_start)
+		self.assertIsNone(charge.coverage_end)

@@ -1,1 +1,31 @@
-{% extends "base.html" %}{% block title %}Pagar suscripción{% endblock %}{% block content %}<div class="signup-box"><h2>Pagar suscripción</h2><p>Usuario: {{ member.username }} &middot; Plan: {{ plan }}</p><form method="post">{% csrf_token %}{% include "includes/styled_form_fields.html" with form=form %}<button type="submit" class="btn-audit">Confirmar pago</button><a href="{% url 'subscription_list' %}">Cancelar</a></form></div>{% endblock %}
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+	Pagar suscripción
+{% endblock %}
+{% block content %}
+	<div class="signup-box">
+		<h2>Pagar suscripción</h2>
+		<p>
+			Usuario:
+			{{ member.username }}
+			· Plan:
+			{{ plan }}
+		</p>
+		<form method="post" id="subscription-payment-form" data-gym-price="{{ gym_price }}">
+			{% csrf_token %}
+			{% include "includes/styled_form_fields.html" with form=form %}
+			<p>
+				Referencia del comprobante: se genera automáticamente al confirmar el pago.
+				Usá ese ID para vincular la factura.
+			</p>
+			<p><strong>Total a pagar: <span id="payment-total" aria-live="polite"></span></strong></p>
+			<div id="payment-detail"></div>
+			<button type="submit" class="btn-audit">Confirmar pago</button>
+			<a href="{% url 'subscription_list' %}">Cancelar</a>
+		</form>
+	</div>
+{{ prices|json_script:"course-prices" }}
+{{ charges|json_script:"subscription-charges" }}
+<script src="{% static 'js/subscription-payment.js' %}" defer></script>
+{% endblock %}

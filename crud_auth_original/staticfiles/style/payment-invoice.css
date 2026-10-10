@@ -1,0 +1,306 @@
+* {
+	box-sizing: border-box
+}
+
+body {
+	margin: 0;
+	background: #ededed;
+	color: #111;
+	font: 15px/1.45 Arial, sans-serif
+}
+
+main {
+	max-width: 1000px;
+	min-height: 700px;
+	margin: 32px auto;
+	padding: 48px 64px;
+	background: white
+}
+
+h1 {
+	margin: 40px 0 42px auto;
+	width: 42%;
+	font-size: 40px;
+	line-height: 1.08
+}
+
+p {
+	margin: 3px 0;
+	overflow-wrap: anywhere
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: 160px minmax(0, 1fr);
+	gap: 20px
+}
+
+.metadata,
+.issuer {
+	border-top: 5px solid #111;
+	padding-top: 8px
+}
+
+.label {
+	display: block;
+	font-size: 12px;
+	text-transform: uppercase
+}
+
+.value {
+	display: block;
+	font-size: 20px;
+	font-weight: bold;
+	overflow-wrap: anywhere
+}
+
+.date {
+	margin-top: 32px;
+	border-top: 1px solid #111;
+	padding-top: 8px
+}
+
+.recipient {
+	margin-top: 22px
+}
+
+.issuer-name {
+	font-size: 20px;
+	font-weight: bold
+}
+
+.details {
+	margin-top: 30px
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px
+}
+
+thead {
+	border-top: 5px solid #111;
+	border-bottom: 2px solid #111
+}
+
+th,
+td {
+	padding: 10px 6px;
+	text-align: right;
+	vertical-align: top
+}
+
+th:first-child,
+td:first-child {
+	text-align: left;
+	padding-left: 0;
+	width: 46%
+}
+
+th:last-child,
+td:last-child {
+	padding-right: 0;
+	white-space: nowrap
+}
+
+tbody {
+	border-bottom: 2px solid #111
+}
+
+.note {
+	font-size: 12px;
+	color: #555
+}
+
+.totals {
+	width: 55%;
+	margin-left: auto
+}
+
+.total-row {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 0
+}
+
+.grand-total {
+	border-top: 2px solid #111;
+	border-bottom: 1px solid #111;
+	font-size: 21px;
+	font-weight: bold
+}
+
+.payment-info {
+	margin-top: 24px;
+	font-size: 12px
+}
+
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: center
+}
+
+button {
+	padding: 10px 18px;
+	background: #111;
+	color: white;
+	border: 0;
+	border-radius: 4px;
+	cursor: pointer;
+	font: inherit
+}
+
+a {
+	color: #333
+}
+
+footer {
+	margin-top: 36px;
+	font-size: 12px;
+	color: #555
+}
+
+
+@media(max-width:650px) {
+	main {
+		margin: 0;
+		padding: 24px 18px;
+		min-height: 100vh
+	}
+
+	h1 {
+		width: 100%;
+		margin: 36px 0 28px;
+		font-size: 32px
+	}
+
+	.layout {
+		grid-template-columns: 1fr;
+		gap: 24px
+	}
+
+	.metadata {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 28px
+	}
+
+	.date {
+		margin: 0;
+		border: 0;
+		padding: 0
+	}
+
+	th,
+	td {
+		padding: 8px 3px;
+		font-size: 12px
+	}
+
+	.totals {
+		width: 75%
+	}
+
+
+}
+
+
+.invoice-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	margin: 40px 0 42px
+}
+
+.invoice-heading h1 {
+	margin: 0;
+	width: auto
+}
+
+.brand-logo {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 22px;
+	font-weight: bold
+}
+
+.brand-logo svg {
+	width: 64px;
+	height: 64px;
+	flex-shrink: 0
+}
+
+@media(max-width:650px) {
+	.invoice-heading {
+		flex-wrap: wrap;
+		margin: 30px 0
+	}
+
+	.brand-logo {
+		font-size: 19px
+	}
+
+	.brand-logo svg {
+		width: 48px;
+		height: 48px
+	}
+
+
+}
+
+
+@page {
+	size: A4;
+	margin: 16mm
+}
+
+
+@media print {
+	body {
+		background: white;
+		font-size: 12px
+	}
+
+	main {
+		max-width: none;
+		min-height: 0;
+		margin: 0;
+		padding: 0
+	}
+
+	.toolbar {
+		display: none
+	}
+
+	h1 {
+		margin-top: 20px;
+		font-size: 36px
+	}
+
+	.layout {
+		grid-template-columns: 130px minmax(0, 1fr)
+	}
+
+	.metadata {
+		display: block
+	}
+
+	.date {
+		margin-top: 32px;
+		border-top: 1px solid #111;
+		padding-top: 8px
+	}
+
+	.details,
+	.totals {
+		break-inside: avoid
+	}
+
+
+}

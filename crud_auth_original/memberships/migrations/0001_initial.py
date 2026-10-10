@@ -7,43 +7,43 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    initial = True
+	initial = True
 
-    dependencies = [
-        ("plans", "0001_initial"),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+	dependencies = [
+		("plans", "0001_initial"),
+		migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+	]
 
-    operations = [
-        migrations.CreateModel(
-            name="Membership",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("status", models.CharField(default="inactive", max_length=12)),
-                (
-                    "plan",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        to="plans.plan",
-                    ),
-                ),
-                (
-                    "user",
-                    models.OneToOneField(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-            ],
-        ),
-    ]
+	operations = [
+		migrations.CreateModel(
+			name="Membership",
+			fields=[
+				(
+					"id",
+					models.BigAutoField(
+						auto_created=True,
+						primary_key=True,
+						serialize=False,
+						verbose_name="ID",
+					),
+				),
+				("status", models.CharField(default="inactive", max_length=12)),
+				(
+					"plan",
+					models.ForeignKey(
+						blank=True,
+						null=True,
+						on_delete=django.db.models.deletion.SET_NULL,
+						to="plans.plan",
+					),
+				),
+				(
+					"user",
+					models.OneToOneField(
+						on_delete=django.db.models.deletion.CASCADE,
+						to=settings.AUTH_USER_MODEL,
+					),
+				),
+			],
+		),
+	]

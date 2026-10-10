@@ -5,21 +5,21 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('pagos', '0003_import_payment_history'),
-    ]
+	dependencies = [
+		("pagos", "0003_import_payment_history"),
+	]
 
-    operations = [
-        migrations.RemoveConstraint(
-            model_name='monthlypayment',
-            name='monthly_payment_payment_details',
-        ),
-        migrations.RemoveField(
-            model_name='paymentmovement',
-            name='method',
-        ),
-        migrations.RemoveField(
-            model_name='monthlypayment',
-            name='method',
-        ),
-    ]
+	operations = [
+		migrations.RemoveConstraint(
+			model_name="monthlypayment",
+			name="monthly_payment_payment_details",
+		),
+		migrations.RemoveField(
+			model_name="paymentmovement",
+			name="method",
+		),
+		migrations.RemoveField(
+			model_name="monthlypayment",
+			name="method",
+		),
+	]

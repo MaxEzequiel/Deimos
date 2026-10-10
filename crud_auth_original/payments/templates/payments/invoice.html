@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8">
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1"
+		>
+		<title>
+			Factura #{{ movement.pk }}
+			· Deimos
+		</title>
+		<link
+			rel="stylesheet"
+			href="{% static 'style/payment-invoice.css' %}"
+		>
+		<script
+			src="{% static 'js/payment-invoice.js' %}"
+			defer
+		></script>
+	</head>
+	<body>
+		<main>
+			<nav
+				class="toolbar"
+				aria-label="Acciones de factura"
+			>
+				<button
+					type="button"
+					id="print-invoice"
+				>
+					Imprimir / Guardar PDF
+				</button>
+				<a href="{% url 'payment_history' %}">Volver a pagos</a>
+			</nav>
+			<header class="invoice-heading">
+				<div
+					class="brand-logo"
+					aria-label="Deimos Gym"
+				>
+					<svg
+						viewBox="0 0 64 64"
+						xmlns="http://www.w3.org/2000/svg"
+						role="img"
+						aria-label="Logo de Deimos Gym: mancuerna"
+					>
+						<rect x="2" y="23" width="8" height="18" rx="2" fill="currentColor" />
+						<rect x="12" y="15" width="10" height="34" rx="2" fill="currentColor" />
+						<rect x="22" y="28" width="20" height="8" fill="currentColor" />
+						<rect x="42" y="15" width="10" height="34" rx="2" fill="currentColor" />
+						<rect x="54" y="23" width="8" height="18" rx="2" fill="currentColor" />
+					</svg>
+					<span>Deimos Gym</span>
+				</div>
+				<h1>Factura</h1>
+			</header>
+			<div class="layout">
+				<aside
+					class="metadata"
+					aria-label="Datos del comprobante"
+				>
+					<div>
+						<span class="label">Número</span>
+						<span
+							class="value"
+						>
+							{{ movement.pk|stringformat:"07d" }}
+						</span>
+					</div>
+					<div class="date">
+						<span class="label">Fecha</span>
+						<span
+							class="value"
+						>
+							{{ movement.paid_on|date:"d/m/Y" }}
+						</span>
+					</div>
+				</aside>
+				<div>
+					<section
+						class="issuer"
+						aria-label="Emisor y socio"
+					>
+						<span class="label">De</span>
+						<p class="issuer-name">Deimos Gym</p>
+						<div class="recipient">
+							<span class="label">Para</span>
+							<p>
+								<strong>
+									{% if person %}
+										{{ person.name }}
+										{{ person.surname }}
+									{% else %}
+										{{ member.get_full_name|default:member.username }}
+									{% endif %}
+								</strong>
+							</p>
+							<p>
+								Usuario:
+								{{ member.username }}
+								· ID
+								{{ member.pk }}
+							</p>
+							{% if person.id_number %}
+								<p>
+									DNI:
+									{{ person.id_number }}
+								</p>
+							{% endif %}
+							{% if person.email or member.email %}
+								<p>{{ person.email|default:member.email }}</p>
+							{% endif %}
+							{% if membership %}
+								<p>
+									Membresía #{{ membership.pk }}
+								</p>
+							{% endif %}
+						</div>
+					</section>
+					<section
+						class="details"
+						aria-label="Detalle del pago"
+					>
+						<p class="note">Plan actual: {{ plan.name|default:"Sin plan registrado" }}</p>
+						<p class="note">{{ movement.charge.get_kind_display }} · Período {{ movement.charge.period|date:"m/Y" }}</p>
+						<table>
+							<thead>
+								<tr>
+									<th scope="col">Descripción</th>
+									<th scope="col">Cantidad</th>
+									<th scope="col">Precio unidad</th>
+									<th scope="col">Importe</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for item in movement.charge.items %}
+								<tr><td>{{ item.name }}</td><td>1</td><td>${{ item.price }}</td><td>{% if movement.reversal_of_id %}-{% endif %}${{ item.price }}</td></tr>
+								{% endfor %}
+								{% if not movement.charge.items %}
+								<tr>
+									<td>
+										{% if movement.reversal_of_id %}
+											Anulación de cuota de membresía
+										{% else %}
+											Cuota de membresía
+										{% endif %}
+										<p class="note">
+											Plan actual:
+											{{ plan.name|default:"Sin plan registrado" }}
+										</p>
+										<p class="note">
+											Período
+											{{ movement.charge.period|date:"m/Y" }}
+											· Cuota #{{ movement.charge_id }}
+										</p>
+									</td>
+									<td>1</td>
+									<td>
+										${{ movement.amount|floatformat:2 }}
+									</td>
+									<td>
+										<strong>
+											${{ movement.amount|floatformat:2 }}
+										</strong>
+									</td>
+								</tr>
+							{% endif %}
+							</tbody>
+						</table>
+						<div class="totals">
+							<div class="total-row">
+								<span>SUBTOTAL</span>
+								<strong>
+									${{ movement.amount|floatformat:2 }}
+								</strong>
+							</div>
+							<div class="total-row grand-total">
+								<span>Total</span>
+								<span>
+									${{ movement.amount|floatformat:2 }}
+								</span>
+							</div>
+						</div>
+					</section>
+					<div class="payment-info">
+						<p>
+							<strong>Medio de pago:</strong>
+							{{ movement.get_method_display|default:"Sin registrar" }}
+						</p>
+						<p>
+							<strong>Referencia:</strong>
+							{{ movement.reference|default:"Sin referencia" }}
+						</p>
+						<p>
+							<strong>Estado:</strong>
+							{% if movement.reversal_of_id %}
+								Anulación del pago #{{ movement.reversal_of_id }}
+							{% elif movement.reversal %}
+								Pago anulado (movimiento #{{ movement.reversal.pk }})
+							{% else %}
+								Pago realizado
+							{% endif %}
+						</p>
+						<p>
+							<strong>Registrado por:</strong>
+							{{ movement.recorded_by.username|default:"Sin registrar" }}
+						</p>
+					</div>
+				</div>
+			</div>
+			<footer>Comprobante interno de pago. No válido como factura fiscal.</footer>
+		</main>
+	</body>
+</html>

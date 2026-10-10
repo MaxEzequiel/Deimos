@@ -7,77 +7,168 @@ from django.db import models
 from django.utils import timezone
 
 
+PAYMENT_METHODS = [
+	("cash", "Efectivo"),
+	("transfer", "Transferencia"),
+	("card", "Tarjeta"),
+]
+
+
+PAYMENT_KINDS = [("gym", "Musculación"), ("classes", "Clases"), ("both", "Musculación y clases")]
+
+
 class MonthlyPayment(models.Model):
-    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="monthly_payments", verbose_name="Socio")
-    period = models.DateField("Mes de la cuota", help_text="Se guarda como el primer día del mes.")
-    amount = models.DecimalField("Importe", max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
-    due_date = models.DateField("Vencimiento")
-    paid_on = models.DateField("Fecha de pago", null=True, blank=True)
-    coverage_start = models.DateField("Inicio de vigencia", null=True, blank=True)
-    coverage_end = models.DateField("Fin de vigencia", null=True, blank=True)
-    reference = models.CharField("Referencia del comprobante", max_length=100, blank=True)
-    recorded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="recorded_monthly_payments", editable=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+	kind = models.CharField("Concepto", max_length=12, choices=PAYMENT_KINDS, default="gym")
+	items = models.JSONField("Detalle de precios", default=list, blank=True)
 
-    class Meta:
-        ordering = ["-period", "member__username"]
-        verbose_name = "mensualidad"
-        verbose_name_plural = "mensualidades"
-        constraints = [
-            models.UniqueConstraint(fields=["member", "period"], name="unique_member_month"),
-            models.CheckConstraint(condition=models.Q(amount__gt=0), name="monthly_payment_positive_amount"),
-        ]
+	method = models.CharField(
+		"Medio de pago", max_length=12, choices=PAYMENT_METHODS, blank=True,
+	)
+	member = models.ForeignKey(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.PROTECT,
+		related_name="monthly_payments",
+		verbose_name="Socio",
+	)
+	period = models.DateField(
+		"Mes de la cuota", help_text="Se guarda como el primer día del mes."
+	)
+	amount = models.DecimalField(
+		"Importe",
+		max_digits=10,
+		decimal_places=2,
+		validators=[MinValueValidator(Decimal("0.01"))],
+	)
+	due_date = models.DateField("Vencimiento")
+	paid_on = models.DateField("Fecha de pago", null=True, blank=True)
+	coverage_start = models.DateField(
+		"Inicio de vigencia", null=True, blank=True
+	)
+	coverage_end = models.DateField("Fin de vigencia", null=True, blank=True)
+	reference = models.CharField(
+		"Referencia del comprobante", max_length=100, blank=True
+	)
+	recorded_by = models.ForeignKey(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.SET_NULL,
+		null=True,
+		blank=True,
+		related_name="recorded_monthly_payments",
+		editable=False,
+	)
+	created_at = models.DateTimeField(auto_now_add=True)
 
-    @property
-    def status(self):
-        if self.paid_on:
-            return "paid"
-        return "overdue" if self.due_date < timezone.localdate() else "pending"
+	class Meta:
+		ordering = ["-period", "member__username"]
+		verbose_name = "mensualidad"
+		verbose_name_plural = "mensualidades"
+		constraints = [
+			models.UniqueConstraint(
+				fields=["member", "period"], name="unique_member_month"
+			),
+			models.CheckConstraint(
+				condition=models.Q(amount__gt=0),
+				name="monthly_payment_positive_amount",
+			),
+		]
 
-    @property
-    def status_label(self):
-        return {"paid": "Pagada", "overdue": "Vencida", "pending": "Pendiente"}[self.status]
+	@property
+	def status(self):
+		if self.paid_on:
+			return "paid"
+		return "overdue" if self.due_date < timezone.localdate() else "pending"
 
-    def clean(self):
-        super().clean()
-        errors = {}
-        if self.period and self.period.day != 1:
-            errors["period"] = "El período debe ser el primer día del mes."
-        if self.period and self.due_date and (self.period.year, self.period.month) != (self.due_date.year, self.due_date.month):
-            errors["due_date"] = "El vencimiento debe pertenecer al mes de la cuota."
-        if self.paid_on and self.paid_on > timezone.localdate():
-            errors["paid_on"] = "La fecha de pago no puede ser futura."
-        if bool(self.coverage_start) != bool(self.coverage_end):
-            errors["coverage_start"] = "Indicá inicio y fin de vigencia juntos."
-        if self.coverage_start and self.coverage_end and self.coverage_end <= self.coverage_start:
-            errors["coverage_end"] = "El fin de vigencia debe ser posterior al inicio."
-        if errors:
-            raise ValidationError(errors)
+	@property
+	def status_label(self):
+		return {"paid": "Pagada", "overdue": "Vencida", "pending": "Pendiente"}[
+			self.status
+		]
 
-    def __str__(self):
-        return f"{self.member} · {self.period:%m/%Y}"
+	def clean(self):
+		super().clean()
+		errors = {}
+		if self.period and self.period.day != 1:
+			errors["period"] = "El período debe ser el primer día del mes."
+		if (
+			self.period
+			and self.due_date
+			and (self.period.year, self.period.month)
+			!= (self.due_date.year, self.due_date.month)
+		):
+			errors["due_date"] = (
+				"El vencimiento debe pertenecer al mes de la cuota."
+			)
+		if self.paid_on and self.paid_on > timezone.localdate():
+			errors["paid_on"] = "La fecha de pago no puede ser futura."
+		if bool(self.coverage_start) != bool(self.coverage_end):
+			errors["coverage_start"] = "Indicá inicio y fin de vigencia juntos."
+		if (
+			self.coverage_start
+			and self.coverage_end
+			and self.coverage_end <= self.coverage_start
+		):
+			errors["coverage_end"] = (
+				"El fin de vigencia debe ser posterior al inicio."
+			)
+		if errors:
+			raise ValidationError(errors)
+
+	def __str__(self):
+		return f"{self.member} · {self.period:%m/%Y}"
 
 
 class PaymentMovement(models.Model):
-    """Historial: un cobro positivo y, si se anula, su contrapartida negativa."""
-    charge = models.ForeignKey(MonthlyPayment, on_delete=models.PROTECT, related_name="movements")
-    amount = models.DecimalField("Monto", max_digits=10, decimal_places=2)
-    paid_on = models.DateField("Fecha")
-    reference = models.CharField(max_length=100, blank=True)
-    reversal_of = models.OneToOneField("self", on_delete=models.PROTECT, null=True, blank=True, related_name="reversal")
-    recorded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, editable=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+	"""Historial: cobro positivo y contrapartida negativa si se anula."""
 
-    class Meta:
-        ordering = ["-created_at", "-pk"]
-        constraints = [models.CheckConstraint(
-            condition=(models.Q(amount__gt=0, reversal_of__isnull=True) | models.Q(amount__lt=0, reversal_of__isnull=False)),
-            name="payment_movement_sign",
-        )]
+	method = models.CharField(
+		"Medio de pago", max_length=12, choices=PAYMENT_METHODS, blank=True,
+	)
 
-    def clean(self):
-        super().clean()
-        if self.reversal_of_id:
-            original = self.reversal_of
-            if original.amount <= 0 or self.amount != -original.amount or self.charge_id != original.charge_id:
-                raise ValidationError("La anulación debe corresponder al cobro original y tener su monto opuesto.")
+	charge = models.ForeignKey(
+		MonthlyPayment, on_delete=models.PROTECT, related_name="movements"
+	)
+	amount = models.DecimalField("Monto", max_digits=10, decimal_places=2)
+	paid_on = models.DateField("Fecha")
+	reference = models.CharField(max_length=100, blank=True)
+	reversal_of = models.OneToOneField(
+		"self",
+		on_delete=models.PROTECT,
+		null=True,
+		blank=True,
+		related_name="reversal",
+	)
+	recorded_by = models.ForeignKey(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.SET_NULL,
+		null=True,
+		editable=False,
+	)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ["-created_at", "-pk"]
+		constraints = [
+			models.CheckConstraint(
+				condition=(
+					models.Q(amount__gt=0, reversal_of__isnull=True)
+					| models.Q(amount__lt=0, reversal_of__isnull=False)
+				),
+				name="payment_movement_sign",
+			)
+		]
+
+	def clean(self):
+		super().clean()
+		if self.reversal_of_id:
+			original = self.reversal_of
+			if (
+				original.amount <= 0
+				or self.amount != -original.amount
+				or self.charge_id != original.charge_id
+			):
+				raise ValidationError(
+					(
+						"La anulación debe corresponder al cobro original y tener su monto "
+						"opuesto."
+					)
+				)

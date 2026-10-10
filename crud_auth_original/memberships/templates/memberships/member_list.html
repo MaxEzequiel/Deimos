@@ -1,43 +1,184 @@
 {% extends "base.html" %}
-{% block title %}Suscripciones | Deimos Gym{% endblock %}
+{% block title %}
+	Suscripciones | Deimos Gym
+{% endblock %}
 {% block content %}
-<div class="plans-module">
-    <div class="module-header"><h2>Suscripciones</h2><p>Asigná planes, administrá membresías y registrá pagos de los usuarios existentes.</p></div>
-    <form method="get" class="audit-filters member-filters">
-        <div class="module-search-row">
-        <div class="audit-filter-field"><label for="member-search" class="module-field-label">Buscar por usuario, nombre o DNI</label><input type="search" name="q" id="member-search" value="{{ search }}" class="module-search-input"></div>
-        <div class="audit-filter-actions"><button type="submit" class="btn-audit btn-audit-filter">Buscar</button><a href="{% url 'subscription_list' %}" class="btn-audit btn-audit-reset">Ver todos</a></div>
-        </div>
-    </form>
-    <p>{{ total_users }} usuarios registrados</p>
-    <div class="plans-table-container table-responsive">
-        <table class="plans-table">
-            <thead><tr><th>Socio / usuario</th><th>DNI</th><th>Plan</th><th>Monto</th><th>Membresía</th><th>Último pago</th><th>Acciones</th></tr></thead>
-            <tbody>
-            {% for member in page %}
-                <tr>
-                    <td data-label="Socio">{% if member.person %}{{ member.person.name }} {{ member.person.surname }}<br>{% endif %}<small>{{ member.username }}</small>{% if not member.is_active %}<br><span class="stat-badge audit-badge-logout">Cuenta desactivada</span>{% endif %}</td>
-                    <td data-label="DNI">{{ member.person.id_number|default:"Sin perfil" }}</td>
-                    <td data-label="Plan">{{ member.subscription_plan|default:"Sin plan" }}{% if member.subscription_plan.description %}<br><small>{{ member.subscription_plan.description }}</small>{% endif %}</td>
-                    <td data-label="Monto">{% if member.subscription_amount != None %}${{ member.subscription_amount|floatformat:2 }}{% else %}Sin monto{% endif %}</td>
-                    <td data-label="Membresía">{% if member.membership %}{% if member.membership_status == 'active' %}<span class="stat-badge audit-badge-login">Activa</span>{% else %}<span class="stat-badge audit-badge-logout">Inactiva</span>{% endif %}{% else %}Sin membresía{% endif %}</td>
-                    <td data-label="Último pago">{{ member.last_paid_on|date:"d/m/Y"|default:"Sin pagos" }}</td>
-                    <td data-label="Acciones">
-                        {% if user.is_superuser %}<a href="{% url 'manage_member' member.pk %}#plan" class="action-btn edit-btn">{% if member.subscription_plan %}Editar plan{% else %}Agregar plan{% endif %}</a>{% endif %}
-                        {% if perms.pagos.change_monthlypayment and can_view_all and member.can_pay_subscription %}<a href="{% url 'pay_subscription' member.pk %}" class="action-btn edit-btn">Pagar</a>{% endif %}
-                        <a href="{% url 'payment_history' %}?member_id={{ member.pk }}">Ver pagos</a>
-                    </td>
-                </tr>
-            {% empty %}<tr><td colspan="7" class="empty-row">No se encontraron usuarios.</td></tr>{% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% if page.has_other_pages %}
-    <nav class="audit-pagination" aria-label="Páginas de socios">
-        {% if page.has_previous %}<a href="?q={{ search|urlencode }}&amp;page={{ page.previous_page_number }}">Anterior</a>{% endif %}
-        <span>Página {{ page.number }} de {{ page.paginator.num_pages }}</span>
-        {% if page.has_next %}<a href="?q={{ search|urlencode }}&amp;page={{ page.next_page_number }}">Siguiente</a>{% endif %}
-    </nav>
-    {% endif %}
-</div>
+	<div class="plans-module">
+		<div class="module-header">
+			<h2>Suscripciones</h2>
+			<p>
+				Asigná planes, administrá membresías y registrá pagos de los usuarios
+				existentes.
+			</p>
+		</div>
+		<form
+			method="get"
+			class="audit-filters member-filters"
+		>
+			<div class="module-search-row">
+				<div class="audit-filter-field">
+					<label
+						for="member-search"
+						class="module-field-label"
+					>
+						Buscar por usuario, nombre o DNI
+					</label>
+					<input
+						type="search"
+						name="q"
+						id="member-search"
+						value="{{ search }}"
+						class="module-search-input"
+					>
+				</div>
+				<div class="audit-filter-actions">
+					<button
+						type="submit"
+						class="btn-audit btn-audit-filter"
+					>
+						Buscar
+					</button>
+					<a
+						href="{% url 'subscription_list' %}"
+						class="btn-audit btn-audit-reset"
+					>
+						Ver todos
+					</a>
+				</div>
+			</div>
+		</form>
+		<p>
+			{{ total_users }}
+			usuarios registrados
+		</p>
+		<div
+			class="plans-table-container table-responsive"
+		>
+			<table class="plans-table">
+				<thead>
+					<tr>
+						<th>Socio / usuario</th>
+						<th>DNI</th>
+						<th>Plan</th>
+						<th>Monto</th>
+						<th>Membresía</th>
+						<th>Último pago</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for member in page %}
+						<tr>
+							<td data-label="Socio">
+								{% if member.person %}
+									{{ member.person.name }}
+									{{ member.person.surname }}
+									<br>
+								{% endif %}
+								<small>{{ member.username }}</small>
+								{% if not member.is_active %}
+									<br>
+									<span class="stat-badge audit-badge-logout">Cuenta desactivada</span>
+								{% endif %}
+							</td>
+							<td data-label="DNI">
+								{{ member.person.id_number|default:"Sin perfil" }}
+							</td>
+							<td data-label="Plan">
+								{{ member.subscription_plan|default:"Sin plan" }}
+								{% if member.subscription_plan.description %}
+									<br>
+									<small>{{ member.subscription_plan.description }}</small>
+								{% endif %}
+							</td>
+							<td data-label="Monto">
+								{% if member.subscription_amount != None %}
+									${{ member.subscription_amount|floatformat:2 }}
+								{% else %}
+									Sin monto
+								{% endif %}
+							</td>
+							<td data-label="Membresía">
+								{% if member.membership %}
+									{% if member.membership_status == "active" %}
+										<span class="stat-badge audit-badge-login">Activa</span>
+									{% else %}
+										<span class="stat-badge audit-badge-logout">Inactiva</span>
+									{% endif %}
+								{% else %}
+									Sin membresía
+								{% endif %}
+							</td>
+							<td data-label="Último pago">
+								{{ member.last_paid_on|date:"d/m/Y"|default:"Sin pagos" }}
+							</td>
+							<td data-label="Acciones">
+								{% if user.is_superuser %}
+									<a
+										href="{% url 'manage_member' member.pk %}#plan"
+										class="action-btn edit-btn"
+									>
+										{% if member.subscription_plan %}
+											Editar plan
+										{% else %}
+											Agregar pago
+										{% endif %}
+									</a>
+								{% endif %}
+								{% if perms.pagos.change_monthlypayment and can_view_all and member.can_pay_subscription %}
+									<a
+										href="{% url 'pay_subscription' member.pk %}"
+										class="action-btn edit-btn"
+									>
+										Pagar
+									</a>
+								{% endif %}
+								<a
+									href="{% url 'payment_history' %}?member_id={{ member.pk }}"
+								>
+									Ver pagos
+								</a>
+							</td>
+						</tr>
+					{% empty %}
+						<tr>
+							<td
+								colspan="7"
+								class="empty-row"
+							>
+								No se encontraron usuarios.
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% if page.has_other_pages %}
+			<nav
+				class="audit-pagination"
+				aria-label="Páginas de socios"
+			>
+				{% if page.has_previous %}
+					<a
+						href="?q={{ search|urlencode }}&amp;page={{ page.previous_page_number }}"
+					>
+						Anterior
+					</a>
+				{% endif %}
+				<span>
+					Página
+					{{ page.number }}
+					de
+					{{ page.paginator.num_pages }}
+				</span>
+				{% if page.has_next %}
+					<a
+						href="?q={{ search|urlencode }}&amp;page={{ page.next_page_number }}"
+					>
+						Siguiente
+					</a>
+				{% endif %}
+			</nav>
+		{% endif %}
+	</div>
 {% endblock %}
