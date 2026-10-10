@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<a href="{% url 'accounts_admin_groups' %}">Grupos</a>
-<a href="{% url 'accounts_admin_users' %}">Usuarios</a>
-
+	<a
+		href="{% url 'accounts_admin_groups' %}"
+	>
+		Grupos
+	</a>
+	<a href="{% url 'accounts_admin_users' %}">Usuarios</a>
 {% endblock content %}

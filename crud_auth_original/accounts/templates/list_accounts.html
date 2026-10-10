@@ -1,66 +1,112 @@
 {% extends "base.html" %}
 {% load l10n %}
-
 {% block content %}
-<div class="container-main"></div>
-    <div class="plans-module">
-        <div class="module-header">
-            <h2> Lista de Usuarios</h2>
-            <p>Total: {{ accounts|length }} usuarios</p>
-        </div>
-<div class="stats-actions" style="justify-content:flex-start; margin-bottom:1.5rem;">
-        <a href="{% url 'create_account' %}" class="btn-audit btn-audit-filter">
-            <i class="fas fa-plus-circle"></i> Crear Usuario
-        </a>
+	<div class="container-main">
+	</div>
+	<div class="plans-module">
+		<div class="module-header">
+			<h2>Lista de Usuarios</h2>
+			<p>
+				Total:
+				{{ accounts|length }}
+				usuarios
+			</p>
+		</div>
+		<div
+			class="stats-actions"
+			style="justify-content:flex-start;
+			margin-bottom:1.5rem"
+		>
+			<a
+				href="{% url 'create_account' %}"
+				class="btn-audit btn-audit-filter"
+			>
+				<i class="fas fa-plus-circle">
+				</i>
+				Crear Usuario
+			</a>
+		</div>
+		<div class="plans-table-container">
+			<table class="plans-table">
+				<thead>
+					<tr>
+						<th>Usuario</th>
+						<th>DNI</th>
+						<th>Email</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for account in accounts %}
+						<tr>
+							<td
+								class="plan-name-cell"
+								data-label="Usuario"
+							>
+								<i
+									class="fas fa-user-circle"
+								>
+								</i>
+								{{ account.username }}
+							</td>
+							<td data-label="DNI">
+								{{ account.person.id_number|default_if_none:"Sin DNI"|default:"Sin DNI"|unlocalize }}
+							</td>
+							<td data-label="Email">
+								<i
+									class="fas fa-envelope"
+								>
+								</i>
+								{{ account.email }}
+							</td>
+							<td
+								data-label="Acciones"
+								class="plan-actions-cell"
+							>
+								<a
+									href="{% url 'manage_member' account.id %}"
+									class="action-btn edit-btn"
+								>
+									Plan, membresía y pagos
+								</a>
+								<a
+									href="{% url 'edit_account' account.id %}"
+									class="action-btn edit-btn"
+								>
+									<i class="fas fa-edit">
+									</i>
+									Editar Usuario
+								</a>
+								{% if account.is_active %}
+									<a
+										href="{% url 'deactivate_account' account.id %}"
+										class="action-btn delete-btn"
+									>
+										<i
+											class="fas fa-edit"
+										>
+										</i>
+										Desactivar Usuario
+									</a>
+								{% else %}
+									<p>Usuario No activo</p>
+								{% endif %}
+							</td>
+						</tr>
+					{% empty %}
+						<tr>
+							<td colspan="4" class="empty-row">
+								<i
+									class="fas fa-info-circle"
+								>
+								</i>
+								Sin usuarios para mostrar
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
-
-        <div class="plans-table-container">
-            <table class="plans-table">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>DNI</th>
-                        <th>Email</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for account in accounts %}
-                    <tr>
-                        <td class="plan-name-cell" data-label="Usuario">
-                            <i class="fas fa-user-circle"></i> {{ account.username }}
-                        </td>
-                        <td data-label="DNI">
-                            {{ account.person.id_number|default_if_none:"Sin DNI"|default:"Sin DNI"|unlocalize }}
-                        </td>
-                        <td data-label="Email">
-                            <i class="fas fa-envelope"></i> {{ account.email }}
-                        </td>
-                        <td data-label="Acciones" class="plan-actions-cell">
-                            <a href="{% url 'manage_member' account.id %}" class="action-btn edit-btn">Plan, membresía y pagos</a>
-                            <a href="{% url 'edit_account' account.id %}" class="action-btn edit-btn">
-                                <i class="fas fa-edit"></i> Editar Usuario
-                            </a>
-                            {% if account.is_active %}
-                            <a href="{% url 'deactivate_account' account.id %}" class="action-btn delete-btn">
-                                <i class="fas fa-edit"></i> Desactivar Usuario
-                            </a>
-                            {% else %}
-                            <p>Usuario No activo</p>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="empty-row">
-                            <i class="fas fa-info-circle"></i> Sin usuarios para mostrar
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
 {% endblock content %}

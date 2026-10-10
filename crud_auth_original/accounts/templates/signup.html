@@ -1,86 +1,126 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<div class="signup-box">
-    <h1 class="text-center">
-        <i class="fas fa-user-plus"></i> Registrar Usuario
-    </h1>
-
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ user_form.non_field_errors }}
-        {{ person_form.non_field_errors }}
-
-        <div class="form-section">
-            <h3>
-                <i class="fas fa-user-circle"></i> Datos de usuario
-            </h3>
-            <div class="form-group">
-                {{ user_form.username.label_tag }}{% if user_form.username.field.required %}<span class="required-marker">*</span>{% endif %}
-                {{ user_form.username }}
-                {% if user_form.username.errors %}
-                <div class="error-text">{{ user_form.username.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-group">
-                {{ user_form.password1.label_tag }}{% if user_form.password1.field.required %}<span class="required-marker">*</span>{% endif %}
-                {{ user_form.password1 }}
-                {% if user_form.password1.errors %}
-                <div class="error-text">{{ user_form.password1.errors }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-group">
-                {{ user_form.password2.label_tag }}{% if user_form.password2.field.required %}<span class="required-marker">*</span>{% endif %}
-                {{ user_form.password2 }}
-                {% if user_form.password2.errors %}
-                <div class="error-text">{{ user_form.password2.errors }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Campo para seleccionar si es administrador -->
-            <div class="form-group">
-                <label for="is_admin">
-                    <i class="fas fa-user-shield"></i> Es administrador
-                </label>
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
-                    <input type="checkbox" 
-                           name="is_admin" 
-                           id="is_admin"
-                           style="width: auto; margin: 0;">
-                    <span style="opacity: 0.7; font-size: 0.85rem;">Marcar si el usuario será administrador del sistema</span>
-                </div>
-                <small style="display: block; margin-top: 0.25rem; opacity: 0.6;">Los administradores tienen acceso a todas las funcionalidades del sistema.</small>
-            </div>
-        </div>
-
-        <div class="form-section">
-            <h3>
-                <i class="fas fa-address-card"></i> Datos personales
-            </h3>
-            {% for field in person_form %}
-            <div class="form-group">
-                {{ field.label_tag }}{% if field.field.required %}<span class="required-marker">*</span>{% endif %}
-                {{ field }}
-                {% if field.errors %}
-                <div class="error-text">{{ field.errors }}</div>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-
-        <button type="submit" class="btn-outline-light">
-            <i class="fas fa-save"></i> Guardar Usuario
-        </button>
-
-        {% if error %}
-        <div class="alert alert-error mt-3">
-            <i class="fas fa-exclamation-triangle"></i> {{ error }}
-        </div>
-        {% endif %}
-    </form>
-</div>
-
+	<div class="signup-box">
+		<h1 class="text-center">
+			<i class="fas fa-user-plus">
+			</i>
+			Registrar Usuario
+		</h1>
+		<form action="" method="post">
+			{% csrf_token %}
+			{{ user_form.non_field_errors }}
+			{{ person_form.non_field_errors }}
+			<div class="form-section">
+				<h3>
+					<i class="fas fa-user-circle">
+					</i>
+					Datos de usuario
+				</h3>
+				<div class="form-group">
+					{{ user_form.username.label_tag }}
+					{% if user_form.username.field.required %}
+						<span class="required-marker">*</span>
+					{% endif %}
+					{{ user_form.username }}
+					{% if user_form.username.errors %}
+						<div
+							class="error-text"
+						>
+							{{ user_form.username.errors }}
+						</div>
+					{% endif %}
+				</div>
+				<div class="form-group">
+					{{ user_form.password1.label_tag }}
+					{% if user_form.password1.field.required %}
+						<span class="required-marker">*</span>
+					{% endif %}
+					{{ user_form.password1 }}
+					{% if user_form.password1.errors %}
+						<div
+							class="error-text"
+						>
+							{{ user_form.password1.errors }}
+						</div>
+					{% endif %}
+				</div>
+				<div class="form-group">
+					{{ user_form.password2.label_tag }}
+					{% if user_form.password2.field.required %}
+						<span class="required-marker">*</span>
+					{% endif %}
+					{{ user_form.password2 }}
+					{% if user_form.password2.errors %}
+						<div
+							class="error-text"
+						>
+							{{ user_form.password2.errors }}
+						</div>
+					{% endif %}
+				</div>
+				<!-- Campo para seleccionar si es administrador -->
+				<div class="form-group">
+					<label for="is_admin">
+						<i class="fas fa-user-shield">
+						</i>
+						Es administrador
+					</label>
+					<div
+						style="display: flex; align-items: center; gap: 0.5rem; margin-top:
+						0.5rem"
+					>
+						<input
+							type="checkbox"
+							name="is_admin"
+							id="is_admin"
+							style="width: auto;
+							margin: 0"
+						>
+						<span
+							style="opacity: 0.7;
+							font-size: 0.85rem"
+						>
+							Marcar si el usuario será administrador del sistema
+						</span>
+					</div>
+					<small
+						style="display: block; margin-top: 0.25rem; opacity: 0.6"
+					>
+						Los administradores tienen acceso a todas las funcionalidades del sistema.
+					</small>
+				</div>
+			</div>
+			<div class="form-section">
+				<h3>
+					<i class="fas fa-address-card">
+					</i>
+					Datos personales
+				</h3>
+				{% for field in person_form %}
+					<div class="form-group">
+						{{ field.label_tag }}
+						{% if field.field.required %}
+							<span class="required-marker">*</span>
+						{% endif %}
+						{{ field }}
+						{% if field.errors %}
+							<div class="error-text">{{ field.errors }}</div>
+						{% endif %}
+					</div>
+				{% endfor %}
+			</div>
+			<button type="submit" class="btn-outline-light">
+				<i class="fas fa-save">
+				</i>
+				Guardar Usuario
+			</button>
+			{% if error %}
+				<div class="alert alert-error mt-3">
+					<i class="fas fa-exclamation-triangle">
+					</i>
+					{{ error }}
+				</div>
+			{% endif %}
+		</form>
+	</div>
 {% endblock %}

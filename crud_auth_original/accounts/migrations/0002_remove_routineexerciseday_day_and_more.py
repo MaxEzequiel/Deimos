@@ -5,48 +5,48 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ("login", "0001_initial"),
-    ]
+	dependencies = [
+		("login", "0001_initial"),
+	]
 
-    operations = [
-        migrations.RemoveField(
-            model_name="routineexerciseday",
-            name="day",
-        ),
-        migrations.RemoveField(
-            model_name="routineexerciseday",
-            name="exercise",
-        ),
-        migrations.RemoveField(
-            model_name="person",
-            name="plan",
-        ),
-        migrations.RemoveField(
-            model_name="person",
-            name="routine",
-        ),
-        migrations.RemoveField(
-            model_name="person",
-            name="user",
-        ),
-        migrations.RemoveField(
-            model_name="routineexerciseday",
-            name="routine",
-        ),
-        migrations.DeleteModel(
-            name="Day",
-        ),
-        migrations.DeleteModel(
-            name="Exercise",
-        ),
-        migrations.DeleteModel(
-            name="Person",
-        ),
-        migrations.DeleteModel(
-            name="Routine",
-        ),
-        migrations.DeleteModel(
-            name="RoutineExerciseDay",
-        ),
-    ]
+	operations = [
+		migrations.RemoveField(
+			model_name="routineexerciseday",
+			name="day",
+		),
+		migrations.RemoveField(
+			model_name="routineexerciseday",
+			name="exercise",
+		),
+		migrations.RemoveField(
+			model_name="person",
+			name="plan",
+		),
+		migrations.RemoveField(
+			model_name="person",
+			name="routine",
+		),
+		migrations.RemoveField(
+			model_name="person",
+			name="user",
+		),
+		migrations.RemoveField(
+			model_name="routineexerciseday",
+			name="routine",
+		),
+		migrations.DeleteModel(
+			name="Day",
+		),
+		migrations.DeleteModel(
+			name="Exercise",
+		),
+		migrations.DeleteModel(
+			name="Person",
+		),
+		migrations.DeleteModel(
+			name="Routine",
+		),
+		migrations.DeleteModel(
+			name="RoutineExerciseDay",
+		),
+	]

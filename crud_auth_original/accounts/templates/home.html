@@ -1,259 +1,436 @@
 {% extends "base.html" %}
-
-{% block title %}Inicio | Deimos Gym{% endblock %}
-
+{% block title %}
+	Inicio | Deimos Gym
+{% endblock %}
 {% block content %}
-<div class="container-main">
-
-    {% if is_admin_home %}
-    {# ========== PANEL ADMINISTRATIVO ========== #}
-    <section class="hero-welcome">
-        <div class="hero-content">
-            <div class="hero-greeting">Panel administrativo</div>
-            <h1 class="hero-username">Gestion Deimos Gym</h1>
-            <p class="hero-subtitle">Accesos rapidos para controlar socios, mensualidades, check-in y reportes.</p>
-
-            <div class="hero-actions">
-                <a href="{% url 'subscription_list' %}" class="hero-btn hero-btn-primary">
-                    <i class="fas fa-id-card"></i> Suscripciones
-                </a>
-                <a href="{% url 'payment_history' %}" class="hero-btn hero-btn-secondary">
-                    <i class="fas fa-receipt"></i> Ver pagos
-                </a>
-            </div>
-        </div>
-
-        <div class="hero-icon">
-            <i class="fas fa-chart-line"></i>
-        </div>
-    </section>
-
-    <div class="home-info-grid">
-        <div class="home-info-card">
-            <div class="home-info-icon icon-success">
-                <i class="fas fa-users"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Cuentas activas</span>
-                <span class="home-info-value">{{ admin_stats.active_accounts }}</span>
-                <span class="home-info-hint">Usuarios habilitados</span>
-            </div>
-        </div>
-
-        <div class="home-info-card">
-            <div class="home-info-icon icon-info">
-                <i class="fas fa-id-card"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Socios cargados</span>
-                <span class="home-info-value">{{ admin_stats.members }}</span>
-                <span class="home-info-hint">Perfiles con datos personales</span>
-            </div>
-        </div>
-
-        <div class="home-info-card">
-            <div class="home-info-icon icon-warn">
-                <i class="fas fa-clock"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Pagos pendientes</span>
-                <span class="home-info-value">{{ admin_stats.pending_payments }}</span>
-                <span class="home-info-hint">Mensualidades por cobrar</span>
-            </div>
-        </div>
-
-        <div class="home-info-card">
-            <div class="home-info-icon icon-danger">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Pagos vencidos</span>
-                <span class="home-info-value">{{ admin_stats.overdue_payments }}</span>
-                <span class="home-info-hint">Requieren seguimiento</span>
-            </div>
-        </div>
-    </div>
-
-    <section class="home-classes-section">
-        <header class="home-section-header">
-            <h2><i class="fas fa-tools"></i> Accesos de gestion</h2>
-        </header>
-        <div class="home-classes-grid">
-            <article class="home-class-card">
-                <div class="home-class-top"><h3>Socios y pagos</h3></div>
-                <p class="home-class-desc">Administrar planes, membresias, pagos y vigencias individuales.</p>
-                <a href="{% url 'subscription_list' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Abrir gestion</a>
-            </article>
-            <article class="home-class-card">
-                <div class="home-class-top"><h3>Check-in</h3></div>
-                <p class="home-class-desc">Registrar ingreso y revisar estado de mensualidad al entrar.</p>
-                <a href="{% url 'checkin_home' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Abrir check-in</a>
-            </article>
-            <article class="home-class-card">
-                <div class="home-class-top"><h3>Reportes</h3></div>
-                <p class="home-class-desc">Consultar estadisticas, exportar informes y revisar actividad.</p>
-                <a href="{% url 'estadisticas_dashboard' %}" class="home-class-btn"><i class="fas fa-arrow-right"></i> Ver reportes</a>
-            </article>
-        </div>
-    </section>
-
-    {% else %}
-    {# ========== HERO DE BIENVENIDA ========== #}
-    <section class="hero-welcome">
-        <div class="hero-content">
-            <div class="hero-greeting">Bienvenido de nuevo</div>
-            <h1 class="hero-username">{{ user.username }}</h1>
-            <p class="hero-subtitle">
-                {% if membership and membership_status == "active" %}
-                    Tu membresía está activa. ¡A entrenar!
-                {% elif membership %}
-                    Recordá renovar tu membresía para seguir entrenando.
-                {% else %}
-                    Adquirí una membresía para comenzar tu entrenamiento.
-                {% endif %}
-            </p>
-
-            <div class="hero-actions">
-                <a href="{% url 'list_class' %}" class="hero-btn hero-btn-primary">
-                    <i class="fas fa-calendar-alt"></i> Ver clases
-                </a>
-                <a href="{% url 'list_plans' %}" class="hero-btn hero-btn-secondary">
-                    <i class="fas fa-list"></i> Ver planes
-                </a>
-            </div>
-        </div>
-
-        <div class="hero-icon">
-            <i class="fas fa-dumbbell"></i>
-        </div>
-    </section>
-
-    {# ========== TARJETAS DE INFO ========== #}
-    <div class="home-info-grid">
-
-        {# --- Membresía --- #}
-        <div class="home-info-card">
-            <div class="home-info-icon {% if membership and membership_status == 'active' %}icon-success{% else %}icon-danger{% endif %}">
-                <i class="fas fa-id-card"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Membresía</span>
-                <span class="home-info-value">
-                    {% if membership %}
-                        {% if membership_status == 'active' %}Activa{% else %}Inactiva{% endif %}
-                    {% else %}
-                        Sin membresía
-                    {% endif %}
-                </span>
-                {% if membership and membership.plan %}
-                <span class="home-info-hint">Plan: {{ membership.plan.name }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        {# --- Mensualidad --- #}
-        <div class="home-info-card">
-            <div class="home-info-icon {% if monthly_status.membership_status == 'active' %}icon-success{% elif monthly_status.membership_status == 'expiring' %}icon-warn{% else %}icon-danger{% endif %}">
-                <i class="fas fa-receipt"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Mensualidad</span>
-                <span class="home-info-value">{{ monthly_status.membership_label }}</span>
-                <span class="home-info-hint">{{ monthly_status.membership_detail }}</span>
-                {% if monthly_status.membership_expires_at %}
-                <span class="home-info-hint">Renovar antes del {{ monthly_status.membership_expires_at|date:"d/m/Y" }}</span>
-                {% endif %}
-                {% if monthly_status.last_paid_on %}
-                <span class="home-info-hint">Ultimo pago: {{ monthly_status.last_paid_on|date:"d/m/Y" }}</span>
-                {% endif %}
-            </div>
-        </div>
-
-        {# --- Rutinas --- #}
-        <div class="home-info-card">
-            <div class="home-info-icon icon-info">
-                <i class="fas fa-dumbbell"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Rutinas</span>
-                <span class="home-info-value">{{ total_rutinas }}</span>
-                <span class="home-info-hint">
-                    {% if total_rutinas == 0 %}Sin asignar{% else %}Asignadas{% endif %}
-                </span>
-            </div>
-        </div>
-
-        {# --- Próxima clase --- #}
-        <div class="home-info-card">
-            <div class="home-info-icon icon-warn">
-                <i class="fas fa-calendar-check"></i>
-            </div>
-            <div class="home-info-content">
-                <span class="home-info-label">Próximas clases</span>
-                <span class="home-info-value">{{ proximas_clases|length }}</span>
-                <span class="home-info-hint">
-                    {% if proximas_clases %}Disponibles{% else %}Sin programar{% endif %}
-                </span>
-            </div>
-        </div>
-
-    </div>
-
-    {# ========== PRÓXIMAS CLASES ========== #}
-    <section class="home-classes-section">
-        <header class="home-section-header">
-            <h2><i class="fas fa-calendar-alt"></i> Próximas clases</h2>
-            <a href="{% url 'list_class' %}" class="home-section-link">
-                Ver todas <i class="fas fa-arrow-right"></i>
-            </a>
-        </header>
-
-        {% if proximas_clases %}
-        <div class="home-classes-grid">
-            {% for course in proximas_clases %}
-            <article class="home-class-card">
-                <div class="home-class-top">
-                    <h3>{{ course.name }}</h3>
-                    {% if course.has_spots %}
-                        <span class="home-class-badge home-class-badge-open">
-                            <i class="fas fa-check"></i> {{ course.free_spots }} cupos
-                        </span>
-                    {% else %}
-                        <span class="home-class-badge home-class-badge-full">
-                            <i class="fas fa-times"></i> Lleno
-                        </span>
-                    {% endif %}
-                </div>
-
-                {% if course.description %}
-                <p class="home-class-desc">{{ course.description|truncatechars:70 }}</p>
-                {% endif %}
-
-                <div class="home-class-meta">
-                    <span><i class="fas fa-user"></i> {{ course.teacher }}</span>
-                    <span><i class="fas fa-clock"></i> {{ course.starts_at|date:"d/m H:i" }}</span>
-                </div>
-
-                {% if course.has_spots %}
-                <a href="{% url 'inscription_question' course.id %}" class="home-class-btn">
-                    <i class="fas fa-user-plus"></i> Inscribirse
-                </a>
-                {% else %}
-                <button class="home-class-btn home-class-btn-disabled" disabled>
-                    <i class="fas fa-ban"></i> Sin cupos
-                </button>
-                {% endif %}
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="home-empty">
-            <i class="fas fa-calendar-times"></i>
-            <p>No hay clases programadas por el momento</p>
-        </div>
-        {% endif %}
-    </section>
-    {% endif %}
-
-</div>
+	<div class="container-main">
+		{% if is_admin_home %}
+			{% comment %}
+				========== PANEL ADMINISTRATIVO ==========
+			{% endcomment %}
+			<section class="hero-welcome">
+				<div class="hero-content">
+					<div class="hero-greeting">Panel administrativo</div>
+					<h1 class="hero-username">Gestion Deimos Gym</h1>
+					<p class="hero-subtitle">
+						Accesos rapidos para controlar socios, mensualidades, check-in y reportes.
+					</p>
+					<div class="hero-actions">
+						<a
+							href="{% url 'subscription_list' %}"
+							class="hero-btn hero-btn-primary"
+						>
+							<i class="fas fa-id-card">
+							</i>
+							Suscripciones
+						</a>
+						<a
+							href="{% url 'payment_history' %}"
+							class="hero-btn hero-btn-secondary"
+						>
+							<i class="fas fa-receipt">
+							</i>
+							Ver pagos
+						</a>
+					</div>
+				</div>
+				<div class="hero-icon">
+					<i class="fas fa-chart-line">
+					</i>
+				</div>
+			</section>
+			<div class="home-info-grid">
+				<div class="home-info-card">
+					<div class="home-info-icon icon-success">
+						<i class="fas fa-users">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Cuentas activas</span>
+						<span
+							class="home-info-value"
+						>
+							{{ admin_stats.active_accounts }}
+						</span>
+						<span class="home-info-hint">Usuarios habilitados</span>
+					</div>
+				</div>
+				<div class="home-info-card">
+					<div class="home-info-icon icon-info">
+						<i class="fas fa-id-card">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Socios cargados</span>
+						<span
+							class="home-info-value"
+						>
+							{{ admin_stats.members }}
+						</span>
+						<span
+							class="home-info-hint"
+						>
+							Perfiles con datos personales
+						</span>
+					</div>
+				</div>
+				<div class="home-info-card">
+					<div class="home-info-icon icon-warn">
+						<i class="fas fa-clock">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Pagos pendientes</span>
+						<span
+							class="home-info-value"
+						>
+							{{ admin_stats.pending_payments }}
+						</span>
+						<span
+							class="home-info-hint"
+						>
+							Mensualidades por cobrar
+						</span>
+					</div>
+				</div>
+				<div class="home-info-card">
+					<div class="home-info-icon icon-danger">
+						<i class="fas fa-exclamation-triangle">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Pagos vencidos</span>
+						<span
+							class="home-info-value"
+						>
+							{{ admin_stats.overdue_payments }}
+						</span>
+						<span
+							class="home-info-hint"
+						>
+							Requieren seguimiento
+						</span>
+					</div>
+				</div>
+			</div>
+			<section class="home-classes-section">
+				<header class="home-section-header">
+					<h2>
+						<i class="fas fa-tools">
+						</i>
+						Accesos de gestion
+					</h2>
+				</header>
+				<div class="home-classes-grid">
+					<article class="home-class-card">
+						<div class="home-class-top">
+							<h3>Socios y pagos</h3>
+						</div>
+						<p class="home-class-desc">
+							Administrar planes, membresias, pagos y vigencias individuales.
+						</p>
+						<a
+							href="{% url 'subscription_list' %}"
+							class="home-class-btn"
+						>
+							<i class="fas fa-arrow-right">
+							</i>
+							Abrir gestion
+						</a>
+					</article>
+					<article class="home-class-card">
+						<div class="home-class-top">
+							<h3>Check-in</h3>
+						</div>
+						<p class="home-class-desc">
+							Registrar ingreso y revisar estado de mensualidad al entrar.
+						</p>
+						<a
+							href="{% url 'checkin_home' %}"
+							class="home-class-btn"
+						>
+							<i class="fas fa-arrow-right">
+							</i>
+							Abrir check-in
+						</a>
+					</article>
+					<article class="home-class-card">
+						<div class="home-class-top">
+							<h3>Reportes</h3>
+						</div>
+						<p class="home-class-desc">
+							Consultar estadisticas, exportar informes y revisar actividad.
+						</p>
+						<a
+							href="{% url 'estadisticas_dashboard' %}"
+							class="home-class-btn"
+						>
+							<i class="fas fa-arrow-right">
+							</i>
+							Ver reportes
+						</a>
+					</article>
+				</div>
+			</section>
+		{% else %}
+			{% comment %}
+				========== HERO DE BIENVENIDA ==========
+			{% endcomment %}
+			<section class="hero-welcome">
+				<div class="hero-content">
+					<div class="hero-greeting">Bienvenido de nuevo</div>
+					<h1 class="hero-username">{{ user.username }}</h1>
+					<p class="hero-subtitle">
+						{% if membership and membership_status == "active" %}
+							Tu membresía está activa. ¡A entrenar!
+						{% elif membership %}
+							Recordá renovar tu membresía para seguir entrenando.
+						{% else %}
+							Adquirí una membresía para comenzar tu entrenamiento.
+						{% endif %}
+					</p>
+					<div class="hero-actions">
+						<a
+							href="{% url 'list_class' %}"
+							class="hero-btn hero-btn-primary"
+						>
+							<i class="fas fa-calendar-alt">
+							</i>
+							Ver clases
+						</a>
+						<a
+							href="{% url 'list_plans' %}"
+							class="hero-btn hero-btn-secondary"
+						>
+							<i class="fas fa-list">
+							</i>
+							Ver planes
+						</a>
+					</div>
+				</div>
+				<div class="hero-icon">
+					<i class="fas fa-dumbbell">
+					</i>
+				</div>
+			</section>
+			{% comment %}
+				========== TARJETAS DE INFO ==========
+			{% endcomment %}
+			<div class="home-info-grid">
+				{% comment %}
+					--- Membresía ---
+				{% endcomment %}
+				<div class="home-info-card">
+					<div
+						class="home-info-icon
+						{% if membership and membership_status == 'active' %} icon-success{% else
+						%}icon-danger{% endif %}"
+					>
+						<i class="fas fa-id-card">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Membresía</span>
+						<span class="home-info-value">
+							{% if membership %}
+								{% if membership_status == "active" %}
+									Activa
+								{% else %}
+									Inactiva
+								{% endif %}
+							{% else %}
+								Sin membresía
+							{% endif %}
+						</span>
+						{% if membership and membership.plan %}
+							<span
+								class="home-info-hint"
+							>
+								Plan:
+								{{ membership.plan.name }}
+							</span>
+						{% endif %}
+					</div>
+				</div>
+				{% comment %}
+					--- Mensualidad ---
+				{% endcomment %}
+				<div class="home-info-card">
+					<div
+						class="home-info-icon
+						{% if monthly_status.membership_status == 'active' %} icon-success{% elif
+						monthly_status.membership_status == 'expiring' %}icon-warn{% else
+						%}icon-danger{% endif %}"
+					>
+						<i class="fas fa-receipt">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Mensualidad</span>
+						<span
+							class="home-info-value"
+						>
+							{{ monthly_status.membership_label }}
+						</span>
+						<span
+							class="home-info-hint"
+						>
+							{{ monthly_status.membership_detail }}
+						</span>
+						{% if monthly_status.membership_expires_at %}
+							<span class="home-info-hint">
+								Renovar antes del
+								{{ monthly_status.membership_expires_at|date:"d/m/Y" }}
+							</span>
+						{% endif %}
+						{% if monthly_status.last_paid_on %}
+							<span class="home-info-hint">
+								Ultimo pago:
+								{{ monthly_status.last_paid_on|date:"d/m/Y" }}
+							</span>
+						{% endif %}
+					</div>
+				</div>
+				{% comment %}
+					--- Rutinas ---
+				{% endcomment %}
+				<div class="home-info-card">
+					<div class="home-info-icon icon-info">
+						<i class="fas fa-dumbbell">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Rutinas</span>
+						<span class="home-info-value">{{ total_rutinas }}</span>
+						<span class="home-info-hint">
+							{% if total_rutinas == 0 %}
+								Sin asignar
+							{% else %}
+								Asignadas
+							{% endif %}
+						</span>
+					</div>
+				</div>
+				{% comment %}
+					--- Próxima clase ---
+				{% endcomment %}
+				<div class="home-info-card">
+					<div class="home-info-icon icon-warn">
+						<i class="fas fa-calendar-check">
+						</i>
+					</div>
+					<div class="home-info-content">
+						<span class="home-info-label">Próximas clases</span>
+						<span
+							class="home-info-value"
+						>
+							{{ proximas_clases|length }}
+						</span>
+						<span class="home-info-hint">
+							{% if proximas_clases %}
+								Disponibles
+							{% else %}
+								Sin programar
+							{% endif %}
+						</span>
+					</div>
+				</div>
+			</div>
+			{% comment %}
+				========== PRÓXIMAS CLASES ==========
+			{% endcomment %}
+			<section class="home-classes-section">
+				<header class="home-section-header">
+					<h2>
+						<i class="fas fa-calendar-alt">
+						</i>
+						Próximas clases
+					</h2>
+					<a
+						href="{% url 'list_class' %}"
+						class="home-section-link"
+					>
+						Ver todas
+						<i class="fas fa-arrow-right">
+						</i>
+					</a>
+				</header>
+				{% if proximas_clases %}
+					<div class="home-classes-grid">
+						{% for course in proximas_clases %}
+							<article class="home-class-card">
+								<div class="home-class-top">
+									<h3>{{ course.name }}</h3>
+									{% if course.has_spots %}
+										<span
+											class="home-class-badge home-class-badge-open"
+										>
+											<i class="fas fa-check">
+											</i>
+											{{ course.free_spots }}
+											cupos
+										</span>
+									{% else %}
+										<span
+											class="home-class-badge home-class-badge-full"
+										>
+											<i class="fas fa-times">
+											</i>
+											Lleno
+										</span>
+									{% endif %}
+								</div>
+								{% if course.description %}
+									<p class="home-class-desc">
+										{{ course.description|truncatechars:70 }}
+									</p>
+								{% endif %}
+								<div class="home-class-meta">
+									<span>
+										<i
+											class="fas fa-user"
+										>
+										</i>
+										{{ course.teacher }}
+									</span>
+									<span>
+										<i class="fas fa-clock">
+										</i>
+										{{ course.starts_at|date:"d/m H:i" }}
+									</span>
+								</div>
+								{% if course.has_spots %}
+									<a
+										href="{% url 'inscription_question' course.id %}"
+										class="home-class-btn"
+									>
+										<i
+											class="fas fa-user-plus"
+										>
+										</i>
+										Inscribirse
+									</a>
+								{% else %}
+									<button
+										class="home-class-btn home-class-btn-disabled"
+										disabled
+									>
+										<i class="fas fa-ban">
+										</i>
+										Sin cupos
+									</button>
+								{% endif %}
+							</article>
+						{% endfor %}
+					</div>
+				{% else %}
+					<div class="home-empty">
+						<i class="fas fa-calendar-times">
+						</i>
+						<p>No hay clases programadas por el momento</p>
+					</div>
+				{% endif %}
+			</section>
+		{% endif %}
+	</div>
 {% endblock content %}
