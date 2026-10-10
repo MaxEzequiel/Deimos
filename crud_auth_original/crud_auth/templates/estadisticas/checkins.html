@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Reporte de check-ins | Deimos{% endblock %}
+{% block content %}
+<div class="container-main">
+	<div class="welcome-section">
+		<h1>Reporte de check-ins</h1>
+		<p>{% if anio %}Año {{ anio }}{% if mes %} · Mes {{ mes }}{% endif %}{% else %}Todos los check-ins registrados{% endif %}</p>
+	</div>
+	<form method="get" class="audit-filters">
+		{% if anio %}<input type="hidden" name="anio" value="{{ anio }}">{% if mes %}<input type="hidden" name="mes" value="{{ mes }}">{% endif %}{% else %}<input type="hidden" name="todos" value="1">{% endif %}
+		<div class="audit-filter-row">
+			<div class="audit-filter-field"><label for="checkin-nombre">Nombre o apellido</label><input id="checkin-nombre" type="text" name="nombre" value="{{ nombre }}" placeholder="Nombre o apellido"></div>
+			<div class="audit-filter-field"><label for="checkin-dni">DNI</label><input id="checkin-dni" type="text" inputmode="numeric" name="dni" value="{{ dni }}" placeholder="DNI"></div>
+			<div class="audit-filter-field"><label for="checkin-desde">Desde</label><input id="checkin-desde" type="date" name="desde" value="{{ desde|date:'Y-m-d' }}"></div>
+			<div class="audit-filter-field"><label for="checkin-hasta">Hasta</label><input id="checkin-hasta" type="date" name="hasta" value="{{ hasta|date:'Y-m-d' }}"></div>
+			<div class="audit-filter-field">
+				<label for="checkin-dia">Día de la semana</label>
+				<select id="checkin-dia" name="dia_semana">
+					<option value="">Todos los días</option>
+					{% for dia in asistencia_semana %}<option value="{{ dia.dia }}" {% if dia.dia == dia_semana %}selected{% endif %}>{{ dia.nombre }}</option>{% endfor %}
+				</select>
+			</div>
+			<div class="audit-filter-actions">
+				<button type="submit" class="btn-audit btn-audit-filter">Filtrar</button>
+				<a class="btn-audit btn-audit-reset" href="{% url 'estadisticas_checkins' %}?{% if anio %}anio={{ anio }}{% if mes %}&amp;mes={{ mes }}{% endif %}{% else %}todos=1{% endif %}">Limpiar filtros</a>
+			</div>
+		</div>
+		<p>Para consultar un solo día, elegí la misma fecha en Desde y Hasta.</p>
+	</form>
+	{% include "estadisticas/includes/resumen_checkins.html" %}
+	<div class="stats-actions"><a class="btn-audit btn-audit-reset" href="{% url 'estadisticas_dashboard' %}{% if anio %}?anio={{ anio }}{% if mes %}&amp;mes={{ mes }}{% endif %}{% endif %}">Volver a estadísticas</a></div>
+	<section class="clase-card stats-report-card" style="margin-bottom:2rem">
+		<h3>Asistencia por día de la semana</h3>
+		<p>Check-ins acumulados por día de la semana, según las fechas, nombre y DNI seleccionados. Esta comparación incluye los siete días.</p>
+		<p>{% if dias_mayor_asistencia %}<strong>Mayor asistencia:</strong> {% for dia in dias_mayor_asistencia %}{{ dia.nombre }} ({{ dia.total }} check-ins){% if not forloop.last %}, {% endif %}{% endfor %}{% else %}No hay check-ins para comparar.{% endif %}</p>
+		<div class="plans-table-container"><table class="plans-table">
+			<thead><tr><th>Día de la semana</th><th>Total de check-ins</th></tr></thead>
+			<tbody>{% for dia in asistencia_semana %}<tr>
+				<td data-label="Día de la semana">{{ dia.nombre }}{% if dia.mayor_asistencia %} · Mayor asistencia{% endif %}</td>
+				<td data-label="Total de check-ins">{{ dia.total }}</td>
+			</tr>{% endfor %}</tbody>
+		</table></div>
+	</section>
+	<section class="clase-card stats-report-card">
+		<h3>Detalle de check-ins</h3>
+		<div class="plans-table-container"><table class="plans-table">
+			<thead><tr><th>Fecha</th><th>Hora de entrada</th><th>DNI</th><th>Persona</th><th>Registrado por</th><th>Observaciones</th></tr></thead>
+			<tbody>{% for checkin in checkins %}<tr>
+				<td data-label="Fecha">{{ checkin.fecha|date:"d/m/Y" }}</td>
+				<td data-label="Hora de entrada">{{ checkin.hora_entrada|date:"H:i:s" }}</td>
+				<td data-label="DNI">{{ checkin.dni }}</td>
+				<td data-label="Persona">{% if checkin.person %}{{ checkin.person.surname }}, {{ checkin.person.name }}{% else %}Sin persona asociada{% endif %}</td>
+				<td data-label="Registrado por">{{ checkin.registrado_por.username|default:"—" }}</td>
+				<td data-label="Observaciones">{{ checkin.observaciones|default:"—" }}</td>
+			</tr>{% empty %}<tr><td colspan="6" class="empty-row">No hay check-ins que coincidan con los filtros seleccionados.</td></tr>{% endfor %}</tbody>
+		</table></div>
+	</section>
+</div>
+{% endblock %}
