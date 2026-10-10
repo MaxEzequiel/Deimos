@@ -8,29 +8,78 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    initial = True
+	initial = True
 
-    dependencies = [
-        ('people', '0002_alter_person_email_alter_person_gender_and_more'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+	dependencies = [
+		("people", "0002_alter_person_email_alter_person_gender_and_more"),
+		migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+	]
 
-    operations = [
-        migrations.CreateModel(
-            name='CheckIn',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('dni', models.CharField(db_index=True, max_length=20, verbose_name='DNI')),
-                ('fecha', models.DateField(default=django.utils.timezone.localdate, verbose_name='Fecha')),
-                ('hora_entrada', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Hora de entrada')),
-                ('observaciones', models.TextField(blank=True, null=True, verbose_name='Observaciones')),
-                ('person', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='checkins', to='people.person', verbose_name='Persona')),
-                ('registrado_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='Registrado por')),
-            ],
-            options={
-                'verbose_name': 'Check-in',
-                'verbose_name_plural': 'Check-ins',
-                'ordering': ['-hora_entrada'],
-            },
-        ),
-    ]
+	operations = [
+		migrations.CreateModel(
+			name="CheckIn",
+			fields=[
+				(
+					"id",
+					models.BigAutoField(
+						auto_created=True,
+						primary_key=True,
+						serialize=False,
+						verbose_name="ID",
+					),
+				),
+				(
+					"dni",
+					models.CharField(
+						db_index=True, max_length=20, verbose_name="DNI"
+					),
+				),
+				(
+					"fecha",
+					models.DateField(
+						default=django.utils.timezone.localdate,
+						verbose_name="Fecha",
+					),
+				),
+				(
+					"hora_entrada",
+					models.DateTimeField(
+						default=django.utils.timezone.now,
+						verbose_name="Hora de entrada",
+					),
+				),
+				(
+					"observaciones",
+					models.TextField(
+						blank=True, null=True, verbose_name="Observaciones"
+					),
+				),
+				(
+					"person",
+					models.ForeignKey(
+						blank=True,
+						null=True,
+						on_delete=django.db.models.deletion.SET_NULL,
+						related_name="checkins",
+						to="people.person",
+						verbose_name="Persona",
+					),
+				),
+				(
+					"registrado_por",
+					models.ForeignKey(
+						blank=True,
+						null=True,
+						on_delete=django.db.models.deletion.SET_NULL,
+						to=settings.AUTH_USER_MODEL,
+						verbose_name="Registrado por",
+					),
+				),
+			],
+			options={
+				"verbose_name": "Check-in",
+				"verbose_name_plural": "Check-ins",
+				"ordering": ["-hora_entrada"],
+			},
+		),
+	]

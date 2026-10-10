@@ -14,83 +14,95 @@ from .services import member_checkin_status
 
 
 @login_required
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(["GET", "POST"])
 @permission_required("checkin.add_checkin", raise_exception=True)
 def checkin_home(request):
-    """Pantalla principal: registrar entrada por DNI"""
-    form = CheckInForm()
-    
-    if request.method == 'POST':
-        form = CheckInForm(request.POST)
-        if form.is_valid():
-            dni = form.cleaned_data['dni'].strip()
-            observaciones = form.cleaned_data.get('observaciones', '')
-            
-            # Crear el check-in (solo entrada)
-            checkin = CheckIn.objects.create(
-                dni=dni,
-                person=form.person,
-                observaciones=observaciones,
-                registrado_por=request.user
-            )
-            return redirect('checkin_success', pk=checkin.pk)
-    
-    return render(request, 'checkin/checkin_home.html', {
-        'form': form,
-    })
+	"""Pantalla principal: registrar entrada por DNI"""
+	form = CheckInForm()
+
+	if request.method == "POST":
+		form = CheckInForm(request.POST)
+		if form.is_valid():
+			dni = form.cleaned_data["dni"].strip()
+			observaciones = form.cleaned_data.get("observaciones", "")
+
+			# Crear el check-in (solo entrada)
+			checkin = CheckIn.objects.create(
+				dni=dni,
+				person=form.person,
+				observaciones=observaciones,
+				registrado_por=request.user,
+			)
+			return redirect("checkin_success", pk=checkin.pk)
+
+	return render(
+		request,
+		"checkin/checkin_home.html",
+		{
+			"form": form,
+		},
+	)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def checkin_success(request, pk):
-    """Confirmación del check-in"""
-    can_view_all = request.user.has_perm("checkin.view_checkin")
-    if not can_view_all and not request.user.has_perm("checkin.add_checkin"):
-        raise PermissionDenied
-    checkins = CheckIn.objects.select_related('person', 'person__user')
-    if not can_view_all:
-        checkins = checkins.filter(registrado_por=request.user)
-    checkin = get_object_or_404(checkins, pk=pk)
-    context = member_checkin_status(checkin.person)
-    context['checkin'] = checkin
-    return render(request, 'checkin/checkin_success.html', context)
+	"""Confirmación del check-in"""
+	can_view_all = request.user.has_perm("checkin.view_checkin")
+	if not can_view_all and not request.user.has_perm("checkin.add_checkin"):
+		raise PermissionDenied
+	checkins = CheckIn.objects.select_related("person", "person__user")
+	if not can_view_all:
+		checkins = checkins.filter(registrado_por=request.user)
+	checkin = get_object_or_404(checkins, pk=pk)
+	context = member_checkin_status(checkin.person)
+	context["checkin"] = checkin
+	return render(request, "checkin/checkin_success.html", context)
 
 
 @login_required
 @permission_required("checkin.view_checkin", raise_exception=True)
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def checkin_history(request):
-    """Historial de ingresos con filtros"""
-    q = request.GET.get('q', '').strip()
-    desde = request.GET.get('desde', '')
-    hasta = request.GET.get('hasta', '')
-    
-    checkins = CheckIn.objects.select_related('person', 'registrado_por')
-    
-    if q:
-        checkins = checkins.filter(
-            Q(dni__icontains=q) |
-            Q(person__name__icontains=q) |
-            Q(person__surname__icontains=q)
-        )
-    
-    date_form = DateRangeForm(request.GET)
-    if date_form.is_valid():
-        if date_form.cleaned_data.get("desde"):
-            checkins = checkins.filter(fecha__gte=date_form.cleaned_data["desde"])
-        if date_form.cleaned_data.get("hasta"):
-            checkins = checkins.filter(fecha__lte=date_form.cleaned_data["hasta"])
-    else:
-        messages.error(request, "Revisá las fechas del filtro")
-        checkins = checkins.none()
-    
-    hoy = timezone.localdate()
-    total_hoy = CheckIn.objects.filter(fecha=hoy).count()
-    
-    return render(request, 'checkin/checkin_history.html', {
-        'checkins': checkins[:200],
-        'q': q,
-        'desde': desde,
-        'hasta': hasta,
-        'total_hoy': total_hoy,
-    })
+	"""Historial de ingresos con filtros"""
+	q = request.GET.get("q", "").strip()
+	desde = request.GET.get("desde", "")
+	hasta = request.GET.get("hasta", "")
+
+	checkins = CheckIn.objects.select_related("person", "registrado_por")
+
+	if q:
+		checkins = checkins.filter(
+			Q(dni__icontains=q)
+			| Q(person__name__icontains=q)
+			| Q(person__surname__icontains=q)
+		)
+
+	date_form = DateRangeForm(request.GET)
+	if date_form.is_valid():
+		if date_form.cleaned_data.get("desde"):
+			checkins = checkins.filter(
+				fecha__gte=date_form.cleaned_data["desde"]
+			)
+		if date_form.cleaned_data.get("hasta"):
+			checkins = checkins.filter(
+				fecha__lte=date_form.cleaned_data["hasta"]
+			)
+	else:
+		messages.error(request, "Revisá las fechas del filtro")
+		checkins = checkins.none()
+
+	hoy = timezone.localdate()
+	total_hoy = CheckIn.objects.filter(fecha=hoy).count()
+
+	return render(
+		request,
+		"checkin/checkin_history.html",
+		{
+			"checkins": checkins[:200],
+			"q": q,
+			"desde": desde,
+			"hasta": hasta,
+			"total_hoy": total_hoy,
+		},
+	)
