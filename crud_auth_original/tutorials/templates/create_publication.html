@@ -1,44 +1,71 @@
 {% extends "base.html" %}
-
-{% block title %}Crear Publicación | Deimos{% endblock %}
-
+{% block title %}
+	Crear Publicación | Deimos
+{% endblock %}
 {% block content %}
-<div class="container-main">
-
-    <div class="welcome-section">
-        <h1><i class="fas fa-plus-circle"></i> Crear Publicación</h1>
-        <p>Completá los datos para publicar</p>
-    </div>
-
-    <div class="signup-box" style="max-width: 700px; margin: 0 auto;">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            {% for field in publication_form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">
-                    <i class="fas fa-tag"></i> {{ field.label }}:
-                </label>
-                {{ field }}
-                {% if field.errors %}
-                <div class="error-text">{{ field.errors }}</div>
-                {% endif %}
-                {% if field.help_text %}
-                <small class="form-text">{{ field.help_text }}</small>
-                {% endif %}
-            </div>
-            {% endfor %}
-
-            <div class="stats-actions" style="justify-content:flex-start; margin-top:1.5rem;">
-                <button type="submit" class="btn-audit btn-audit-filter">
-                    <i class="fas fa-save"></i> Crear
-                </button>
-                <a href="{% url 'list_publications' %}" class="btn-audit btn-audit-reset">
-                    <i class="fas fa-arrow-left"></i> Cancelar
-                </a>
-            </div>
-        </form>
-    </div>
-
-</div>
+	<div class="container-main">
+		<div class="welcome-section">
+			<h1>
+				<i class="fas fa-plus-circle">
+				</i>
+				Crear Publicación
+			</h1>
+			<p>Completá los datos para publicar</p>
+		</div>
+		<div
+			class="signup-box"
+			style="max-width: 700px;
+			margin: 0 auto"
+		>
+			<form
+				method="post"
+				enctype="multipart/form-data"
+			>
+				{% csrf_token %}
+				{% for field in publication_form %}
+					<div class="form-group">
+						<label for="{{ field.id_for_label }}">
+							<i class="fas fa-tag">
+							</i>
+							{{ field.label }}
+							:
+						</label>
+						{{ field }}
+						{% if field.errors %}
+							<div class="error-text">{{ field.errors }}</div>
+						{% endif %}
+						{% if field.help_text %}
+							<small
+								class="form-text"
+							>
+								{{ field.help_text }}
+							</small>
+						{% endif %}
+					</div>
+				{% endfor %}
+				<div
+					class="stats-actions"
+					style="justify-content:flex-start;
+					margin-top:1.5rem"
+				>
+					<button
+						type="submit"
+						class="btn-audit btn-audit-filter"
+					>
+						<i class="fas fa-save">
+						</i>
+						Crear
+					</button>
+					<a
+						href="{% url 'list_publications' %}"
+						class="btn-audit btn-audit-reset"
+					>
+						<i class="fas fa-arrow-left">
+						</i>
+						Cancelar
+					</a>
+				</div>
+			</form>
+		</div>
+	</div>
 {% endblock content %}

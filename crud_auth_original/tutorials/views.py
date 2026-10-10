@@ -8,75 +8,99 @@ from tutorials.forms import PublicationForm
 # --- VER: cualquier usuario con permiso view_publication ---
 @login_required
 @permission_required("tutorials.view_publication", login_url="/error_403")
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def list_publications(request):
-    publications = Publication.objects.all()
-    puede_editar = (
-        request.user.has_perm("tutorials.add_publication")
-        or request.user.has_perm("tutorials.change_publication")
-        or request.user.has_perm("tutorials.delete_publication")
-    )
-    return render(request, "list_publications.html", {
-        "publications": publications,
-        "puede_editar": puede_editar,
-    })
+	publications = Publication.objects.all()
+	puede_editar = (
+		request.user.has_perm("tutorials.add_publication")
+		or request.user.has_perm("tutorials.change_publication")
+		or request.user.has_perm("tutorials.delete_publication")
+	)
+	return render(
+		request,
+		"list_publications.html",
+		{
+			"publications": publications,
+			"puede_editar": puede_editar,
+		},
+	)
 
 
 @login_required
 @permission_required("tutorials.view_publication", login_url="/error_403")
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def detail_publication(request, publication_id):
-    publication = get_object_or_404(Publication, id=publication_id)
-    puede_editar = (
-        request.user.has_perm("tutorials.add_publication")
-        or request.user.has_perm("tutorials.change_publication")
-        or request.user.has_perm("tutorials.delete_publication")
-    )
-    return render(request, "detail_publication.html", {
-        "publication": publication,
-        "puede_editar": puede_editar,
-    })
+	publication = get_object_or_404(Publication, id=publication_id)
+	puede_editar = (
+		request.user.has_perm("tutorials.add_publication")
+		or request.user.has_perm("tutorials.change_publication")
+		or request.user.has_perm("tutorials.delete_publication")
+	)
+	return render(
+		request,
+		"detail_publication.html",
+		{
+			"publication": publication,
+			"puede_editar": puede_editar,
+		},
+	)
 
 
 # --- CREAR: solo quien tenga add_publication ---
 @login_required
 @permission_required("tutorials.add_publication", login_url="/error_403")
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(["GET", "POST"])
 def create_publication(request):
-    if request.method == "GET":
-        return render(request, "create_publication.html", {"publication_form": PublicationForm()})
-    else:
-        form = PublicationForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("list_publications")
-        return render(request, "create_publication.html", {"publication_form": form})
+	if request.method == "GET":
+		return render(
+			request,
+			"create_publication.html",
+			{"publication_form": PublicationForm()},
+		)
+	else:
+		form = PublicationForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save()
+			return redirect("list_publications")
+		return render(
+			request, "create_publication.html", {"publication_form": form}
+		)
 
 
 # --- EDITAR: solo quien tenga change_publication ---
 @login_required
 @permission_required("tutorials.change_publication", login_url="/error_403")
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(["GET", "POST"])
 def edit_publication(request, publication_id):
-    publication = get_object_or_404(Publication, id=publication_id)
-    if request.method == "GET":
-        return render(request, "edit_publication.html", {"publication_form": PublicationForm(instance=publication)})
-    else:
-        form = PublicationForm(request.POST, request.FILES, instance=publication)
-        if form.is_valid():
-            form.save()
-            return redirect("list_publications")
-        return render(request, "edit_publication.html", {"publication_form": form})
+	publication = get_object_or_404(Publication, id=publication_id)
+	if request.method == "GET":
+		return render(
+			request,
+			"edit_publication.html",
+			{"publication_form": PublicationForm(instance=publication)},
+		)
+	else:
+		form = PublicationForm(
+			request.POST, request.FILES, instance=publication
+		)
+		if form.is_valid():
+			form.save()
+			return redirect("list_publications")
+		return render(
+			request, "edit_publication.html", {"publication_form": form}
+		)
 
 
 # --- ELIMINAR: solo quien tenga delete_publication ---
 @login_required
 @permission_required("tutorials.delete_publication", login_url="/error_403")
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(["GET", "POST"])
 def delete_publication(request, publication_id):
-    publication = get_object_or_404(Publication, id=publication_id)
-    if request.method == "GET":
-        return render(request, "delete_publication.html", {"publication": publication})
-    else:
-        publication.delete()
-        return redirect("list_publications")
+	publication = get_object_or_404(Publication, id=publication_id)
+	if request.method == "GET":
+		return render(
+			request, "delete_publication.html", {"publication": publication}
+		)
+	else:
+		publication.delete()
+		return redirect("list_publications")

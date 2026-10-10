@@ -1,42 +1,75 @@
 {% extends "base.html" %}
-
-{% block title %}{{ publication.title }} | Deimos{% endblock %}
-
+{% block title %}
+	{{ publication.title }}
+	| Deimos
+{% endblock %}
 {% block content %}
-<div class="container-main">
-
-    <div class="welcome-section">
-        <h1><i class="fas fa-file-alt"></i> {{ publication.title }}</h1>
-        <p>{{ publication.description }}</p>
-    </div>
-
-    {% if publication.image %}
-    <div class="clase-card" style="text-align:center; margin-bottom:2rem;">
-        <img src="{{ publication.image.url }}" alt="{{ publication.title }}"
-             style="max-width: 100%; max-height: 450px; border-radius: 12px; object-fit: cover;">
-    </div>
-    {% endif %}
-
-    <div class="clase-card" style="margin-bottom:2rem;">
-        <h3><i class="fas fa-align-left"></i> Contenido</h3>
-        <p>{{ publication.content|linebreaks }}</p>
-    </div>
-
-    <div class="stats-actions" style="justify-content:flex-start;">
-        {% if perms.tutorials.change_publication %}
-        <a href="{% url 'edit_publication' publication.id %}" class="btn-audit btn-audit-filter">
-            <i class="fas fa-edit"></i> Editar
-        </a>
-        {% endif %}
-                {% if perms.tutorials.delete_publication %}
-                <a href="{% url 'delete_publication' publication.id %}" class="btn-audit btn-audit-reset">
-            <i class="fas fa-trash-alt"></i> Eliminar
-        </a>
-        {% endif %}
-        <a href="{% url 'list_publications' %}" class="btn-audit btn-audit-reset">
-            <i class="fas fa-arrow-left"></i> Volver a la lista
-        </a>
-    </div>
-
-</div>
+	<div class="container-main">
+		<div class="welcome-section">
+			<h1>
+				<i class="fas fa-file-alt">
+				</i>
+				{{ publication.title }}
+			</h1>
+			<p>{{ publication.description }}</p>
+		</div>
+		{% if publication.image %}
+			<div
+				class="clase-card"
+				style="text-align:center;
+				margin-bottom:2rem"
+			>
+				<img
+					src="{{ publication.image.url }}"
+					alt="{{ publication.title }}"
+					style="max-width: 100%; max-height: 450px; border-radius: 12px; object-fit:
+					cover"
+				>
+			</div>
+		{% endif %}
+		<div
+			class="clase-card"
+			style="margin-bottom:2rem"
+		>
+			<h3>
+				<i class="fas fa-align-left">
+				</i>
+				Contenido
+			</h3>
+			<p>{{ publication.content|linebreaks }}</p>
+		</div>
+		<div
+			class="stats-actions"
+			style="justify-content:flex-start"
+		>
+			{% if perms.tutorials.change_publication %}
+				<a
+					href="{% url 'edit_publication' publication.id %}"
+					class="btn-audit btn-audit-filter"
+				>
+					<i class="fas fa-edit">
+					</i>
+					Editar
+				</a>
+			{% endif %}
+			{% if perms.tutorials.delete_publication %}
+				<a
+					href="{% url 'delete_publication' publication.id %}"
+					class="btn-audit btn-audit-reset"
+				>
+					<i class="fas fa-trash-alt">
+					</i>
+					Eliminar
+				</a>
+			{% endif %}
+			<a
+				href="{% url 'list_publications' %}"
+				class="btn-audit btn-audit-reset"
+			>
+				<i class="fas fa-arrow-left">
+				</i>
+				Volver a la lista
+			</a>
+		</div>
+	</div>
 {% endblock content %}
